@@ -1,10 +1,10 @@
 # ZSV · Zcash Stablecoin Vault
 
-An experimental **stablecoin-only alternative to general Zcash Shielded Assets**: lock ZEC, issue one dollar-targeting stablecoin, and enforce vault transitions on Zcash.
+ZSV proposes a Zcash protocol for locking ZEC and issuing one dollar-targeting stablecoin. It excludes the arbitrary asset issuance proposed by general Zcash Shielded Assets.
 
-**Research prototype. No live funds. No mainnet or public-testnet activation. No production peg or privacy claim.** The executable is a signed account-ledger model; the native Zebra implementation is proposed separately.
+The executable is a signed account-ledger model with simulated funds. The native Zebra implementation is proposed separately. Do not use the prototype or its fixture keys for real funds.
 
-## Start here
+## Documents
 
 - [Whitepaper](docs/whitepaper.md) · [PDF](docs/whitepaper.pdf)
 - [Threat model](docs/threatmodel.md) · [Economic adversarial review](docs/economic-review.md) · [Independent code review](docs/adversarial-review.md)
@@ -22,11 +22,11 @@ An experimental **stablecoin-only alternative to general Zcash Shielded Assets**
 | Checked integer math and supply/debt conservation | Wallet/library encoding and native value-pool integration | Dollar redemption, interest, recapitalization |
 | Explicit bad debt and issuance freeze | Possible fixed-two-asset shielded profile | Shielded stablecoin payments or private vaults in v0 |
 
-The fixed-asset restriction prevents arbitrary native issuance **through this extension**. It cannot prevent off-protocol tokens, inscriptions, derivatives or speculation. New cryptographic constraints and consensus code still need independent review.
+The fixed-asset restriction prevents arbitrary native issuance through ZSV. Off-protocol tokens, inscriptions, derivatives and speculation remain possible. The proposed cryptographic constraints and consensus code need independent review.
 
 ## Run locally
 
-Requires Rust 1.90 with `rustfmt` and `clippy`; the checked-in toolchain selects the version. No service or network connection is used by the executable. Cargo downloads locked dependencies on first build.
+Requires Rust 1.90 with `rustfmt` and `clippy`; the checked-in toolchain selects the version. Cargo downloads locked dependencies on first build. The executable then runs locally without a service or network connection.
 
 ```sh
 cargo test --locked
@@ -35,24 +35,24 @@ cargo fmt --check
 cargo clippy --locked --all-targets -- -D warnings
 ```
 
-The scenario uses explicitly public fixture keys and simulated ZEC. It demonstrates healthy issuance/repayment and a price crash that creates visible bad debt. Do not use those keys for any funds. Exact commands/results and model limitations are in the verification receipt.
+The scenario uses public fixture keys and simulated ZEC. It demonstrates issuance, repayment and a price crash that creates bad debt. The verification receipt records the commands, results and model limits.
 
-The library accepts a `Block` through `State::validate_block` / `State::apply_block`. Immutable `Snapshot`s expose balances and vault state for inspection. State construction is explicitly named `from_regtest_fixture` and rejects Mainnet/Testnet. There is no general mint API or deserializable mutable ledger state.
+The library accepts a `Block` through `State::validate_block` / `State::apply_block`. `Snapshot`s expose copies of balances and vault state for inspection. `from_regtest_fixture` constructs the state and rejects Mainnet/Testnet. Callers cannot deserialize mutable ledger state or invoke a general mint API.
 
 ## Design choices
 
 - Owner-scoped vault IDs and genesis/configuration-bound signing domains protect the model against the ID squatting and cross-configuration replay reproduced during independent review. Identical canonical genesis/configuration represents the same model chain.
-- Public vaults and balances in the executable. Public vault health makes borrower-independent liquidation observable; shielded payments are later work.
-- Single stablecoin provisional name: zUSD. The name is not a claim of ticker ownership or an existing deployment.
+- Vaults and balances are public, so anyone can inspect liquidation conditions. Shielded payments are later work.
+- The stablecoin's provisional name is zUSD. No deployment or ticker ownership is claimed.
 - Illustrative 250% borrowing ratio, 200% liquidation threshold and 5% bonus; 100 zUSD minimum nonzero debt; 100,000 zUSD global ceiling. These are test settings, not risk recommendations.
 - Liquidations burn actual stable balances, pay ZEC atomically, and retain uncovered debt. A zero-tolerance bad-debt freeze contains issuance but permits griefing and has no recovery action in v0.
-- The price quorum authenticates observations; it does not prove those observations represent executable market prices. There is no unconditional holder redemption, so a dollar peg is not guaranteed.
+- The price quorum authenticates observations but cannot prove that traders can execute at those prices. Holders have no unconditional redemption right, so the model does not guarantee a dollar peg.
 
 ## Native implementation boundary
 
-The proposed native system has no collateral spending or issuer key that can override consensus rules. The reference account model is useful for testing those rules, but it does **not** lock real ZEC or parse actual Zcash vault transactions.
+The proposed native system gives no collateral spending or issuer key authority to override consensus rules. The account model tests those rules using simulated ZEC. Native collateral locking and Zcash vault-transaction parsing still need implementation.
 
-See the source-pinned Zebra proposal for actual current APIs, required librustzcash changes, activation/digest rules, state/fork handling and acceptance gates. Any contextual adapter included here is an executable seam sketch, not a patch that activates a complete node.
+The Zebra proposal identifies current APIs, required librustzcash changes, activation and digest rules, fork handling, and release checks. The included contextual adapter tests preparation and commit behavior against the model. It is not linked into Zebra.
 
 ## Rebuild the paper
 

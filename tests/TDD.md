@@ -1,8 +1,7 @@
 # Test-first implementation evidence
 
 The integration tests were written against a compiling, deliberately incomplete
-interface before implementing state transitions. No cryptographic or economic
-implementation was present in that scaffold; block validation returned
+interface before implementing state transitions. The scaffold had no cryptographic or economic implementation; block validation returned
 `Invalid("not implemented")`.
 
 On 2026-10-29 (UTC), Rust 1.90.0:
@@ -30,8 +29,7 @@ borrow freeze, the liquidation threshold, debt dust, and genesis validation.
 The managed environment used direct Cargo/Rustc binaries under
 `/tmp/zsv-rustup/toolchains/1.90.0-x86_64-unknown-linux-gnu/bin` and
 `CARGO_HOME=/tmp/zsv-cargo`. The first dependency fetch required network access.
-An attempted rustup-proxy launch failed inside the sandbox before tests; this
-environment failure is not counted as RED evidence.
+An attempted rustup-proxy launch failed inside the sandbox before tests; the failure occurred before tests and does not count as RED evidence.
 
 Review then identified missing liquidator intent constraints. After adding the
 new action fields to the type and signing encoding, but before enforcing them:
@@ -70,7 +68,7 @@ snapshots/checkpoint hashes.
 ## Owner namespaces and immutable chain domains
 
 Before publication, independent review changed two retained-limit tests into
-security expectations **on the old implementation**, then ran:
+security expectations on the old implementation, then ran:
 
 ```text
 cargo test --offline --locked --test reviewer_attacks
@@ -84,7 +82,7 @@ failed with both `tx_rejected=false` and `oracle_rejected=false`. Its two
 configurations shared the two signing reporters and changed the third key, so
 quorum membership could not mask missing domain authentication.
 
-The implementation then added full owner-scoped `VaultId` keys (without hash
+The fixes added full owner-scoped `VaultId` keys (without hash
 truncation), explicit liquidation owner references, canonical validated
 configuration/genesis domains, and state-scoped signing helpers. The immutable
 domain is signed by both transaction and oracle envelopes; rewriting it to the
@@ -109,3 +107,9 @@ The final suite comprises adversarial (22), boundaries (6), economics (9),
 independent reviewer attacks (21), vector replay (1), and contextual adapter
 tests (10). The later results and regenerated vectors supersede the earlier
 66-test checkpoint above.
+
+## Signing encoder cleanup
+
+Two literal-byte fixtures in `tests/cleanup.rs` passed against the original encoder before the refactor. They cover every action, both asset tags, transaction and oracle headers, field order and integer boundaries. The refactor groups adjacent numeric fields into ordered slices without changing their encoding.
+
+After the refactor, all 71 integration tests passed. The full verification script also passed formatting, Clippy, doc tests and byte-for-byte comparison with the unchanged signed scenario output. A separate reviewer repeated the full verification and found no required follow-ups. See `docs/code-cleanup.md`.

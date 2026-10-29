@@ -2,13 +2,13 @@
 
 ZIP: **unassigned**
 
-Status: local research draft, not submitted;29 October 2026.
+Status: local research draft, not submitted; 29 October 2026.
 
 Category: Consensus / Wallet.
 
 ## Summary
 
-Introduce exactly one consensus-defined dollar-targeting stable asset backed by native ZEC vaults. Provide no general asset-issuance capability. A complete specification requires native encoding, proof statements, activation and economics decisions identified below; this draft does not reserve transaction versions, asset IDs or branch IDs.
+Introduce exactly one consensus-defined dollar-targeting stable asset backed by native ZEC vaults. Provide no general asset-issuance capability. A complete specification still needs the native encoding, proof statements, activation and economic decisions listed below. This draft does not reserve transaction versions, asset IDs or branch IDs.
 
 ## Required consensus behavior
 
@@ -16,7 +16,7 @@ The permitted asset set is a closed enum containing ZEC and the stable asset. No
 
 Stable issuance MUST equal principal added through a valid vault transition in the same transaction. There MUST be no alternate issuer-key authorization path. Stable repayment MUST consume actual stable value; a claimed burn amount or memo is insufficient. Stable asset flows MUST NOT modify ZEC monetary supply or replace ZEC transaction fees.
 
-Vault locking MUST consume real native ZEC. Locked value MUST NOT also be spendable as an ordinary transparent output or shielded note. Each vault has exactly one current state, represented by a uniquely identified unspent vault output. The executable uses owner-scoped local integer IDs, preventing another owner from squatting that namespace. This model scheme is NOT the proposed native identifier scheme. Native outpoints/domain-separated 256-bit identifiers must be specified with creation/spend uniqueness.
+Vault locking MUST consume real native ZEC. Locked value MUST NOT also be spendable as an ordinary transparent output or shielded note. Each vault has exactly one current state, represented by a uniquely identified unspent vault output. The executable uses owner-scoped local integer IDs to prevent another owner from squatting that namespace. This model scheme is not the proposed native identifier scheme. Native outpoints/domain-separated 256-bit identifiers must be specified with creation/spend uniqueness.
 
 Each transition MUST commit its owner, operation, amounts, asset types, previous vault reference, stable value inputs/outputs, successor state, network/branch, transaction version and relevant oracle epoch. A liquidator intent MUST also bound the amount burned and collateral received. Current owner authorization cannot override the transition verifier.
 
@@ -30,9 +30,9 @@ The model uses full-state scans and cloning for clarity. A native implementation
 
 ## Operations
 
-- **Open/deposit:** authorize a collateral contribution and create/update a vault. Do not require an oracle merely to add collateral.
+- **Open/deposit:** authorize a collateral contribution and create/update a vault. Do not require an oracle to add collateral.
 - **Borrow:** require owner authorization, a fresh canonical price, sufficient collateral, minimum debt and global ceiling. Atomically mint principal. Reject any new borrowing with bad debt in the v0 policy.
-- **Repay:** debit and burn stable value; decrease principal exactly; allow repayment without a fresh oracle. The executable prototype requires owner authorization for repayment, although future third-party repayment could be separately specified.
+- **Repay:** debit and burn stable value; decrease principal exactly; allow repayment without a fresh oracle. The executable prototype requires owner authorization for repayment; third-party repayment would need a separate specification.
 - **Withdraw/close:** require owner authorization. Debt-free release needs no oracle. Otherwise enforce collateral sufficiency after release. No alternate payment path may release locked value.
 - **Transfer:** conserve an existing permitted asset; do not alter debt or authorize issuance.
 - **Liquidate:** require fresh oracle and unhealthy state; do not require borrower authorization. Burn supplied stablecoins, release precisely computed collateral, return residual collateral, remove the vault and record any uncovered liability. Include signed epoch and slippage/amount bounds.
@@ -43,7 +43,7 @@ Units, integer inequalities and liquidation rounding are in [design.md](design.m
 
 Signed observations are submitted through native transactions. Consensus validates reporter membership, quorum, distinct signers, identical tuple, monotonic sequence, defined validity window and canonical ordering. A node MUST NOT fetch a web price or use local wall-clock time while validating a block.
 
-The proposal needs an explicit observed-height/not-before policy in addition to expiry, delayed reporter rotation, correlated-source analysis, equivocation handling, emergency policy and economic corruption analysis. The current model implements sequence and expiry with a 100-block maximum acceptance lifetime; it does not implement all of these controls. Distinct authorized keys do not establish independent observations.
+The proposal needs an explicit observed-height/not-before policy in addition to expiry. It also needs delayed reporter rotation, correlated-source analysis, equivocation handling, emergency policy and economic corruption analysis. The current model implements sequence and expiry with a 100-block maximum acceptance lifetime; it does not implement all of these controls. Distinct authorized keys do not establish independent observations.
 
 ## Wire and crypto work still required
 

@@ -1,12 +1,12 @@
 # Native ZSV integration with Zebra
 
-**Proposal, not deployed consensus.** ZSV (Zcash Stablecoin Vault) is a narrowly scoped native stablecoin experiment: lock ZEC in protocol-controlled vaults and mint one protocol-defined stablecoin against that collateral. All ownership, mint, burn, withdrawal, liquidation and state-transition rules must be validated by Zcash nodes. General asset creation, issuer keys, arbitrary metadata, user-selected tickers, arbitrary base points and external settlement chains are excluded.
+Status: proposal, not deployed consensus. ZSV (Zcash Stablecoin Vault) would lock ZEC in protocol-controlled vaults and mint one protocol-defined stablecoin against that collateral. Zcash nodes must validate all ownership, mint, burn, withdrawal, liquidation and state-transition rules. General asset creation, issuer keys, arbitrary metadata, user-selected tickers, arbitrary base points and external settlement chains are excluded.
 
 The immutable source baseline is Zebra `5faf8a413f0d30a6e93115f3d16af1e229fd7858` (2026-10-28) and ZIPs `2bdf39494320e5e04057ac93b1794031ebfb00b5` (2026-10-21), researched 2026-10-29. See [sources.md](sources.md) for verified links, dates, status and evidence limits.
 
 ## What can be reused
 
-The useful ZSA subset is the *cryptography for moving a non-ZEC asset*, not the permissionless issuance mechanism.
+ZSV could reuse ZSA cryptography for moving a non-ZEC asset. Permissionless issuance remains excluded.
 
 - Study ZIP 226's asset-bound note commitments, value commitments, nullifiers, transfer conservation, burn accounting and split-note constraints.
 - Fix the asset domain to exactly ZEC and one canonical ZSV unit in the consensus implementation and circuit. An enum in a wallet does not enforce this: the proof must constrain the asset/base to a permitted constant, or the public typed-asset validator must reject every other value.
@@ -20,7 +20,7 @@ A fixed set of asset constants simplifies valid-base checks; it does not justify
 
 ZIP 222 (TZEs) is still Draft. Its architecture of consensus-distributed, finite extension modules is relevant to a vault covenant, but there is no verified production TZE entry point to register a stablecoin today. A TZE-based route would itself require specification, deployment, digest changes and a fixed ZSV extension type. It cannot be assumed available as a plug-in.
 
-ZIP 230 is Withdrawn. **Do not implement the historical ZSA “v6” format.** ZIP 229 now defines v6 for NU6.3/Ironwood, with version group ID `0xD884B698`; it explicitly does not require ZSAs. ZIP 259 says NU7 introduces no new format and its listed deployment scope excludes ZSA ZIPs 226/227. Some draft ZSA text still refers to the withdrawn v6 proposal.
+ZIP 230 is Withdrawn. Do not implement the historical ZSA “v6” format. ZIP 229 now defines v6 for NU6.3/Ironwood, with version group ID `0xD884B698`; it explicitly does not require ZSAs. ZIP 259 says NU7 introduces no new format and its listed deployment scope excludes ZSA ZIPs 226/227. Some draft ZSA text still refers to the withdrawn v6 proposal.
 
 ZSV therefore needs a separately reviewed transaction-format extension and activation proposal. “ZsvVNext” is a development placeholder, not a reserved version, branch ID or asset identifier. Choose actual numbers through the Zcash upgrade process. Existing NU6.3/NU7 constants in the sources are evidence about upstream, not ZSV activation parameters.
 
@@ -42,7 +42,7 @@ pub fn hash(&self) -> transaction::Hash;
 pub fn auth_digest(&self) -> Option<AuthDigest>;
 ```
 
-These are observed upstream methods, not methods added by ZSV. There is **no observed `zsv_bundle()` accessor**. The inner transaction accessor is crate-private. Do not write an adapter that assumes the older `Transaction::V5` enum.
+These methods exist at the upstream pin. No `zsv_bundle()` accessor was observed. The inner transaction accessor is crate-private. Do not write an adapter that assumes the older `Transaction::V5` enum.
 
 The semantic services in `zebra-consensus/src/transaction.rs` use:
 
@@ -78,7 +78,7 @@ Production transaction serialization lives below Zebra: `Transaction::zcash_seri
 | Transport / policy | `zebra-network/src/protocol/external/codec.rs`; transaction size and action-cost paths | Bound all allocations and cryptographic work before accepting untrusted bundles; update fee/cost accounting and peer protocol compatibility where required. |
 | Upgrade and isolated testing | `zebra-chain/src/parameters/network_upgrade.rs`, `parameters/constants.rs`, testnet parameters | Allocate a distinct experimental network identity and separate activation in isolated tests. No Mainnet or public-Testnet acceptance follows from a local flag. Full production activation remains undefined. |
 
-The stablecoin transition engine should be a synchronous, deterministic library that depends on neither network requests nor Zebra service orchestration. Zebra owns parsing, cryptographic verification, state access and commit/rollback. An external process that reports “valid” cannot replace consensus execution.
+The stablecoin transition engine should be a synchronous, deterministic library, independent of network requests and Zebra service orchestration. Zebra owns parsing, cryptographic verification, state access and commit/rollback. An external process that reports “valid” cannot replace consensus execution.
 
 ## Compiled contextual seam in this repository
 
@@ -90,7 +90,7 @@ Model transaction and oracle signatures also bind an immutable `State::chain_dom
 
 `commit(PreparedTransition, &mut State)` consumes that preparation, rechecks the exact parent checkpoint and height, and replaces the state once. The exclusive mutable borrow covers both check and replacement. Sibling preparations or duplicate preparations become stale after the first commit; a failed preparation or commit leaves its input unchanged. This is in-memory atomic replacement, not durable database atomicity.
 
-The SHA-256 value returned by `State::commitment()` is a deterministic **model checkpoint**, including model configuration. It is not a ZIP 244 digest, Zcash block hash or specified protocol state root. It also does not authenticate the caller's choice of chain branch. A native integration must obtain the candidate block's actual parent branch inside `zebra-state`, keep the corresponding ZSV state with that branch, and bind its transition to the native transaction/signature and collateral-spend rules.
+The SHA-256 value returned by `State::commitment()` is a deterministic model checkpoint, including model configuration. It is not a ZIP 244 digest, Zcash block hash or specified protocol state root. It also does not authenticate the caller's choice of chain branch. A native integration must obtain the candidate block's parent branch inside `zebra-state`, keep the corresponding ZSV state with that branch, and bind its transition to the native transaction/signature and collateral-spend rules.
 
 In the pinned source, that future call belongs in the parent-specific contextual execution reached through `service/write.rs::validate_and_commit_non_finalized` and `service/non_finalized_state.rs::commit_block`, before the branch is accepted. Candidate ZSV changes must remain private until all ordinary and ZSV block checks pass; the actual branch/database commit must atomically include both sets of changes and their rollback data. A separate best-chain lookup or a commit in only the mempool verifier would be insufficient.
 
@@ -116,7 +116,7 @@ If a prototype instead exposes only `evaluate(state, operation)`, label it a ref
 
 ## Oracle and economic boundary
 
-“All enforcement on Zcash” is achievable for protocol rules. A USD target still needs external information: Zcash cannot infer the dollar price of ZEC from its own ledger. Oracle providers may observe markets elsewhere and submit signed observations; nodes verify the allowed keys, quorum, epoch, bounds, freshness and deterministic aggregation entirely on chain.
+Zcash nodes can enforce protocol rules. A USD target still needs external information: Zcash cannot infer the dollar price of ZEC from its own ledger. Oracle providers may observe markets elsewhere and submit signed observations; nodes verify the allowed keys, quorum, epoch, bounds, freshness and deterministic aggregation entirely on chain.
 
 Use integer/rational arithmetic with specified rounding. Require fresh prices for debt increases and collateral withdrawals. Define deterministic stale-price handling without unilateral operator overrides; repayments and safe collateral top-ups should remain possible when the oracle stalls. Rotation of oracle keys and risk parameters must be explicitly governed and delayed, or fixed by upgrade. A local prototype's quorum counter is not signature verification.
 

@@ -1,28 +1,26 @@
 # ZSV: a stablecoin-only alternative to general ZSAs
 
-**Draft for community discussion. Not posted. Research prototype, not a mainnet proposal ready for activation.**
+Unpublished draft for community discussion. ZSV is a regtest research prototype; native integration and mainnet activation remain future work.
 
-I'd like to explore a narrower question than general-purpose asset issuance on Zcash:
+I'd like to explore one ZEC-backed, dollar-targeting stablecoin, with vault rules enforced entirely by Zcash and no arbitrary token-launch interface.
 
-**Can we support one ZEC-backed, dollar-targeting stablecoin, with the vault rules enforced entirely by Zcash, without opening an arbitrary token-launch interface?**
+I'm calling this experiment ZSV: Zcash Stablecoin Vault.
 
-I'm calling this experiment **ZSV: Zcash Stablecoin Vault**.
-
-The goal is straightforward: lock native ZEC, mint a stablecoin against it, repay to recover the collateral, and allow permissionless liquidation if a vault becomes unhealthy. The collateral, debt, minting and liquidation rules would all be checked by Zcash nodes. There is no external-chain execution or custody committee.
+An owner would lock native ZEC, mint a stablecoin against it and repay to recover the collateral. Anyone could liquidate an unhealthy vault. Zcash nodes would check collateral, debt, minting and liquidation rules without external-chain execution or a custody committee.
 
 ## Why limit the scope?
 
 I want to investigate the utility of a private dollar-denominated payment instrument without making a general token economy a prerequisite.
 
-The proposed protocol recognizes exactly ZEC and one stablecoin. No user-defined asset IDs, issuer keys, token descriptions, NFTs, governance token or registration API. Issuance is authorized only by a valid collateralized borrowing transition.
+The proposed protocol recognizes exactly ZEC and one stablecoin. It excludes user-defined asset IDs, issuer keys, token descriptions, NFTs, a governance token and a registration API. Only a valid collateralized borrowing transition authorizes issuance.
 
-That is a concrete consensus restriction. It isn't a claim that Zcash could prevent all memes, speculation, inscriptions or derivatives elsewhere. A fixed asset set cannot police what people build off-protocol.
+This consensus restriction cannot prevent speculation, inscriptions or derivatives built off-protocol.
 
 ## What could be reused from ZSAs?
 
 Potentially the multi-asset conservation techniques, value commitments, note encryption, wallet-scanning work and relevant circuit gadgets. The general issuance and asset-registration surfaces would be excluded.
 
-This would still be a new protocol profile requiring its own review. Reusing some ZSA work doesn't mean inheriting its audits unchanged or assuming the resulting upgrade would be small.
+The resulting protocol profile would need its own review. Existing ZSA audits would not establish its security, and the upgrade could still be substantial.
 
 ## How the native vault would work
 
@@ -36,21 +34,19 @@ A signed price observation is accepted into Zcash state under deterministic quor
 
 The repository contains an executable Rust research model, a whitepaper, a threat model, independent adversarial analysis and a source-pinned Zebra implementation proposal.
 
-The model uses public vaults and balances, real signatures and integer monetary arithmetic. It is an isolated account model, not a mainnet-compatible Zebra fork. There are no live funds, deployed stablecoin or shielded stablecoin payments in this version.
+The isolated account model uses public vaults and balances, real signatures and integer monetary arithmetic. It does not implement native Zebra accounting, handle live funds or support shielded stablecoin payments.
 
 The first native implementation target would keep vault health public so anyone can liquidate. Shielded payments for the fixed stablecoin would be a separate stage. Fully private vaults require a credible answer to who can construct a liquidation when the borrower disappears.
 
 ## The hard parts
 
-The biggest unresolved issues are economic as well as technical:
+Several economic and technical problems remain unresolved:
 
 - A collateralized token does not automatically stay at one dollar. The model has no unconditional holder redemption or proven peg mechanism.
 - A ZEC crash can outrun collateral margins and liquidation liquidity.
 - A compromised price quorum can enable excess borrowing or wrongful liquidation.
 - Freezing new borrowing after any bad debt contains issuance but can also create a system-wide griefing target.
 - Putting this into consensus adds risk and resource costs for ZEC users who never borrow.
-
-Those are reasons to test the design carefully, not reasons to hide the tradeoffs behind the word decentralized.
 
 ## Feedback I'd value
 
@@ -59,7 +55,5 @@ Those are reasons to test the design carefully, not reasons to hide the tradeoff
 3. Would a dedicated native bundle be preferable to a restricted proof/predicate mechanism?
 4. What oracle, peg and loss-recovery design would justify proceeding beyond a model?
 5. What evidence should a Zebra development-network implementation produce before any activation discussion?
-
-The intent is to make the tradeoffs concrete enough to evaluate. This draft does not claim Zcash community approval, an assigned ZIP, production readiness or a launch timetable.
 
 Technical references: [ZSA transfer/burn](https://zips.z.cash/zip-0226), [ZSA issuance](https://zips.z.cash/zip-0227), [extensible transaction format](https://zips.z.cash/zip-0248), and [private programmability research](https://forum.zcashcommunity.com/t/private-programmability-in-zcash-research-results-and-community-discussion/48016). See the repository's source map for pinned Zebra references.

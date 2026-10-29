@@ -1,6 +1,6 @@
 # Source register
 
-Research checked on **2026-10-29 UTC** through the native GitHub connector. These are primary-source repository reads, not proof of a running node, a deployed stablecoin, or a live network tip.
+Research checked on 2026-10-29 UTC through the native GitHub connector. These are primary-source repository reads, not proof of a running node, a deployed stablecoin, or a live network tip.
 
 ## Immutable baselines
 
@@ -11,7 +11,7 @@ Research checked on **2026-10-29 UTC** through the native GitHub connector. Thes
   - `zcash_protocol 0.11.0`: `266da226b6be42545b9fc299f1def9f5e525764845b8afa874f167155de943ba`.
   - `orchard 0.16.0`: `4ae7ceb7b5387bd76cf3c0712f57708795c925cecf097036cedb60b5c3706e8f`.
 
-These precise pins matter: earlier ZSA documentation uses “v6” for a format that was subsequently withdrawn. The current Zebra transaction representation is also different from older releases.
+Earlier ZSA documentation uses “v6” for a format that was subsequently withdrawn. Zebra's current transaction representation also differs from older releases.
 
 ## Protocol sources and observed status
 
@@ -21,11 +21,11 @@ These precise pins matter: earlier ZSA documentation uses “v6” for a format 
 | P2 | [ZIP 226: Transfer and Burn of Zcash Shielded Assets](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0226.rst#L3-L50) | **Draft**. It describes custom asset note commitments and asset-specific value bases. [Lines 304–307](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0226.rst#L304-L307) explain why accepting arbitrary base points can enable counterfeiting and why valid-base provenance must be enforced. |
 | P3 | [ZIP 227: Issuance of Zcash Shielded Assets](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0227.rst#L3-L78) | **Draft**. Requires issuance by any user and supports arbitrary custom assets, issuer keys, multiple assets and finalization. Those capabilities are explicitly outside ZSV's proposed scope. |
 | P4 | [ZIP 230: Withdrawn Version 6 Transaction Format](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0230.rst#L3-L45) | **Withdrawn**. Explicitly says it will not be deployed and that version 6 is now defined by ZIP 229. |
-| P5 | [ZIP 229: Version 6 Transaction Format](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0229.md#L1-L59) | Header remains **Draft** at this pin. Defines v6 / Ironwood for NU6.3; [non-requirements](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0229.md#L151-L158) say it need not support ZSAs. [Consensus rules](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0229.md#L237-L257) assign version group `0xD884B698`. Do not infer non-implementation from this header alone: pinned Zebra contains v6 validation. |
+| P5 | [ZIP 229: Version 6 Transaction Format](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0229.md#L1-L59) | Header remains **Draft** at this pin. Defines v6 / Ironwood for NU6.3; [non-requirements](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0229.md#L151-L158) say it need not support ZSAs. [Consensus rules](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0229.md#L237-L257) assign version group `0xD884B698`. Pinned Zebra contains v6 validation despite the Draft header. |
 | P6 | [ZIP 258: Deployment of NU6.3](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0258.md#L1-L83) | **Final**. Specifies branch ID `0x37A5165B`; activation Mainnet 3,428,143 / Testnet 4,134,000; minimum peer protocol 170160. This is specification evidence, not a chain-tip measurement. |
 | P7 | [ZIP 259: Deployment of NU7](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0259.md#L1-L86) | **Proposed**. Says NU7 introduces no new transaction format; v4 becomes invalid, v5/v6 remain. Its enumerated deployment scope does not include ZSA ZIPs 226/227. [Constants](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0259.md#L102-L139) specify Mainnet 3,543,405 / Testnet 4,465,026 and branch `0x77190AD9`. |
 
-ZIP 226/227 still contain historical references to a ZSA “v6” and ZIP 230. Read those as unresolved draft design material, not as an allocation to reuse. A native stablecoin change requires an explicitly allocated format and upgrade.
+ZIP 226/227 still contain historical references to a ZSA “v6” and ZIP 230. Those references remain unresolved draft material and do not allocate a format for ZSV. A native stablecoin change requires an explicitly allocated format and upgrade.
 
 ## Zebra source map at immutable pin
 

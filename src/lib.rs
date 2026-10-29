@@ -294,8 +294,10 @@ fn network_tag(network: Network) -> u8 {
         Network::Testnet => 2,
     }
 }
-fn number(bytes: &mut Vec<u8>, n: u64) {
-    bytes.extend_from_slice(&n.to_le_bytes());
+fn numbers(bytes: &mut Vec<u8>, values: &[u64]) {
+    for n in values {
+        bytes.extend_from_slice(&n.to_le_bytes());
+    }
 }
 impl SignedTx {
     /// Model signing encoding: version, network, immutable chain domain, key, nonce,
@@ -306,8 +308,7 @@ impl SignedTx {
         bytes.push(network_tag(self.network));
         bytes.extend_from_slice(&self.chain_domain);
         bytes.extend_from_slice(&self.signer.0);
-        number(&mut bytes, self.nonce);
-        number(&mut bytes, self.actions.len() as u64);
+        numbers(&mut bytes, &[self.nonce, self.actions.len() as u64]);
         for action in &self.actions {
             match action {
                 Action::Open {
@@ -315,32 +316,27 @@ impl SignedTx {
                     collateral,
                 } => {
                     bytes.push(0);
-                    number(&mut bytes, *vault_id);
-                    number(&mut bytes, *collateral);
+                    numbers(&mut bytes, &[*vault_id, *collateral]);
                 }
                 Action::Deposit { vault_id, amount } => {
                     bytes.push(1);
-                    number(&mut bytes, *vault_id);
-                    number(&mut bytes, *amount);
+                    numbers(&mut bytes, &[*vault_id, *amount]);
                 }
                 Action::Borrow { vault_id, amount } => {
                     bytes.push(2);
-                    number(&mut bytes, *vault_id);
-                    number(&mut bytes, *amount);
+                    numbers(&mut bytes, &[*vault_id, *amount]);
                 }
                 Action::Repay { vault_id, amount } => {
                     bytes.push(3);
-                    number(&mut bytes, *vault_id);
-                    number(&mut bytes, *amount);
+                    numbers(&mut bytes, &[*vault_id, *amount]);
                 }
                 Action::Withdraw { vault_id, amount } => {
                     bytes.push(4);
-                    number(&mut bytes, *vault_id);
-                    number(&mut bytes, *amount);
+                    numbers(&mut bytes, &[*vault_id, *amount]);
                 }
                 Action::Close { vault_id } => {
                     bytes.push(5);
-                    number(&mut bytes, *vault_id);
+                    numbers(&mut bytes, &[*vault_id]);
                 }
                 Action::Liquidate {
                     vault_id,
@@ -350,11 +346,9 @@ impl SignedTx {
                     min_collateral,
                 } => {
                     bytes.push(6);
-                    number(&mut bytes, *vault_id);
+                    numbers(&mut bytes, &[*vault_id]);
                     bytes.extend_from_slice(&owner.0);
-                    number(&mut bytes, *oracle_sequence);
-                    number(&mut bytes, *max_burn);
-                    number(&mut bytes, *min_collateral);
+                    numbers(&mut bytes, &[*oracle_sequence, *max_burn, *min_collateral]);
                 }
                 Action::Transfer { asset, to, amount } => {
                     bytes.push(7);
@@ -363,7 +357,7 @@ impl SignedTx {
                         Asset::ZUSD => 1,
                     });
                     bytes.extend_from_slice(&to.0);
-                    number(&mut bytes, *amount);
+                    numbers(&mut bytes, &[*amount]);
                 }
             }
         }
@@ -376,9 +370,7 @@ impl SignedOracleReport {
         bytes.push(network_tag(self.network));
         bytes.extend_from_slice(&self.chain_domain);
         bytes.extend_from_slice(&self.signer.0);
-        number(&mut bytes, self.sequence);
-        number(&mut bytes, self.price);
-        number(&mut bytes, self.valid_until);
+        numbers(&mut bytes, &[self.sequence, self.price, self.valid_until]);
         bytes
     }
 }

@@ -1,14 +1,14 @@
 # Zcash Stablecoin Vault Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
+The prototype and documents below are complete. Native Zebra support remains proposed; [verification.md](verification.md) records the tested scope.
 
-**Goal:** Build a reproducible single-stablecoin native-Zcash research package with an executable Rust reference model and an independent adversarial review.
+Goal: build a single-stablecoin Zcash protocol proposal, executable Rust model and independent adversarial review.
 
-**Architecture:** Fixed asset types and a native vault state machine; an authenticated account model exercises the rules off-network. Zebra integration is separately specified against a pinned upstream tree, requiring transaction-library and contextual-state work rather than claiming that the model is already a native node.
+The account model tests fixed asset types and vault rules off-network. The Zebra proposal identifies the transaction-library and branch-state changes needed in a native implementation against a pinned source tree.
 
-**Tech Stack:** Rust 2021, Ed25519 signatures, integer arithmetic, Cargo tests; Markdown/PDF research artifacts.
+Tools: Rust 2021, Ed25519 signatures, integer arithmetic and Cargo tests; Markdown and PDF documents.
 
-**Spec:** [design.md](design.md)
+Specification: [design.md](design.md).
 
 ## Global Constraints
 
@@ -26,7 +26,7 @@
 - Unknown assets, overflow and aggregate supply limits must fail closed.
 - Failed multi-action blocks must not leave partial balances, debt or oracle updates.
 
-## Task1: authenticated model and conservation
+## Task 1: authenticated model and conservation
 
 Files: `Cargo.toml`, `src/`, `tests/`, `examples/`.
 
@@ -34,23 +34,23 @@ Files: `Cargo.toml`, `src/`, `tests/`, `examples/`.
 - [x] Implement fixed assets, authenticated requests/oracle, vault transitions, atomic block application, invariants and bounds.
 - [x] Run tests and deterministic scenario covering healthy borrowing, repayment, liquidation and crash/bad debt.
 
-## Task2: native integration and research documents
+## Task 2: native integration and research documents
 
 Files: `docs/design.md`, `docs/whitepaper.md`, `docs/forum-post.md`, `docs/zebra-integration.md`, `docs/sources.md`, `zebra/`.
 
 - [x] Pin current primary Zebra/ZIP sources; map serialization, transaction verification and branch-state boundaries.
-- [x] Specify exact single-asset/ZSA-subset boundary and staged implementation acceptance gates.
+- [x] Specify which ZSA components the design may reuse and the release checks for each stage.
 - [x] Produce PDF whitepaper and review claims against executable scope.
 
-## Task3: independent security review
+## Task 3: independent security review
 
 Files: `docs/threatmodel.md`, `docs/economic-review.md`, `docs/adversarial-review.md`, regression tests.
 
-- [x] Threat model model-runtime and proposed native architecture separately.
+- [x] Write a threat model for the executable and proposed native implementation.
 - [x] Fresh reviewer attempts attacks on code and documented assumptions.
 - [x] Fix verified correctness issues, add regressions, retain economic/production blockers.
 
-## Task4: verified publication package
+## Task 4: verified publication package
 
 Files: `README.md`, `docs/verification.md`, `SECURITY.md`, `LICENSE`.
 
@@ -60,4 +60,4 @@ Files: `README.md`, `docs/verification.md`, `SECURITY.md`, `LICENSE`.
 
 ## Execution note
 
-The user explicitly requested implementation and parallel adversarial review. Root handles integration/publication, a Rust worker handles the isolated model, a primary-source researcher handles Zebra, and independent reviewers handle economics and threat analysis. Private assistant context is excluded from all package content.
+Separate agents implemented the model, researched Zebra, and reviewed economics and security. The main agent checked the combined package and published it. Private assistant context is excluded from the repository.
