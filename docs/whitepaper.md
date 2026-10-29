@@ -1,7 +1,7 @@
 ---
 title: "ZSV: Zcash Stablecoin Vault"
 subtitle: "A narrow native protocol for a ZEC-collateralized dollar target"
-author: "ZSV contributors"
+author: "Giacomo Barbieri"
 date: "29 October 2026 · research draft 0.1"
 geometry: margin=25mm
 fontsize: 11pt

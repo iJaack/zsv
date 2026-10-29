@@ -50,7 +50,7 @@ These are model fingerprints, not Zcash block hashes or consensus state roots.
 - `src/lib.rs`: SHA-256 `b2f26bfba8c2d0ddb54b855e37d52741944a061ad368372a012002e1fcf535be`.
 - `Cargo.lock`: SHA-256 `e44aec7ac75310c939371401fd77a3ecf3b2241fa81b50354ad359a5c1f39812`.
 - `tests/reviewer_attacks.rs`: SHA-256 `b4b68bfeb05d7c37112421a45cbbf48de00b6addb1e70728c91ab7a459612110`.
-- `docs/whitepaper.pdf`: SHA-256 `e97dc1be48d40ab3bfb492d4bb52af98a08968c7a8c4b11af05a7ef5a3ca8871`.
+- `docs/whitepaper.pdf`: SHA-256 `3e6b45aea4cbec2eda240ab5474aca5dc54bbd89967356752735db04d53d541a`.
 
 PDF generation timestamps may change on rebuilding; source behavior and the signed scenario vectors are deterministic.
 
@@ -79,3 +79,7 @@ The remote already contained its initial README commit `8509bb5`. That commit wa
 The public push succeeded. An independent GitHub REST read of `repos/iJaack/zsv/commits/main` returned `c102a18d03e928954ac9634166b19e3ca11d339d`, the merge containing the full reviewed package. This receipt is added in a subsequent documentation commit; the repository history records its final identifier.
 
 Repository: <https://github.com/iJaack/zsv>. No forum post, upstream PR, deployment or network activation followed from this source publication. No credential or permission expansion was used.
+
+## Whitepaper attribution update
+
+The author is Giacomo Barbieri, as explicitly requested. The Markdown author field and regenerated PDF title page/metadata were checked. This is an attribution/document-only update; the executable source is unchanged and the 69-test receipt above remains applicable.
