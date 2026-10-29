@@ -1,6 +1,6 @@
 # Verification receipt
 
-Status: local implementation and checks complete, 29 October 2026. GitHub publication remains blocked because the existing integration cannot create the requested repository. No push is claimed.
+Status: local implementation and checks complete; published to the public iJaack/zsv repository on 29 October 2026 with explicit user authorization.
 
 ## Scope
 
@@ -72,6 +72,10 @@ Retained blockers include pre-allocation decoder/resource limits, cumulative sta
 
 ## GitHub delivery
 
-The existing authenticated connection identifies the requested account as `iJaack`. Both GraphQL repository creation and the official REST `POST /user/repos` returned `Resource not accessible by integration` (REST HTTP 403). A later read still could not resolve `iJaack/zsv`. No permission expansion, copied credential or alternative account was used.
+The authenticated account is `iJaack`. Initial repository creation was blocked by the integration's permissions; the user then created `iJaack/zsv` and explicitly authorized keeping it public and pushing this reviewed package.
 
-The local repository is prepared for the requested remote. Creation of an empty repository with access granted to the existing connection is the remaining external prerequisite. Publication status must be updated only after a successful push and independent remote commit readback.
+The remote already contained its initial README commit `8509bb5`. That commit was merged without force-pushing or deleting its history. The expanded ZSV README preserves the original project name and description.
+
+The public push succeeded. An independent GitHub REST read of `repos/iJaack/zsv/commits/main` returned `c102a18d03e928954ac9634166b19e3ca11d339d`, the merge containing the full reviewed package. This receipt is added in a subsequent documentation commit; the repository history records its final identifier.
+
+Repository: <https://github.com/iJaack/zsv>. No forum post, upstream PR, deployment or network activation followed from this source publication. No credential or permission expansion was used.

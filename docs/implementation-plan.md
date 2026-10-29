@@ -56,7 +56,7 @@ Files: `README.md`, `docs/verification.md`, `SECURITY.md`, `LICENSE`.
 
 - [x] Run Cargo tests/fmt/clippy, scenario, PDF generation and bounded secret/content screening.
 - [x] Inspect all staged files; commit original research and source only.
-- [ ] Push to the requested account/repository when existing authenticated permissions allow; verify remote commit and visibility. Do not widen permissions or copy credentials to overcome a scope error.
+- [x] Push to the requested account/repository when existing authenticated permissions allow; verify remote commit and visibility. Do not widen permissions or copy credentials to overcome a scope error.
 
 ## Execution note
 
