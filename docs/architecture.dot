@@ -1,0 +1,25 @@
+digraph ZSV {
+  graph [rankdir=TB, bgcolor="white", pad="0.2", nodesep="0.35", ranksep="0.35", fontname="Helvetica", fontsize=12];
+  node [shape=box, style="rounded,filled", fillcolor="#eef4f8", color="#52677a", fontname="Helvetica", fontsize=11, margin="0.15"];
+  edge [color="#52677a", fontname="Helvetica", fontsize=10];
+  owner [label="Owner / liquidator\nsigned request"];
+  reporters [label="Market observations\n2 of 3 oracle reporters", fillcolor="#fff2d7"];
+  { rank=same; owner; reporters; }
+  subgraph cluster_consensus {
+    label="Zcash consensus (proposed native implementation)";
+    color="#3d6584";
+    style="rounded";
+    validate [label="Bounded decode\nsignatures / fixed assets"];
+    state [label="Parent-branch vault state\ncanonical price / debt / supply"];
+    transition [label="Deterministic vault transition\ncollateral checks / mint / burn"];
+    commit [label="Atomic commit or reject\nfork rollback / persistence"];
+    { rank=same; validate; state; }
+    validate -> transition;
+    state -> transition;
+    transition -> commit;
+  }
+  payments [label="One stablecoin\npublic v0 model\nshielded profile: future work", fillcolor="#e8f2e5"];
+  owner -> validate;
+  reporters -> validate [label="signed data"];
+  commit -> payments;
+}
