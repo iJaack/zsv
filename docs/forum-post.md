@@ -34,7 +34,7 @@ A signed price observation is accepted into Zcash state under deterministic quor
 
 The repository contains an executable Rust research model, a whitepaper, a threat model, independent adversarial analysis and a source-pinned Zebra implementation proposal.
 
-The isolated account model uses public vaults and balances, real signatures and integer monetary arithmetic. It does not implement native Zebra accounting, handle live funds or support shielded stablecoin payments.
+The isolated account model uses public vaults and balances, real signatures and integer monetary arithmetic. Its optional reserve trades tokens created by model vaults, accounts for scheduled fixture funding and closes or auctions inventory under fixed rules. Native Zebra accounting, live funds and shielded stablecoin payments remain future work.
 
 The first native implementation target would keep vault health public so anyone can liquidate. Shielded payments for the fixed stablecoin would be a separate stage. Fully private vaults require a credible answer to who can construct a liquidation when the borrower disappears.
 
@@ -54,11 +54,13 @@ A separate mathematical study tests that possibility. Taking 10% of the taper di
 
 Funding alone does not establish a peg. The study finds that delay narrows the controller's stable range, finite budgets leave residual deviations, and a ZEC crash weakens both collateral and dollar incentive capacity. It also finds a direct attack on raw mint/burn bounties: mint, retain the tokens, then burn them in a later rewarded epoch and collect both payments without an external trade. The current prototype has no rewards. The [math and reproducible scenarios](https://github.com/iJaack/zsv/blob/main/docs/stabilization-math.md) explain what would need to change.
 
-The next [reserve experiment](https://github.com/iJaack/zsv/blob/main/docs/reserve-study.md) implements standing ZEC/zUSD bid/ask exchanges with existing inventory and gross spending limits. It needs only the ZEC/USD conversion oracle. In its assumed market, enough cash and inventory support a $0.995–$1.005 corridor; purchasing 4,500 tokens costs about $4,477.50. This is a Python research model, not native Zebra support. Wrong ZEC prices, fundamental depegs and paid occupation of trading quotas remain risks; the lifecycle proposal below specifies terminal asset disposition.
+The [inventory study](https://github.com/iJaack/zsv/blob/main/docs/reserve-study.md) tests standing ZEC/zUSD bid/ask exchanges with existing inventory and gross spending limits. It needs only the ZEC/USD conversion oracle. In its assumed market, enough cash and inventory support a $0.995–$1.005 corridor; purchasing 4,500 tokens costs about $4,477.50. Those Python scenarios are uncalibrated. Wrong ZEC prices, fundamental depegs and paid occupation of trading quotas remain risks.
 
 ## Shutdown and funding limits
 
-A later [lifecycle experiment](https://github.com/iJaack/zsv/blob/main/docs/reserve-lifecycle.md) replaces lifetime trading stops with a cap on retained funding. It also specifies closure after sustained oracle failure or sunset: inventory first covers recorded bad debt, cash returns to NSM, and residual tokens enter an oracle-free auction. Free terminal distributions were rejected after a borrowing-based farming counterexample. Auctions can still clear cheaply and cash returned to NSM may leave bad debt uncovered. The next milestone is integrating these rules with the signed Rust vault model.
+The [lifecycle policy](https://github.com/iJaack/zsv/blob/main/docs/reserve-lifecycle.md) replaces lifetime trading stops with a cap on retained funding. Closure follows sustained report failure or sunset: existing inventory first covers recorded bad debt, cash moves to the NSM bucket, and residual tokens enter an oracle-free auction. Free terminal distributions were rejected after a borrowing-based farming counterexample. Auctions can still clear cheaply, and cash returned to NSM may leave bad debt uncovered.
+
+These rules now run inside the [signed Rust vault ledger](https://github.com/iJaack/zsv/blob/main/docs/reserve-rust-contract.md). The reserve starts with a donor's simulated ZEC and no tokens. It can buy only tokens that vaults have issued, and all vault, reserve, funding and shutdown changes roll back if a block fails. The funding schedule is a regtest fixture, not an approved block-reward allocation. Freshness measures report inclusion age and expiry; a quorum can still publish stale market data in a new report. The next work is combined economic stress testing and an isolated native Zebra implementation.
 
 ## Feedback I'd value
 

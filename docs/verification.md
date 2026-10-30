@@ -19,7 +19,7 @@ The first command runs locked Cargo tests, doc tests, formatting, strict Clippy,
 
 ## Observed final results
 
-After the reserve lifecycle experiment was added, the main agent ran the complete verification script. It exited with status zero.
+After integrating the reserve into the signed Rust ledger and applying the independent review fix, the main agent ran the complete verification script. It exited with status zero. The final documentation/package check also passed after the review receipt was added.
 
 | Check | Observed result |
 |---|---|
@@ -30,16 +30,20 @@ After the reserve lifecycle experiment was added, the main agent ran the complet
 | Independent reviewer attack tests | 21 passed |
 | Signed scenario vector replay | 1 passed |
 | Contextual adapter tests | 10 passed |
-| Total Rust integration tests | 71 passed; 0 failed; 0 ignored |
+| Reserve core tests | 8 passed |
+| Independent reserve attacks | 19 passed |
+| Combined reserve adapter tests | 3 passed |
+| Signed reserve vector replay | 1 passed, covering three scenarios |
+| Total Rust integration tests | 102 passed; 0 failed; 0 ignored |
 | Python mathematical tests | 96 passed: 71 previous, 22 lifecycle, 3 independent lifecycle review tests |
 | Numerical study reproduction | Exact JSON/CSV match; funding 10 scenarios / 240 combinations; reserve 11 / 144; lifecycle accounting cases |
 | Unit / doc / example test targets | Successful; no additional tests defined |
 | Rust formatting | Passed |
 | Strict Clippy, all targets | Passed; warnings denied |
-| Scenario regeneration | Byte-for-byte match with checked-in signed vectors |
-| Package screening | 68 source/artifact files; relative links and bounded credential patterns passed |
+| Scenario regeneration | Both examples match checked-in JSON exactly; legacy vectors unchanged |
+| Package screening | 76 source/artifact files; relative links and bounded credential patterns passed |
 | Git whitespace check | Passed |
-| Whitepaper | 12-page PDF generated; authorship and lifecycle section checked |
+| Whitepaper | 12-page PDF generated; Giacomo Barbieri author metadata and reserve/lifecycle pages checked |
 
 The scenario contains a solvent liquidation with supply/bad debt both zero, and a crash case leaving 209,523,810 micro-zUSD as explicit bad debt. Its final model checkpoints are:
 
@@ -50,12 +54,15 @@ The model uses these fingerprints to check repeatable state transitions. A nativ
 
 ## Source fingerprints
 
-These hashes identify the current files after cleanup and the mathematical study. The adversarial review records the earlier source versions it examined.
+These hashes identify the current files after the signed reserve integration. The adversarial review records the earlier source versions it examined.
 
-- `src/lib.rs`: SHA-256 `d05503f59afe6324ee4a5119e41aba5bb845411a772f738f272db68edf6fdc07`.
+- `src/lib.rs`: SHA-256 `efa3702d818a0453863b6e59bc7a8d11393c1802c9c5ae86541a10c303a9ffa6`.
+- `src/reserve.rs`: SHA-256 `a219be80b71985a984b84eb626057908a001b538914d9bb9893fe09bd6c07c81`.
+- `tests/reserve_attacks.rs`: SHA-256 `7a16cff322c82f34fecdce60acfc64a425ed4152ebe68382114a6d6006ca9208`.
+- `examples/reserve-scenario-output.json`: SHA-256 `575a1cea502679d94083240d9ebad7395c647182c729a1ba90d1de2dde649895`.
 - `Cargo.lock`: SHA-256 `e44aec7ac75310c939371401fd77a3ecf3b2241fa81b50354ad359a5c1f39812`.
 - `tests/reviewer_attacks.rs`: SHA-256 `b4b68bfeb05d7c37112421a45cbbf48de00b6addb1e70728c91ab7a459612110`.
-- `docs/whitepaper.pdf`: SHA-256 `cc3fcc9bb1bdd3396a821a179baae35c13a4dcb5524013c30fe47a29fbdfa4f0`.
+- `docs/whitepaper.pdf`: SHA-256 `aeb112784c64858d3a5fa26889d2dba6561f1d54c65f887801516e4e32643d04`.
 - `analysis/stabilization.py`: SHA-256 `b7a1524f690901ab104305c7c95ac503034ae08e4fd2a99823ddabfaa92dfc75`.
 - `analysis/run_study.py`: SHA-256 `128a5567f539244ff079c4991daff98929223b8b3912a34f50ba24f197bf114e`.
 - `analysis/results.json`: SHA-256 `5f846c22ab50554d0b15d2ef68767b30702cabf4b775166afea7e0c0e853d845`.
@@ -100,7 +107,7 @@ The whitepaper credits Giacomo Barbieri. Its Markdown author field, PDF title pa
 
 ## Prose and code cleanup
 
-The prose pass applied [No AI Slop](https://github.com/petergyang/no-ai-slop) to the README, repository instructions, security policy, research documents, forum draft and test evidence. It removed filler, repeated caveats and decorative emphasis. Equations, parameters, requirements, source links, findings and Giacomo Barbieri's authorship were preserved. The rebuilt PDF has 10 pages; its title page and metadata credit Giacomo Barbieri.
+The prose pass applied [No AI Slop](https://github.com/petergyang/no-ai-slop) to the README, repository instructions, security policy, research documents, forum draft and test evidence. It removed filler, repeated caveats and decorative emphasis. Equations, parameters, requirements, source links, findings and Giacomo Barbieri's authorship were preserved. At that cleanup milestone the rebuilt PDF had 10 pages; its title page and metadata credit Giacomo Barbieri.
 
 The code pass followed [AI Slop Cleaner](https://buildwithclaude.com/skill/ai-slop-cleaner). It consolidated adjacent numeric signing-encoding calls in `src/lib.rs` using the existing private helper. `tests/cleanup.rs` adds two literal-byte tests covering all eight action variants, both assets, transaction and oracle headers, and integer boundaries. The fixtures passed against the old encoder before the refactor and against the new encoder afterward.
 
@@ -137,3 +144,23 @@ Closure burns actual held tokens against explicit bad debt and transfers reserve
 Independent review rejected free holder distributions after demonstrating a mint-hold-repay windfall. The reviewer also reproduced a functional outage-clock bug: always-stale reports with advancing sequences could keep postponing closure. The corrected implementation preserves the first uninterrupted stale height. Twenty-two lifecycle tests and three independent review tests pass, including 12 age/grace configurations and a discrete-auction-price counterexample. The independent full Python run passed all 96 tests and reproduced the numeric cases.
 
 The main agent ran the full verification script successfully: 71 Rust integration tests, 96 Python tests, all numeric/vector comparisons, formatting, strict Clippy and package checks. The rebuilt 12-page whitepaper credits Giacomo Barbieri. Residual economics remain explicit: within-epoch quota occupation, oracle-triggered closure, low auction proceeds, unsold inventory and returning cash to NSM while bad debt may remain. This receipt establishes reference arithmetic and observed checks, not production readiness or guaranteed price support.
+
+## Signed Rust reserve integration
+
+The optional reserve now shares the authenticated vault ledger, block overlay and combined invariants. The new chain domain binds all reserve parameters, donor/seed and funding schedule; the legacy constructor and signed scenario remain unchanged. Initial reserve cash is an actual fixture transfer, initial inventory is zero, and every scenario obtains tokens through collateralized vault issuance. Funding is deterministic synthetic regtest issuance, with no user credit action and no approved native allocation.
+
+The complete script passed 102 Rust integration tests and all 96 existing Python tests. Both signed examples and all mathematical-study JSON/CSV outputs reproduced exactly. Formatting, strict Clippy, doc tests, package links/credential patterns and whitespace checks passed. The PDF rebuilt successfully; its author metadata and funding/reserve/shutdown pages were inspected.
+
+The independent [reserve review](reserve-adversarial-review.md) added 19 signed attack tests. It identified a low-severity panic in the public detached-snapshot auction helper when its copied configuration was malformed. The helper now validates that configuration; the regression returns errors and confirms the live state remains unchanged. The issue was found by source inspection, without a recorded pre-fix execution. No other exploitable accounting or authorization defect was found in the reviewed paths; this was not exhaustive exploration or a production audit.
+
+Three checked-in signed scenarios produce these final model checkpoints:
+
+| Scenario | Result | SHA-256 checkpoint |
+|---|---|---|
+| Borrow, reserve round trip, repay | Supply and bad debt both zero | `181ac4b3a3f3d4178c9f93aa15ff962ea682e3ab6dc33c22e3c54022457c8efb` |
+| Crash and partial terminal coverage | 400-token burn leaves 123.809524 zUSD bad debt | `de90497f37dbc6021589e83f13414777b95f1ab053e566dda610d0cfab3ff46c` |
+| Uncontested floor auction then repayment | 400 tokens sell for 400 zatoshi; principal repaid | `564adb10876508e93e304deade3d191dcce75392ae843ccfe67f4c39e5bbb26a` |
+
+The adapter tests restore an exact parent and replay closure, funding and auction fills, reject stale sibling commits, and reject late failures without partial state changes. This is in-memory model evidence, not a native node reorg or restart test.
+
+The terminal burn precedes user transactions and happens once; later liquidations can create bad debt while auction inventory remains. Reserve inclusion-age checks cannot detect a quorum re-signing stale market data, and legacy vault operations retain their own expiry rule. Cash returned to NSM may leave debt uncovered, reserve purchases can buy impaired tokens, and poor auction competition can reward borrowers. The signed ledger makes these outcomes executable and measurable; it does not establish an economic equilibrium, a dollar peg or production readiness.

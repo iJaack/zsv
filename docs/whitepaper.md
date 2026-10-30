@@ -41,7 +41,7 @@ ZIP 222 describes consensus-distributed verification of complex transparent spen
 
 # Implemented model and proposed native system
 
-The executable prototype uses an account ledger to make balances, authorization and invariants easy to inspect. Its state includes simulated free ZEC, stable balances, vault collateral and principal, account nonces, the accepted oracle observation, outstanding supply and explicit bad debt. A model genesis fixture supplies simulated ZEC. Real Ed25519 signatures authenticate model requests; they are not a substitute for Zcash transaction signatures or spend proofs.
+The executable prototype uses an account ledger to make balances, authorization and invariants easy to inspect. Its state includes simulated free ZEC, stable balances, vault collateral and principal, account nonces, the accepted oracle observation, outstanding supply and explicit bad debt. Optional reserve state adds cash, existing token inventory, funding and trading counters, an NSM accounting bucket and shutdown records. Genesis fixtures and an immutable regtest funding schedule supply simulated ZEC. Real Ed25519 signatures authenticate model requests; native Zcash transaction signatures and spend proofs remain separate work.
 
 The native proposal requires transaction encoding, a designated vault value path, branch-specific contextual state, correct Zcash digests, wallet construction and atomic node state commits. The account ledger cannot replace Zebra's UTXO and shielded-note accounting. The integration document identifies upstream files and acceptance gates against a pinned Zebra commit [S8].
 
@@ -72,7 +72,7 @@ A proposed native vault stores its owner authorization, collateral C, principal 
 
 Collateral cannot remain spendable by an ordinary payment signature, an issuer key or an alternate transaction type. The node must recognize the vault encumbrance throughout locking, successor creation and release. Duplicate successors, replayed spends, cross-network authorizations and reuse of a stablecoin burn must fail.
 
-The reference model signs an explicit action encoding and nonce. Both transaction and oracle signatures bind an immutable model-chain domain derived from the canonical regtest configuration and genesis allocations. Vault IDs are scoped by owner public key and a local integer; a different owner cannot reserve that namespace by opening and closing the same local number. Identical canonical configuration and genesis allocations deliberately represent the same chain, including its forks. This binary authorization format is experimental and specific to the model. A native implementation must adopt an approved Zcash transaction version, consensus branch domain and appropriate digest rules.
+The reference model signs an explicit action encoding and nonce. Both transaction and oracle signatures bind an immutable model-chain domain derived from the canonical regtest configuration and genesis allocations. Reserve-enabled chains also bind all reserve parameters, the initial donor and its contribution. Vault IDs are scoped by owner public key and a local integer; a different owner cannot reserve that namespace by opening and closing the same local number. Identical canonical configuration and genesis allocations deliberately represent the same chain, including its forks. This binary authorization format is experimental and specific to the model. A native implementation must adopt an approved Zcash transaction version, consensus branch domain and appropriate digest rules.
 
 # Parameters and monetary arithmetic
 
@@ -127,15 +127,15 @@ The accounting invariants are:
 
 and:
 
-    sum(stable balances) = outstanding stable supply
+    sum(wallet stable balances) + reserve inventory = outstanding stable supply
 
-During liquidation supply falls by x while live debt falls by D and bad debt rises by D-x. Removing the bad-debt entry would conceal outstanding liabilities. ZEC remains conserved between free balances and vault collateral.
+During liquidation supply falls by x while live debt falls by D and bad debt rises by D-x. Removing the bad-debt entry would conceal outstanding liabilities. Wallet ZEC, vault collateral, reserve cash and the NSM bucket together equal genesis ZEC plus cumulative scheduled fixture funding. Without the optional reserve, no block funding is created and the original conservation rule applies.
 
-New borrowing freezes when B>0. A tiny shortfall can therefore halt all new borrowing, creating a griefing risk. The model has no mechanism to clear bad debt; recovery would require recapitalization, a reset or a future protocol change. A production design must specify how to allocate losses and recapitalize.
+New borrowing freezes when B>0. A tiny shortfall can therefore halt all new borrowing, creating a griefing risk. Reserve closure burns its own inventory against recorded bad debt and can clear only that covered amount. Remaining losses keep borrowing frozen. A production design still needs a broader loss-allocation and recapitalization policy.
 
 # Oracle consensus and trust
 
-The model accepts matching observations from at least two distinct authorized keys in a three-reporter configuration. Reports bind their sequence and validity window. Nodes enforce positive, bounded prices, signature validity, reporter uniqueness, monotonic observation updates and freshness. Users cannot attach a convenient older observation to override the canonical accepted state.
+The model accepts matching observations from at least two distinct authorized keys in a three-reporter configuration. Reports bind their sequence, price and expiry. The verifier enforces positive integer prices, signature validity, reporter uniqueness, monotonic sequence and a bounded acceptance lifetime. Users cannot attach a convenient older report to override the canonical accepted state. Reserve quotes additionally limit the accepted report's age since inclusion. The signed format has no market-observation timestamp; a quorum can publish old data in a new report and pass those checks.
 
 Consensus must use deterministic chain information, not a node's wall clock or an HTTP call to an exchange. If multiple observations are possible in a block, ordering and freshness semantics must be specified so different nodes produce the same result. Reorganizations must roll back oracle state with vault and monetary state.
 
@@ -161,19 +161,21 @@ The adversarial test rejects raw mint/burn bounties: a borrower can mint during 
 
 ## Bounded inventory reserve
 
-The subsequent prototype exchanges existing ZEC and zUSD at standing target-centred bid/ask quotes. Purchased tokens remain reserve inventory; sales require existing inventory. These transfers leave total supply and liabilities unchanged. Only the accepted ZEC/USD conversion observation is needed. Gross per-epoch and lifetime outflow limits, order bounds, freshness and a sunset constrain physical exposure. Excess new funding goes to a proposed NSM bucket; trade proceeds remain available for future purchases.
+The inventory experiment exchanges existing ZEC and zUSD at standing target-centred bid/ask quotes. Purchased tokens remain reserve inventory; sales require existing inventory. These transfers leave total supply and liabilities unchanged. Only the accepted ZEC/USD conversion report is needed. Its first Python version used gross per-epoch and lifetime outflow limits, order bounds, freshness and a sunset. The signed Rust version retains epoch limits and replaces lifetime trading stops with the funding cap described below. Excess new funding goes to an NSM accounting bucket; trade proceeds remain available for future purchases.
 
 In an assumed linear market, sufficient capital and arbitrage move an initial 0.95 or 1.05 dollar price to the illustrative 0.995–1.005 dollar corridor. Buying 4,500 units costs approximately 4,477.50 dollars; initial inventory has its own acquisition cost. Eleven scenarios and 144 parameter combinations test inventory and cash constraints. These inputs are uncalibrated and omit endogenous vault issuance and liquidation.
 
-The spread makes unchanged-price exact round trips costly. Stale or compromised ZEC conversion can still transfer substantial value, fundamental token losses can drain the bid, and losing cycles can occupy scarce spending allowances. Review reproduced and corrected a working-capital drain caused by sweeping trade proceeds prematurely. The lifecycle extension below specifies a proposed terminal disposition. The [reserve report](https://github.com/iJaack/zsv/blob/main/docs/reserve-study.md) includes the integer model, adversarial tests and native integration requirements; the compiled Rust adapter still implements the earlier vault model only.
+The spread makes unchanged-price exact round trips costly. Stale or compromised ZEC conversion can still transfer substantial value, fundamental token losses can drain the bid, and losing cycles can occupy scarce spending allowances. Review reproduced and corrected a working-capital drain caused by sweeping trade proceeds prematurely. The [reserve report](https://github.com/iJaack/zsv/blob/main/docs/reserve-study.md) records those Python experiments. The Rust integration now shares balances and liabilities with actual model vault issuance; it does not establish the market-response assumptions of the Python study.
 
 ## Reserve shutdown and allocation limits
 
-A subsequent lifecycle experiment replaces lifetime gross trading stops with a cap on initial reserve ZEC plus later retained funding credits. Sales retain working capital without restoring funding headroom. Gross per-epoch limits and a sunset remain. The 20-epoch cycle that previously occupied the lifetime purchase allowance can therefore be followed by another valid purchase when cash and epoch capacity remain.
+The lifecycle policy caps initial reserve ZEC plus later retained funding credits. Sales retain working capital without restoring funding headroom. Gross per-epoch limits and a sunset remain. The 20-epoch cycle that previously occupied the lifetime purchase allowance can therefore be followed by another valid purchase when cash and epoch capacity remain.
 
-Normal quotes pause when the canonical observation becomes stale and close after a fixed uninterrupted outage or at sunset. Closure burns held tokens against explicit bad debt, returns cash to the proposed NSM bucket and offers residual token inventory through an oracle-free descending-price auction. It neither distributes free tokens nor forgives active principal. Review removed a terminal distribution that enabled borrowing solely to collect its payout and fixed stale reports postponing closure indefinitely.
+Normal quotes pause when the accepted report exceeds the inclusion-age or expiry limit and close after a fixed uninterrupted outage or at sunset. An elapsed deadline closes trading before a new report can resume it. Closure burns held tokens against explicit bad debt once, returns cash to the NSM bucket and offers residual token inventory through an oracle-free descending-price auction. The burn precedes user transactions; later liquidation losses remain uncovered. Active principal and collateral remain unchanged. Review of the Python policy removed a free terminal distribution that enabled borrowing solely to collect its payout and fixed stale observations postponing closure indefinitely.
 
-Returning cash to NSM can leave uncovered bad debt; auction competition and discrete price steps can produce poor proceeds. Unsold inventory stays available at a positive floor, so liquidation is not guaranteed. The [lifecycle report](https://github.com/iJaack/zsv/blob/main/docs/reserve-lifecycle.md) records these choices and exact accounting cases. This wrapper remains separate from the signed Rust ledger; the next integration contract defines that combined milestone.
+The signed Rust implementation begins with zero reserve tokens and debits initial cash from a named genesis donor. Vault borrowing supplies the tokens that users may later sell to the reserve. Every reserve order signs its direction, quantity, account nonce, report sequence, epoch, expiry and slippage bound. Auction orders sign quantity, expiry and maximum ZEC input. Additional funding comes only from the immutable regtest schedule, once per block, and defaults to zero. Funding, fills, shutdown, inventory burns and vault actions commit or fail together, and the existing contextual adapter prepares the combined state against an exact parent checkpoint.
+
+Returning cash to NSM can leave uncovered bad debt; auction competition and discrete price steps can produce poor proceeds. Unsold inventory stays available at a positive floor, so liquidation is not guaranteed. The [lifecycle report](https://github.com/iJaack/zsv/blob/main/docs/reserve-lifecycle.md) records these choices and exact accounting cases, while the [Rust specification](https://github.com/iJaack/zsv/blob/main/docs/reserve-rust-contract.md) defines their signed implementation. Native coinbase funding, NSM subsidy rules and persistent Zebra branch state remain proposed. No Zcash allocation has been approved for this experiment.
 
 # Privacy
 
@@ -192,7 +194,7 @@ The staged proposal is:
 1. Define the wire format, activation domain, signatures and fixed asset encodings. Do not reuse v6, which already denotes NU6.3/Ironwood [S9]. ZIP 248 is draft future infrastructure, not deployed permission to introduce a bundle.
 2. Implement bounded parsing, canonical digests and fixed asset types in the transaction library. Unknown tags, generic issuance and alternate collateral-release paths must fail closed.
 3. Add structural checks and signature/proof verification to the transaction verifier, including the mempool path. Mempool acceptance is not a substitute for parent-branch contextual verification.
-4. Implement branch-specific oracle, vault, liability and supply state in Zebra. Verify and commit the complete transition atomically, and undo it on a fork switch. Preserve existing ZEC fee accounting.
+4. Implement branch-specific oracle, vault, liability, supply and reserve state in Zebra. Verify and commit the complete transition atomically, including any approved funding allocation, and undo it on a fork switch. Preserve existing ZEC fee accounting.
 5. Add wallet construction/scanning and independently tested adversarial vectors. Introduce any fixed-two-asset shielded profile as its own reviewable stage.
 6. Run differential node tests and a private development network before seeking consensus adoption. No production acceptance bit is enabled by this repository.
 
@@ -207,6 +209,7 @@ The staged proposal is:
 | Public v0 vault health | Exposes financial positions and transaction-ordering opportunities |
 | Selective ZSA technique reuse | New circuit/profile still requires review; not automatically a tiny upgrade |
 | Native price acceptance rules | Dollar information still relies on reporters and governance |
+| Signed reserve trades and exact funding conservation | Quotas can be occupied; oracle errors and thin auctions can transfer value to traders |
 
 Consensus expansion can harm ZEC users who never borrow. State growth, verification costs, malformed inputs, expensive signatures and inconsistent branch rollback are base-layer risks. A narrow use case is not evidence that implementation risk is small. Resource metering, state bounds and cross-implementation test vectors must be release requirements.
 

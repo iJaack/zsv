@@ -16,13 +16,13 @@ This is an alternative to activating general-purpose Zcash Shielded Assets. It m
 
 ## Executable v0
 
-The reference executable is an isolated Rust account-ledger model, not a Zebra transaction parser. It demonstrates authenticated state transitions and asset conservation without touching network funds. It does not implement shielded transfers, consensus activation, PoW, ZIP 244 transaction hashes, wallet recovery, fees, interest, redemption or a recapitalization mechanism.
+The reference executable is an isolated Rust account-ledger model, not a Zebra transaction parser. It demonstrates authenticated state transitions and asset conservation without touching network funds. It does not implement shielded transfers, consensus activation, PoW, ZIP 244 transaction hashes, wallet recovery, fees, interest, redemption or general recapitalization.
 
 One ZEC is 100,000,000 zatoshi. One zUSD is 1,000,000 micro-units. All calculations use checked integers. Opening/borrowing and withdrawals against debt require 250% collateralization. Liquidation is allowed strictly below 200%. Equality is healthy. Bonus is 5%. Minimum nonzero vault debt is 100 zUSD; global outstanding principal plus bad debt is capped at 100,000 zUSD. These are illustrative test parameters, not calibrated risk settings.
 
 Signed owner requests bind the exact action, account nonce and immutable model-chain domain derived from the canonical configuration and genesis allocations. Vault identifiers are scoped by the owner public key and a local integer ID; liquidation identifies that owner explicitly. Identical canonical genesis allocations and configurations intentionally identify the same model chain, including its forks. At least two of three configured reporters independently sign each oracle report. Observations have a monotonic sequence and a height validity window. The currently accepted report is canonical. Reporter independence, price quality, quorum governance and economic corruption resistance remain external assumptions.
 
-Every accepted transition is atomic. Invalid transactions/blocks leave state unchanged. Supply equals live vault principal plus explicit bad debt; total stable balances equal supply. ZEC fixtures are conserved between free balances and vault collateral. No accepted instruction can create ZEC. A fixture genesis is the only source of initial simulated ZEC.
+Every accepted transition is atomic. Invalid transactions/blocks leave state unchanged. Supply equals live vault principal plus explicit bad debt; wallet balances plus reserve inventory equal supply. Without the reserve, fixture ZEC is conserved between free balances and vault collateral. In reserve mode, the immutable fixture funding schedule adds simulated ZEC once per block. Wallets, vault collateral, reserve cash and the NSM bucket together equal genesis ZEC plus cumulative scheduled funding. There is no user-callable funding or unrestricted mint action.
 
 ## Liquidation
 
@@ -33,7 +33,19 @@ For collateral C in zatoshi, debt D in micro-zUSD and price P in micro-USD/ZEC, 
 
 The signed liquidation action commits the canonical oracle sequence, maximum burn and minimum collateral received; all three bounds are checked before mutation. The liquidator burns x stable units, receives z zatoshi, and the owner receives C-z. The vault closes; D-x is recorded as bad debt. Checked arithmetic must establish z<=C rather than silently clamp an overflow. Liquidation does not require the borrower's cooperation. A price so low that x=0 permits a dust close but creates no economic incentive to submit it. The ledger does not promise liquidation liveness.
 
-Any bad debt disables new borrowing. Existing repayment, collateral additions, transfers and permitted closure remain possible. This stops further issuance without curing insolvency; recapitalization remains unimplemented.
+Any bad debt disables new borrowing. Existing repayment, collateral additions, transfers and permitted closure remain possible. Reserve closure can burn its own inventory against recorded bad debt. Any remaining shortfall stays explicit and keeps borrowing frozen; cash-funded recapitalization remains unimplemented.
+
+## Optional reserve ledger
+
+The reserve-enabled constructor binds its immutable policy, named donor and initial ZEC amount to a new model-chain domain. It debits that donor's genesis balance and starts with zero stable inventory. The original constructor and signed scenario vectors retain their previous behavior.
+
+The reserve buys existing zUSD at a fixed dollar bid and sells existing inventory at a fixed dollar ask, using the accepted ZEC/USD report for conversion. Signed requests bind the quantity, direction, account nonce, canonical report sequence, derived epoch, expiry and minimum-output or maximum-input bound. Per-epoch gross allowances apply cumulatively across all transactions in a block. Sales retain their ZEC proceeds without restoring funding headroom.
+
+Funding is derived from an immutable regtest schedule that defaults to zero per block. A credit is retained only within both the cash target and the lifetime retained-funding budget; excess goes to the NSM accounting bucket. Initial cash counts toward the budget. Before reserve activation and after closure, every credit goes to that bucket. The bucket is a model balance, not an implementation of native NSM subsidy rules or an approved Zcash allocation.
+
+Normal quotes pause when report inclusion age or expiry exceeds the reserve policy. Reports have no signed market-observation timestamp, so these checks cannot detect a quorum publishing old market data as a new report. Vault valuation retains its existing report-expiry check. An elapsed outage deadline or sunset closes normal trading before a new report can rescue it. Closure burns the smaller of reserve inventory and bad debt once, reduces supply and bad debt equally, and moves all reserve cash to the NSM bucket. That burn precedes user transactions, so later liquidation losses remain uncovered. Active principal and collateral remain unchanged. Residual tokens enter a descending-price ZEC auction with signed expiry and maximum-input bounds; it needs no conversion oracle. Auction proceeds and subsequent funding go to the NSM bucket.
+
+All reserve, funding and lifecycle transitions share the vault ledger's block overlay and conservation checks. The [Rust integration specification](reserve-rust-contract.md) records the exact API and ordering. The [lifecycle study](reserve-lifecycle.md) explains the economic limits: quota occupation, weak auction competition and uncovered bad debt remain possible.
 
 ## Native proposal
 

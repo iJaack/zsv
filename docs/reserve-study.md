@@ -4,7 +4,7 @@ Author: Giacomo Barbieri. Research prototype with synthetic balances and uncalib
 
 The reserve exchanges existing ZEC and zUSD at a standing bid and ask. It conserves both assets, uses no activity rewards and needs only the ZEC/USD observation already required by vaults. It can support a price corridor while inventory, spending allowances and willing traders are available. Stale or compromised prices and fundamental stablecoin losses can still transfer value out of the reserve.
 
-[Exact ledger](../analysis/reserve.py), [market study](../analysis/reserve_study.py), [results](../analysis/reserve-results.json), [trajectories](../analysis/reserve-trajectories.csv), [parameter grid](../analysis/reserve-sensitivity.csv) and [design](reserve-design.md) are included. This extends the [earlier bounty analysis](stabilization-math.md). Rust monetary rules and the compiled Zebra adapter remain unchanged.
+[Exact ledger](../analysis/reserve.py), [market study](../analysis/reserve_study.py), [results](../analysis/reserve-results.json), [trajectories](../analysis/reserve-trajectories.csv), [parameter grid](../analysis/reserve-sensitivity.csv) and [design](reserve-design.md) are included. This extends the [earlier bounty analysis](stabilization-math.md). This report preserves the original Python experiment. The later [signed Rust integration](reserve-rust-contract.md) implements reserve trades and lifecycle rules in the combined vault ledger.
 
 ## 1. Inventory and liability accounting
 
@@ -157,7 +157,7 @@ The regression failed before the fix. Retaining sale proceeds now leaves **101 Z
 
 The [integration proposal](zebra-integration.md) specifies the required reserve additions. Native code would need a fixed reserve value path, authenticated ZEC observations, branch-specific inventory and counters, signed swap bounds, exact asset conservation, schedule-derived funding credits and complete rollback. The reserve has no issuer, custody or discretionary spending key.
 
-The included Python module and its tests are a separate reference state machine. The existing compiled Rust contextual adapter has no reserve operations. A future implementation must also specify shutdown and residual-asset disposition, resource costs, oracle compromise handling and funding policy before a value-bearing test.
+The included Python module and its tests remain a separate reference state machine. The [signed Rust integration](reserve-rust-contract.md) adds authenticated trades, funding and shutdown to the vault ledger and model adapter. Native resource costs, oracle compromise handling and an approved funding policy remain necessary before a value-bearing test.
 
 ## 7. What improved, and what remains weak
 

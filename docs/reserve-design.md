@@ -1,5 +1,7 @@
 # Bounded ZEC / zUSD reserve experiment
 
+This document records the original Python reserve design. The [signed Rust integration](reserve-rust-contract.md) uses its later lifecycle rules, including a retained-funding budget instead of lifetime trading stops.
+
 This experiment replaces activity bounties with direct, atomic exchanges of existing ZEC and zUSD. The user authorized building and testing this mechanism after the first study identified reward farming. Implementation choices below are research assumptions.
 
 ## Design choice

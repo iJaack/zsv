@@ -1,39 +1,67 @@
-# Next milestone: signed vault and reserve integration
+# Signed vault and reserve integration
 
-This contract is specified against the existing Rust account ledger. It is not an implemented Rust reserve or patched Zebra node. The [lifecycle experiment](reserve-lifecycle.md) supplies the accounting and state-transition reference.
+The reserve and lifecycle rules now execute inside the signed Rust account ledger. [src/reserve.rs](../src/reserve.rs) implements the optional policy; [signed scenarios](../examples/reserve_scenario.rs) exercise actual vault issuance, reserve trades, liquidation and shutdown. The contextual adapter validates the combined state in model tests. Native Zebra parsing, collateral locks, proofs, coinbase rules and persistent fork state remain proposed.
 
-## State and authorization
+## Configuration and authorization
 
-Introduce an explicitly versioned experimental configuration containing reserve inventory, fixed bid/ask parameters, gross epoch rates, retained-funding budget/target, activation/sunset, outage grace and terminal auction parameters. Bind this configuration to the model chain domain. Preserve the current v1 vectors as their own versioned baseline.
+`State::from_regtest_fixture_with_reserve` creates a reserve-enabled chain. Its immutable `ReserveConfig` defines quotes, epoch limits, funding target/budget, activation/sunset, outage timing, auction prices and a synthetic funding schedule. Initial reserve ZEC is debited from a named fixture donor and counts against the funding budget. Initial token inventory is zero. The only token source is successful vault issuance under the existing collateral and supply rules.
 
-Add reserve balances to the same supply/ZEC invariants as wallets and vault collateral. Include explicit retained-funding totals, once-per-block credit markers, canonical observation content, outage start, closure receipt and auction start height in snapshots and branch checkpoints. Funding counts and the NSM bucket are part of exact ZEC conservation.
+The new `zsv/model-chain/v2` domain hashes the legacy canonical genesis domain, every reserve configuration field in declaration order as little-endian u64, donor key and initial reserve ZEC. Transaction and oracle signatures continue to bind the chain domain under their existing v2 signing prefixes. The legacy constructor retains its exact v1 chain domain, checkpoints and signed vectors. The optional reserve snapshot is omitted when disabled.
 
-Signed reserve buy/sell actions bind direction, amount, nonce, observation sequence, epoch, expiry and minimum-output/maximum-input limits. A wind-down purchase binds amount, nonce, expiry and maximum ZEC input; its price derives from the candidate block height and immutable auction parameters. Reuse the actual signature verifier. Names or caller-supplied authorization flags must never substitute for signatures.
+| Action | Direction | Signed fields after its tag |
+|---|---|---|
+| `ReserveBuy`, tag 8 | Reserve buys the signer's existing tokens | tokens, oracle sequence, epoch, expiry, minimum ZEC output |
+| `ReserveSell`, tag 9 | Reserve sells inventory to the signer | tokens, oracle sequence, epoch, expiry, maximum ZEC input |
+| `ReserveAuctionBuy`, tag 10 | Signer buys residual inventory after closure | tokens, expiry, maximum ZEC input |
 
-## Block transition order
+Each field is u64 little-endian. The surrounding transaction signs network, chain domain, signer, nonce and the ordered action list. The existing Ed25519 verifier authenticates all actions. There is no caller-authorized flag, funding action, administrator withdrawal or arbitrary asset type.
 
-1. Resolve the exact parent model state and next block height. Evaluate whether the prior outage deadline or sunset has already elapsed. At an elapsed deadline, normal trading closes before a late observation could rescue it.
-2. Authenticate the block's canonical observations under the specified ordering. Preserve one price/height per sequence. Before the closure deadline, a fresh observation may clear an outage. Define report-observation time separately from inclusion time; the existing report format needs an explicit decision here.
-3. Apply deterministic closure once when required. Burn reserve tokens and reduce explicit bad debt by the same amount. Transfer cash to the NSM allocation path and retain residual inventory for auction. Active vault principal and collateral remain unchanged.
-4. Derive the authorized block-funding amount from the chosen regtest schedule. Credit it once, retaining only available budget/target headroom. After closure, route the entire allocation to the NSM path. Users cannot submit funding credits.
-5. Execute signed vault/reserve operations in canonical order against a private overlay. Same-block fills share counters and balances. Validate all ordinary and reserve invariants before commit.
-6. Commit or reject the whole block atomically. Fork/replay restores counters, credits, oracle state, bad-debt burn, auction state and wallets together.
+## Exact accounting
 
-The Python prototype relies on host-supplied funding amounts and authenticated inputs; the Rust milestone must close those gaps. Native coinbase funding and NSM rules require the separately approved network schedule rather than the regtest fixture schedule.
+Every accepted block checks these equalities in integer units:
 
-## Required acceptance cases
+- Wallet ZEC + vault collateral + reserve ZEC + NSM bucket = fixture ZEC + cumulative scheduled funding.
+- Wallet zUSD + reserve inventory = stable supply = active vault principal + recorded bad debt.
 
-- A valid vault issues tokens, sells some to the reserve, later buys inventory and repays. Every step preserves the combined supply/debt and ZEC invariants.
-- Liquidation produces bad debt; closure burns only actual reserve inventory against that bad debt. Partial coverage leaves an explicit remaining loss.
-- A late failure after a reserve fill, funding credit or closure rolls back the complete block.
-- Same-block competing fills cannot exceed the epoch allowance. A later epoch can use replenished capital without refunding the retained-funding budget.
-- Duplicate block credits, cross-configuration orders, stale quote sequences and wrong nonces fail.
-- Always-stale reports cannot restart the outage clock; fresh reports before and at the deadline have the specified different outcomes.
-- Auction fills work after oracle failure, conserve assets, respect signed input bounds and reject replays. Empty inventory cannot sell again.
-- Sibling branch preparation and reorg replay restore the exact state across expiry and auction fills.
+Funding at heights `funding_start_height <= h < funding_end_height` adds exactly `funding_zec_per_block` synthetic zatoshi per block. Configuration validation rejects schedules whose total plus fixture funds exceeds u64. Default funding is zero. Funding occurs once per consecutive accepted block; snapshots retain its cumulative amount and last processed height. Before activation and after closure, all funding goes to the NSM bucket.
 
-## Limits that remain economic
+While active, the retained amount is the minimum of that block's allocation, remaining cash-target headroom and remaining lifetime funding budget. The rest goes to NSM. Initial reserve cash and later retained credits consume the budget. Sale proceeds stay in the reserve and never restore budget headroom. All balances and counters use checked arithmetic. The NSM bucket records a proposed destination; it does not implement native subsidy reissuance.
 
-Returning cash to the NSM can leave uncovered bad debt. Per-epoch capacity can still be occupied by losing cycles. Auctions can clear cheaply under poor participation or censorship. Neither integer accounting nor signature checks removes those choices and risks.
+For q micro-zUSD and price X micro-USD per ZEC, the bid pays `floor(q * (1e6-spread) * 1e8 / (1e6*X))` zatoshi. The ask charges the corresponding ceiling with `1e6+spread`. Zero-output trades fail. Gross epoch ZEC purchases and token sales share block-wide counters; replenishment does not refund them. Lifetime trade totals remain diagnostic counters, without the earlier lifetime trading stop.
 
-Only after this combined Rust milestone passes review should the reserve be connected to an isolated Zebra development network. The native parser/proof/value-pool, persistent storage and fork requirements remain those in the [Zebra proposal](zebra-integration.md).
+## Oracle timing and block order
+
+Signed reports contain a sequence, price and expiry, but no market-observation timestamp. Reserve freshness therefore means **inclusion age plus signed expiry**: an accepted quorum at height h is usable through the lesser of `h + max_oracle_age` and `valid_until`. A new sequence can carry stale market information with valid signatures. This model cannot detect that deception. Legacy vault operations still use signed expiry, without the reserve's extra inclusion-age cutoff.
+
+Each consecutive block runs against a private copy:
+
+1. Reset epoch counters when the height enters a new epoch. Evaluate sunset and the previous uninterrupted outage deadline before processing a replacement price.
+2. If closure is due, burn `min(reserve tokens, bad debt)` once, reducing inventory, stable supply and bad debt equally. Move all reserve cash to NSM and record the reason, height, burn and transfer. Active principal and collateral stay unchanged.
+3. Authenticate any oracle update. Before the deadline, a fresh accepted quorum clears a pause. At the deadline it cannot reopen normal trading. Malformed or invalid reports reject the entire block, including tentative closure.
+4. Apply the deterministic funding allocation once, then execute signed vault and reserve actions in order. Closed reserves accept only inventory-auction purchases.
+5. Check the combined invariants and commit the complete state, or discard it all on failure.
+
+For a report included at height 1 with maximum age 3, no earlier expiry and grace 6, the first stale height is 5 and closure occurs at 11. A fresh report at 10 resumes quotes; a fresh report at 11 does not reopen them. Without any report, the outage starts at activation. Closure is permanent on that branch; restoring a parent restores its earlier lifecycle state.
+
+The debt burn is one-time and precedes user transactions. A liquidation in the closing block or afterward can create new bad debt while auction inventory remains. There is no later reserve-coverage operation. Funding and auctions continue after closure under their own rules, even without an oracle.
+
+## Terminal inventory sale
+
+After closure, the price in zatoshi per whole token is:
+
+`floor_price + ceil((start_price-floor_price) * max(duration-elapsed, 0) / duration)`.
+
+The buyer pays `ceil(tokens * price / 1e6)` zatoshi. Existing tokens move to the buyer and all proceeds go to NSM. Partial fills, expiry and maximum-input checks apply; empty inventory cannot sell again. The positive floor prevents free transfers but does not ensure useful proceeds or buyers. The sale has no conversion-oracle dependency.
+
+Returning cash to NSM can leave bad debt outstanding. It is a policy choice, not a consequence of the conservation equations. Auctions also let borrowers buy inventory and repay their own debt; cheap clearing prices can make that profitable. These risks remain under correct signatures and accounting.
+
+## Acceptance evidence
+
+- [Core tests](../tests/reserve.rs) cover issuance-to-repayment, retained funding headroom, activation, outage deadlines, quotes, auctions and atomic limits.
+- [Independent attacks](../tests/reserve_attacks.rs) cover configuration/domain changes, signed-field mutations, epoch competition, replay, rounding, overflow, bad debt and late-block rollback.
+- [Adapter tests](../tests/reserve_adapter.rs) prepare sibling branches across closure, funding and auctions, reject stale commits and reproduce a transition after restoring its parent. They do not exercise a real node reorg or disk recovery.
+- [Signed vector replay](../tests/reserve_vectors.rs) checks every recorded checkpoint in three deterministic scenarios. The legacy vectors remain byte-identical.
+
+The scenarios include a crash leaving 523.809524 zUSD of bad debt, followed by a 400-token inventory burn and an explicit 123.809524 remainder. An uncontested four-block auction sells 400 tokens for 400 zatoshi at its floor, after which the borrower repays. Its short duration deliberately illustrates a failure of competition; it is not a calibrated auction recommendation.
+
+The [verification receipt](verification.md) records the actual test counts, commands and fingerprints. The next engineering work is economic stress testing of this combined ledger and an isolated native Zebra integration under the [native proposal](zebra-integration.md).

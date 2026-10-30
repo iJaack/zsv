@@ -10,7 +10,7 @@ The executable is a signed account-ledger model with simulated funds. The native
 - [Threat model](docs/threatmodel.md) · [Economic adversarial review](docs/economic-review.md) · [Independent code review](docs/adversarial-review.md)
 - [Stabilization funding: mathematical tests](docs/stabilization-math.md) · [Reproducible study](analysis/README.md)
 - [Bounded inventory reserve: implementation and adversarial results](docs/reserve-study.md)
-- [Reserve shutdown and funding allowances](docs/reserve-lifecycle.md) · [Next Rust integration contract](docs/reserve-rust-contract.md)
+- [Reserve shutdown and funding allowances](docs/reserve-lifecycle.md) · [Signed Rust integration](docs/reserve-rust-contract.md) · [Reserve adversarial review](docs/reserve-adversarial-review.md)
 - [Native Zebra implementation proposal](docs/zebra-integration.md) · [Draft ZIP](docs/draft-zip.md) · [Pinned sources](docs/sources.md)
 - [Forum post draft](docs/forum-post.md) (not published)
 - [Verification receipt](docs/verification.md)
@@ -22,8 +22,9 @@ The executable is a signed account-ledger model with simulated funds. The native
 | ZEC + one fixed stablecoin enum | Consensus vault bundle and restricted payment encoding | Arbitrary tokens, NFTs or issuer keys |
 | Real signed requests and 2-of-3 oracle reports | Native Zcash signatures/digests, fixed asset constraints | Bridge, external execution or custody committee |
 | Borrow, repay, deposit, withdraw, close, transfer, full liquidation | Atomic branch-state validation/commit/rollback in Zebra | Mainnet node or activated upgrade |
-| Checked integer math and supply/debt conservation | Wallet/library encoding and native value-pool integration | Dollar redemption, interest, recapitalization |
+| Checked integer math and supply/debt conservation | Wallet/library encoding and native value-pool integration | Dollar redemption, interest, general recapitalization |
 | Explicit bad debt and issuance freeze | Possible fixed-two-asset shielded profile | Shielded stablecoin payments or private vaults in v0 |
+| Optional signed reserve swaps, scheduled fixture funding, shutdown and inventory auction | Native reserve value path and approved coinbase/NSM accounting | Approved funding allocation or guaranteed peg |
 
 The fixed-asset restriction prevents arbitrary native issuance through ZSV. Off-protocol tokens, inscriptions, derivatives and speculation remain possible. The proposed cryptographic constraints and consensus code need independent review.
 
@@ -34,15 +35,20 @@ Requires Rust 1.90 with `rustfmt` and `clippy`; the checked-in toolchain selects
 ```sh
 cargo test --locked
 cargo run --locked --example scenario
+cargo run --locked --example reserve_scenario
 cargo fmt --check
 cargo clippy --locked --all-targets -- -D warnings
 ```
 
 The scenario uses public fixture keys and simulated ZEC. It demonstrates issuance, repayment and a price crash that creates bad debt. The verification receipt records the commands, results and model limits.
 
-The separate funding and inventory studies need Python 3.10 or later. Run `python3 -m unittest discover -s analysis -p 'test_*.py'`, `python3 analysis/run_study.py --check` and `python3 -m analysis.reserve_study --check` to verify their arithmetic and checked-in results. Figures additionally require Matplotlib. The inventory reserve trades existing assets without a bounty or new stablecoin-market oracle. Its gross limits bound physical spending; oracle errors and quota occupation remain risks. The studies add no incentive or reserve rules to the Rust model.
+The reserve example adds three signed scenarios: a reserve round trip followed by vault repayment, shutdown that covers only part of the bad debt, and an uncontested auction that sells inventory cheaply.
 
-The library accepts a `Block` through `State::validate_block` / `State::apply_block`. `Snapshot`s expose copies of balances and vault state for inspection. `from_regtest_fixture` constructs the state and rejects Mainnet/Testnet. Callers cannot deserialize mutable ledger state or invoke a general mint API.
+The separate funding and inventory studies need Python 3.10 or later. Run `python3 -m unittest discover -s analysis -p 'test_*.py'`, `python3 analysis/run_study.py --check`, `python3 -m analysis.reserve_study --check` and `python3 -m analysis.lifecycle_study --check` to verify their arithmetic and checked-in results. Figures additionally require Matplotlib. These are uncalibrated economic experiments; the Rust implementation checks their reserve accounting and authorization within the vault ledger.
+
+The library accepts a `Block` through `State::validate_block` / `State::apply_block`. `Snapshot`s expose detached copies for inspection. `from_regtest_fixture` preserves the original vault-only model. `from_regtest_fixture_with_reserve` enables the reserve under a separate configuration-bound chain domain. Both reject Mainnet/Testnet. Callers cannot deserialize mutable ledger state or invoke a general mint API.
+
+The reserve starts with ZEC debited from a named fixture donor and no stablecoins. It acquires tokens issued by real model vaults through signed trades. An immutable regtest schedule supplies additional simulated ZEC once per block; retained funding has a target and lifetime cap. Swaps share gross epoch allowances. Sunset or a sustained report outage closes normal quotes, burns inventory against recorded bad debt, moves cash to an NSM accounting bucket and auctions remaining tokens. The bucket does not implement native NSM issuance.
 
 ## Design choices
 
@@ -50,8 +56,8 @@ The library accepts a `Block` through `State::validate_block` / `State::apply_bl
 - Vaults and balances are public, so anyone can inspect liquidation conditions. Shielded payments are later work.
 - The stablecoin's provisional name is zUSD. No deployment or ticker ownership is claimed.
 - Illustrative 250% borrowing ratio, 200% liquidation threshold and 5% bonus; 100 zUSD minimum nonzero debt; 100,000 zUSD global ceiling. These are test settings, not risk recommendations.
-- Liquidations burn actual stable balances, pay ZEC atomically, and retain uncovered debt. A zero-tolerance bad-debt freeze contains issuance but permits griefing and has no recovery action in v0.
-- The price quorum authenticates observations but cannot prove that traders can execute at those prices. Holders have no unconditional redemption right, so the model does not guarantee a dollar peg.
+- Liquidations burn actual stable balances, pay ZEC atomically, and retain uncovered debt. Any bad debt freezes borrowing. Reserve closure can clear only the portion covered by its existing token inventory; uncovered losses remain.
+- The price quorum authenticates reports but cannot prove market accuracy or execution. Reserve freshness measures inclusion height and report expiry; the signed report has no observation timestamp. Holders have no unconditional redemption right, so the model does not guarantee a dollar peg.
 
 ## Native implementation boundary
 

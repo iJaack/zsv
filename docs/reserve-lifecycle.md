@@ -103,4 +103,4 @@ Even competitive bidding faces discrete steps. At the same assumed ZEC price, th
 | Floor-price sale | Transfers 4,000 tokens for 4,000 zatoshi without a price oracle; liabilities do not change. |
 | Trickle of stale reports | Increasing sequences do not postpone closure at height ten. |
 
-These are exact synthetic accounting cases. The first two mathematical studies remain unchanged and reproducible. The next engineering step is the signed Rust integration described in the contract; this lifecycle wrapper does not run inside the existing Rust vault ledger or Zebra adapter.
+These are exact synthetic accounting cases. The first two mathematical studies remain unchanged and reproducible. The [signed Rust implementation](reserve-rust-contract.md) now integrates these rules with actual vault-issued tokens, signatures and a deterministic regtest funding schedule. This Python wrapper remains a separate reference; its host-supplied observation heights are distinct from the Rust inclusion-height clock.

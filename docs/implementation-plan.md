@@ -64,7 +64,9 @@ Files: `README.md`, `docs/verification.md`, `SECURITY.md`, `LICENSE`.
 - [x] Specify and test stale-oracle pause, fixed outage deadline, bad-debt inventory burn and paid inventory wind-down.
 - [x] Review and remove a free terminal-distribution farming path; fix stale-report updates extending the outage indefinitely.
 - [x] Publish the [lifecycle rules](reserve-lifecycle.md) and [signed Rust integration contract](reserve-rust-contract.md).
-- [ ] Implement the reserve and lifecycle inside the signed Rust vault state machine, including versioned domains, atomic funding and branch rollback.
+- [x] Implement the reserve and lifecycle inside the signed Rust vault state machine, including versioned domains, atomic funding and branch rollback.
+- [x] Start with donor-funded ZEC and zero reserve tokens; acquire inventory from signed vault issuance and trades. Preserve the original vault-only vectors.
+- [x] Bind reserve orders to sequence, epoch, expiry and slippage; retain the market-age limitation of inclusion-based freshness.
 - [ ] Stress the combined vault/reserve economy and build an isolated native Zebra integration after review.
 
 ## Execution note

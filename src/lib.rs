@@ -4,6 +4,9 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 
+mod reserve;
+pub use reserve::{ReserveConfig, ReserveState, ShutdownReason, ShutdownReceipt};
+
 pub const ZATOSHIS_PER_ZEC: u64 = 100_000_000;
 pub const MICRO_USD: u64 = 1_000_000;
 pub const MIN_DEBT: u64 = 100 * MICRO_USD;
@@ -148,6 +151,27 @@ pub enum Action {
         to: Pubkey,
         amount: u64,
     },
+    /// The reserve buys existing tokens from the signer.
+    ReserveBuy {
+        tokens: u64,
+        oracle_sequence: u64,
+        epoch: u64,
+        valid_until: u64,
+        min_zec_out: u64,
+    },
+    /// The reserve sells existing inventory to the signer.
+    ReserveSell {
+        tokens: u64,
+        oracle_sequence: u64,
+        epoch: u64,
+        valid_until: u64,
+        max_zec_in: u64,
+    },
+    ReserveAuctionBuy {
+        tokens: u64,
+        valid_until: u64,
+        max_zec_in: u64,
+    },
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -212,6 +236,8 @@ pub struct Snapshot {
     pub bad_debt: u64,
     pub fixture_zec_total: u64,
     pub used_vault_ids: BTreeSet<VaultId>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reserve: Option<ReserveState>,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct State {
@@ -359,6 +385,46 @@ impl SignedTx {
                     bytes.extend_from_slice(&to.0);
                     numbers(&mut bytes, &[*amount]);
                 }
+                Action::ReserveBuy {
+                    tokens,
+                    oracle_sequence,
+                    epoch,
+                    valid_until,
+                    min_zec_out,
+                } => {
+                    bytes.push(8);
+                    numbers(
+                        &mut bytes,
+                        &[
+                            *tokens,
+                            *oracle_sequence,
+                            *epoch,
+                            *valid_until,
+                            *min_zec_out,
+                        ],
+                    );
+                }
+                Action::ReserveSell {
+                    tokens,
+                    oracle_sequence,
+                    epoch,
+                    valid_until,
+                    max_zec_in,
+                } => {
+                    bytes.push(9);
+                    numbers(
+                        &mut bytes,
+                        &[*tokens, *oracle_sequence, *epoch, *valid_until, *max_zec_in],
+                    );
+                }
+                Action::ReserveAuctionBuy {
+                    tokens,
+                    valid_until,
+                    max_zec_in,
+                } => {
+                    bytes.push(10);
+                    numbers(&mut bytes, &[*tokens, *valid_until, *max_zec_in]);
+                }
             }
         }
         bytes
@@ -471,6 +537,7 @@ impl State {
                 bad_debt: 0,
                 fixture_zec_total: total,
                 used_vault_ids: BTreeSet::new(),
+                reserve: None,
             },
         };
         state.check_invariants()?;
@@ -511,9 +578,11 @@ impl State {
         }
         let mut next = self.clone();
         next.inner.height = block.height;
+        next.prepare_reserve_before_oracle()?;
         if let Some(update) = &block.oracle {
             next.apply_oracle(update)?;
         }
+        next.prepare_reserve_after_oracle(block.oracle.is_some())?;
         for tx in &block.transactions {
             next.apply_transaction(tx)?;
         }
@@ -798,6 +867,11 @@ impl State {
                 self.debit(signer, asset, amount)?;
                 self.credit(to, asset, amount)?;
             }
+            Action::ReserveBuy { .. }
+            | Action::ReserveSell { .. }
+            | Action::ReserveAuctionBuy { .. } => {
+                self.apply_reserve_action(signer, action)?;
+            }
         }
         Ok(())
     }
@@ -823,7 +897,15 @@ impl State {
             zec = add(zec, vault.collateral)?;
             debt = add(debt, vault.debt)?;
         }
-        if zec != self.inner.fixture_zec_total
+        let funded_zec = if let Some(reserve) = &self.inner.reserve {
+            reserve.check_invariants(self.inner.height, self.inner.accounts.len())?;
+            zec = add(zec, add(reserve.reserve_zec, reserve.nsm_zec)?)?;
+            stable = add(stable, reserve.reserve_tokens)?;
+            reserve.funded_zec
+        } else {
+            0
+        };
+        if zec != add(self.inner.fixture_zec_total, funded_zec)?
             || stable != self.inner.stable_supply
             || debt != self.inner.stable_supply
             || stable > SUPPLY_CAP

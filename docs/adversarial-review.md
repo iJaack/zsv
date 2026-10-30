@@ -2,6 +2,8 @@
 
 Reviewed on 29 October 2026 by a separate code-review agent, using the public Rust API and deterministic fictional fixtures. This review covers the account-ledger prototype, not a deployed Zcash protocol. It found and reproduced namespace and replay weaknesses, then verified targeted regressions after their remediation. Resource limits and substantial economic/integration blockers remain. The results do not certify production security, economic solvency or a dollar peg.
 
+The findings below record the original vault-only review. The later [signed reserve review](reserve-adversarial-review.md) covers combined funding, reserve and lifecycle rules, including inventory-based bad-debt coverage.
+
 ## Scope and evidence
 
 The reviewer read `AGENTS.md`, `SECURITY.md`, `Cargo.toml`, `docs/design.md`, `src/lib.rs` and the model's adversarial, economic and boundary tests. The reviewer cross-checked the final threat model for consistent classification. The reviewer wrote only this document and `tests/reviewer_attacks.rs`; implementation fixes belonged to the implementation worker. No private workspace context, credentials, real funds, network endpoint or production key was used.
