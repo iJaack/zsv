@@ -213,8 +213,8 @@ The staged proposal is:
 
 1. Define the wire format, activation domain, signatures and fixed asset encodings. Do not reuse v6, which already denotes NU6.3/Ironwood [S9]. ZIP 248 is draft future infrastructure, not deployed permission to introduce a bundle.
 2. Implement bounded parsing, canonical digests and fixed asset types in the transaction library. Unknown tags, generic issuance and alternate collateral-release paths must fail closed.
-3. Add structural checks and signature/proof verification to the transaction verifier, including the mempool path. Mempool acceptance is not a substitute for parent-branch contextual verification.
-4. Implement branch-specific oracle, vault, liability, supply and reserve state in Zebra. Check every transparent spend against vault restrictions, including transactions without a ZSV annotation. Protect checkpoint/direct-finalization paths as well as ordinary contextual verification. Verify and commit the complete transition atomically, including any approved funding allocation, and undo it on a fork switch. Preserve existing ZEC fee accounting.
+3. Add structural checks and signature verification to the transaction verifier, including the mempool path. Public v1 requires no new shielded circuit. Mempool acceptance is not a substitute for parent-branch contextual verification.
+4. Implement branch-specific oracle, vault, stable UTXO, supply and bad-debt state in Zebra. Collateral belongs to the dedicated vault pool; ordinary transactions cannot access it. Protect checkpoint/direct-finalization paths as well as ordinary contextual verification. Commit ZEC and ZSV changes atomically, preserve fee accounting and undo changes on a fork switch. Reserve and funding state are outside this core.
 5. Add wallet construction/scanning and independently tested adversarial vectors. Introduce any fixed-two-asset shielded profile as its own reviewable stage.
 6. Run differential node tests and a private development network before seeking consensus adoption. No production acceptance bit is enabled by this repository.
 
@@ -236,7 +236,7 @@ Consensus expansion can harm ZEC users who never borrow. State growth, verificat
 
 # Research roadmap and release gates
 
-The collateral profile supplies an executable check of native transparent ownership and per-transaction collateral accounting. Next work should review the ZIP candidate and implement its dedicated transaction format, collateral value pool, stablecoin accounting and durable branch state in Zebra, with independent conformance vectors and adversarial cost benchmarks. Reserve funding and shutdown need a complete native cash path before they can enter this profile.
+The collateral profile supplies an executable check of native transparent ownership and per-transaction collateral accounting. Next work should review the ZIP candidate and implement its dedicated transaction format, collateral value pool, stablecoin accounting and durable branch state in Zebra, with independent conformance vectors and adversarial cost benchmarks. Reserve funding and shutdown remain separate research; they are not prerequisites for implementing the core ZIP.
 
 Before any value-bearing test, require a defined oracle governance and compromise response, loss allocation, sustainable peg mechanism, source-based security audit, cryptographic review of any shielded profile, wallet safety/recovery, reproducible builds and full-node fork/rollback tests. Before mainnet, community review and an adopted network upgrade are indispensable. No mainnet date or funding estimate is asserted here.
 

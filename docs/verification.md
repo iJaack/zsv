@@ -224,3 +224,9 @@ The primary specification is now [draft-ijaack-zsv.md](../zips/draft-ijaack-zsv.
 The candidate specifies a dedicated native transaction/value-pool format, normalized vault operations, a 5-of-7 anchored oracle, uncompensated bad-debt retirement and bounded validation work. These are proposed rules beyond the current Rust model. The separate ZIP checks and review are recorded in [zip-readiness.md](zip-readiness.md). Existing Rust/Python research behavior and vectors were not modified or relabeled as native conformance evidence.
 
 The whitepaper, forum draft, repository navigation and implementation plan now place the ZIP first. The new 14-page paper retains Giacomo Barbieri's attribution. Native implementations, complete signed/block vectors, deployment allocations, reporter operations, economic calibration and qualified independent review remain necessary. A complete Zebra implementation is not a prerequisite for starting ZIP discussion.
+
+## Public-v1 implementation scope cleanup — 30 October 2026
+
+Simplified the README, forum draft, implementation plan and Zebra source map. Removed new shielded circuits, the experimental marker-script guard and reserve/funding state from the core implementation path. The whitepaper's implementation section now matches the candidate's public payments and dedicated collateral pool. Research code, fixtures and normative ZIP rules are unchanged.
+
+`bash scripts/verify-zip.sh` passed all existing candidate checks and package screening; `git diff --check` passed. The paper rebuilt to 14 pages with Giacomo Barbieri's author metadata and the corrected implementation text. PDF SHA-256: `1619bbede35db943f3b040f8f9ee176625d7496cafe24b7379bb8c75277e7150`. Existing Rust test results retain their original scope; no new model validation is claimed for this documentation change.

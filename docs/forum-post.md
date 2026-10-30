@@ -1,84 +1,44 @@
-# ZSV: a stablecoin-only alternative to general ZSAs
+# ZSV: one ZEC-backed stablecoin on Zcash
 
-Unpublished pre-ZIP discussion draft by Giacomo Barbieri. ZSV is a regtest research prototype; node-level vault enforcement and mainnet activation remain future work.
+Unpublished discussion draft by Giacomo Barbieri.
 
-I'd like to explore one ZEC-backed, dollar-targeting stablecoin, with vault rules enforced entirely by Zcash and no arbitrary token-launch interface.
+I'd like feedback on [ZSV](https://github.com/iJaack/zsv/blob/main/zips/draft-ijaack-zsv.md), a proposed Consensus ZIP for borrowing one dollar-targeting stablecoin against ZEC. Zcash nodes would enforce the vault and payment rules. The draft is unnumbered and has not been submitted upstream.
 
-I'm calling the proposal ZSV: Zcash Stablecoin Vault. The intended outcome is a Consensus ZIP; the [unnumbered working draft](https://github.com/iJaack/zsv/blob/main/zips/draft-ijaack-zsv.md) contains the proposed rules. The first version has public payments and public vaults; shielded payments would follow in a separate specification.
+## What the first version does
 
-An owner would lock native ZEC, mint a stablecoin against it and repay to recover the collateral. Anyone could liquidate an unhealthy vault. Zcash nodes would check collateral, debt, minting and liquidation rules without external-chain execution or a custody committee.
+- Locks ZEC in a dedicated vault value pool.
+- Issues zUSD when an owner borrows against sufficient collateral.
+- Burns existing zUSD on repayment or liquidation, accounting for any uncovered debt.
+- Allows public zUSD payments and permissionless liquidation.
+- Accepts ZEC/USD reports signed by five of seven upgrade-selected reporters, with an observation anchored to a recent Zcash block.
 
-## Why limit the scope?
+Vaults and payments are public. Shielded payments would need a follow-up ZIP. There is no arbitrary asset registration, issuer key, governance token or general execution environment. This restriction cannot prevent off-protocol derivatives or speculation.
 
-I want to investigate the utility of a private dollar-denominated payment instrument without making a general token economy a prerequisite.
+The draft uses a 250% borrowing ratio, liquidation below 200%, a 5% liquidation bonus and a 100,000-zUSD supply cap. These are initial research parameters requiring calibration.
 
-The proposed protocol recognizes exactly ZEC and one stablecoin. It excludes user-defined asset IDs, issuer keys, token descriptions, NFTs, a governance token and a registration API. Only a valid collateralized borrowing transition authorizes issuance.
+## The difficult tradeoffs
 
-This consensus restriction cannot prevent speculation, inscriptions or derivatives built off-protocol.
+A dollar target does not guarantee a dollar price. There is no unconditional redemption right. A ZEC crash, false oracle price or shortage of liquidators can leave losses even when every node follows the rules correctly.
 
-## What could be reused from ZSAs?
+Recorded bad debt stops new borrowing. Holders may burn existing tokens without compensation to retire that debt; borrowing resumes only after it reaches zero. If nobody accepts that loss, the freeze can last indefinitely. This recovery policy and the fixed reporter committee need scrutiny.
 
-Potentially the multi-asset conservation techniques, value commitments, note encryption, wallet-scanning work and relevant circuit gadgets. The general issuance and asset-registration surfaces would be excluded.
+Public vaults expose financial positions. Public payments expose amounts and transaction relationships. Adding shielding later would not erase those disclosures.
 
-The resulting protocol profile would need its own review. Existing ZSA audits would not establish its security, and the upgrade could still be substantial.
+## Why keep it narrow?
 
-## How the native vault would work
+The immediate question is whether one native stablecoin justifies the additional consensus and oracle risk. Public v1 needs no new shielded circuit or general ZSA issuance machinery. Selected ZSA transfer techniques may be useful for later shielding.
 
-A special vault output holds ZEC plus its owner and debt state. It can be spent only through defined transitions: deposit, borrow, repay, withdraw, close or liquidate.
+Dev Fund incentives and a stabilization reserve are separate research. The [funding study](https://github.com/iJaack/zsv/blob/main/docs/stabilization-math.md) and [reserve results](https://github.com/iJaack/zsv/blob/main/docs/combined-stress.md) show finite-budget, stale-price and shutdown risks. No funding allocation is assumed by this ZIP.
 
-The owner's signature cannot bypass debt rules. Liquidation does not need the owner's signature. Minting and debt creation happen together; burning and debt reduction happen together. Any liquidation shortfall remains visible as bad debt.
+## What exists
 
-A signed price observation is accepted into Zcash state under deterministic quorum and freshness rules. Nodes use that accepted observation. The dollar price still comes from outside the chain; native enforcement does not eliminate oracle trust.
+The repository contains the draft, a whitepaper, a threat model, financial and encoding fixtures, an executable account model and offline Zebra-linked experiments. These use simulated funds. The experiments do not implement the candidate's native format or stablecoin value pool, and their reviews do not replace qualified independent review.
 
-## What exists so far?
+The [implementation plan](https://github.com/iJaack/zsv/blob/main/docs/implementation-plan.md) follows the public candidate directly: transaction-library support, consensus verification and durable branch state.
 
-The repository contains an executable Rust research model, a whitepaper, a threat model, independent adversarial analysis, combined economic stress scenarios and offline development profiles linked to the pinned Zebra library.
+## Feedback requested
 
-The isolated account model uses public vaults and balances, real signatures and integer monetary arithmetic. Its optional reserve trades tokens created by model vaults, accounts for scheduled fixture funding and closes or auctions inventory under fixed rules. Native Zebra accounting, live funds and shielded stablecoin payments remain future work.
-
-The first native implementation target would keep vault health public so anyone can liquidate. Shielded payments for the fixed stablecoin would be a separate stage. Fully private vaults require a credible answer to who can construct a liquidation when the borrower disappears.
-
-## The hard parts
-
-Several economic and technical problems remain unresolved:
-
-- A collateralized token does not automatically stay at one dollar. The model has no unconditional holder redemption or proven peg mechanism.
-- A ZEC crash can outrun collateral margins and liquidation liquidity.
-- A compromised price quorum can enable excess borrowing or wrongful liquidation.
-- Freezing new borrowing after any bad debt contains issuance but can also create a system-wide griefing target.
-- Putting this into consensus adds risk and resource costs for ZEC users who never borrow.
-
-## Could reduced grant funding support stabilization?
-
-A separate mathematical study tests that possibility. Taking 10% of the taper discussion's rounded net reduction in future ZCG funding would imply about 6,200 ZEC over its horizon, excluding the separate treasury contribution. That allocation would reduce what otherwise goes to the NSM and needs a specified schedule and network upgrade.
-
-Funding alone does not establish a peg. The study finds that delay narrows the controller's stable range, finite budgets leave residual deviations, and a ZEC crash weakens both collateral and dollar incentive capacity. It also finds a direct attack on raw mint/burn bounties: mint, retain the tokens, then burn them in a later rewarded epoch and collect both payments without an external trade. The current prototype has no rewards. The [math and reproducible scenarios](https://github.com/iJaack/zsv/blob/main/docs/stabilization-math.md) explain what would need to change.
-
-The [inventory study](https://github.com/iJaack/zsv/blob/main/docs/reserve-study.md) tests standing ZEC/zUSD bid/ask exchanges with existing inventory and gross spending limits. It needs only the ZEC/USD conversion oracle. In its assumed market, enough cash and inventory support a $0.995–$1.005 corridor; purchasing 4,500 tokens costs about $4,477.50. Those Python scenarios are uncalibrated. Wrong ZEC prices, fundamental depegs and paid occupation of trading quotas remain risks.
-
-## Shutdown and funding limits
-
-The [lifecycle policy](https://github.com/iJaack/zsv/blob/main/docs/reserve-lifecycle.md) replaces lifetime trading stops with a cap on retained funding. Closure follows sustained report failure or sunset: existing inventory first covers recorded bad debt, cash moves to the NSM bucket, and residual tokens enter an oracle-free auction. Free terminal distributions were rejected after a borrowing-based farming counterexample. Auctions can still clear cheaply, and cash returned to NSM may leave bad debt uncovered.
-
-These rules now run inside the [signed Rust vault ledger](https://github.com/iJaack/zsv/blob/main/docs/reserve-rust-contract.md). The reserve starts with a donor's simulated ZEC and no tokens. It can buy only tokens that vaults have issued, and all vault, reserve, funding and shutdown changes roll back if a block fails. The funding schedule is a regtest fixture, not an approved block-reward allocation. Freshness measures report inclusion age and expiry; a quorum can still publish stale market data in a new report.
-
-The [combined stress tests](https://github.com/iJaack/zsv/blob/main/docs/combined-stress.md) vary crashes, reporting delays, liquidator token balances, reserve inventory and liquidation timing through the signed ledger. They distinguish recorded bad debt from collateral shortfalls in vaults that have not been liquidated. One result makes the shutdown choice concrete: at $20/ZEC, liquidating a 25-ZEC vault with 1,000 zUSD debt creates 523.809524 zUSD of bad debt. An 800-token reserve can cover it if liquidation comes before closure; liquidation in the closing block runs after the burn and leaves the loss outstanding. The auction cases also allow a lone borrower to buy back tokens cheaply and repay. These are assumed paths, not a forecast or proof of peg stability.
-
-The [Zebra-linked development runner](https://github.com/iJaack/zsv/blob/main/docs/zebra-development.md) parses native block bytes, checks a model-payload commitment in a zero-valued coinbase output and replays parent-specific branches. The commitment binds data; it does not lock native collateral. The offline fixtures are not mined or fully consensus-verified blocks. A native transaction format, asset accounting, proofs and node-state integration are still required.
-
-The newer [collateral profile](https://github.com/iJaack/zsv/blob/main/docs/collateral-profile.md) checks serialized transparent ZEC transactions against actual fixture UTXOs. It verifies native P2PK signatures, binds each user transaction to a signed model request and checks that every wallet and vault still matches its native outputs after each transaction. Branches retain their own UTXOs and model state. Initial funding comes from a trusted test bootstrap block.
-
-The vault script is protected only by the experimental profile's spend guard; unmodified Zcash nodes would allow it to be spent. zUSD is still a model balance, and this profile excludes reserve funding and shutdown until their native cash accounting exists. The candidate ZIP replaces that experimental marker with a dedicated native collateral value pool. The next step is review of the consensus specification and its conformance cases, followed by implementations of those rules.
-
-The ZIP candidate specifies a dedicated transaction format, fixed-key public zUSD outputs, a 5-of-7 oracle with a twelve-block anchored validity window, and permissionless retirement of bad debt by burning existing tokens without compensation. These are proposed changes beyond the current Rust model. The core has no Dev Fund allocation or reserve; those would be separate proposals. Without willing loss absorption, an issuance freeze can last indefinitely.
-
-## Feedback I'd value
-
-1. Is a fixed stablecoin-only scope a useful alternative to general ZSAs, given its remaining financial and consensus complexity?
-2. Which parts of the ZSA design could be safely reused while enforcing a closed two-asset set throughout the wire format and circuits?
-3. Would a dedicated native bundle be preferable to a restricted proof/predicate mechanism?
-4. What oracle, peg and loss-recovery design would justify proceeding beyond a model?
-5. Is the proposed fixed reporter committee and uncompensated bad-debt retirement acceptable, given censorship, false-price and indefinite-freeze risks?
-6. What changes or conformance evidence are needed for a complete ZIP and eventual Zebra implementation?
-
-Technical references: [ZSA transfer/burn](https://zips.z.cash/zip-0226), [ZSA issuance](https://zips.z.cash/zip-0227), [extensible transaction format](https://zips.z.cash/zip-0248), and [private programmability research](https://forum.zcashcommunity.com/t/private-programmability-in-zcash-research-results-and-community-discussion/48016). See the repository's source map for pinned Zebra references.
+1. Does this limited use case justify a Zcash consensus change?
+2. Are the oracle committee and uncompensated loss-retirement policy acceptable? What concrete alternative would improve them?
+3. Are the transaction and value-pool rules practical for Zcash libraries and Zebra?
+4. What economic evidence would justify the parameters and dollar target?
