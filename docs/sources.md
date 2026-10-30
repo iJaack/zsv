@@ -63,3 +63,9 @@ The later [mathematical study](stabilization-math.md) checked these additional p
 - [ZIP 271](https://zips.z.cash/zip-0271): one-time 78,750 ZEC deferred-pool disbursement, distinct from ongoing deferred accrual. Neither is counted as ZSV funding.
 - [ZIP 218](https://zips.z.cash/zip-0218): proposed shorter block interval with proportionally adjusted scheduled subsidy. The study's 1,800/900 ZEC daily rates are idealized target-spacing inputs.
 - [ZIP 237](https://zips.z.cash/zip-0237) and [ZIP 259](https://zips.z.cash/zip-0259): NSM accounting and proposed reissuance parameters. The simplified study excludes reserve-dependent reissuance and uses scheduled subsidy explicitly.
+
+## ZIP process refresh
+
+On 30 October 2026 the [ZIP Process](https://github.com/zcash/zips/blob/ff594de6e95bb9e9e7d2ace09510281531c30447/zips/zip-0000.rst), [Markdown guide](https://github.com/zcash/zips/blob/ff594de6e95bb9e9e7d2ace09510281531c30447/zips/zip-guide-markdown.md) and [template](https://github.com/zcash/zips/blob/ff594de6e95bb9e9e7d2ace09510281531c30447/zips/zip-template.md) were checked at `ff594de6e95bb9e9e7d2ace09510281531c30447`, committed at 01:46:53 UTC that day. This refresh governs draft structure and process; it does not change the earlier consensus/Zebra source pins.
+
+ZIP 0 permits Markdown, an alias-named initial Draft and MIT licensing. Editors assign numbers. A reference implementation generally need not be complete before Proposed; security/privacy-sensitive proposals still need qualified independent review before release. The original MIT-only research implementation license is disclosed in the candidate as required for linked code that differs from ZIP 0's recommended MIT/Apache-2.0 combination for Zebra work.

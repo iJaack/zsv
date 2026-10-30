@@ -4,6 +4,20 @@ Research scope: a signed regtest state machine, offline Zebra-linked block and c
 
 The design fixes the asset domain to ZEC and one native USD-denominated unit, ZUSD. Vault debt creates ZUSD; repayment and liquidation consume existing ZUSD. There is no arbitrary asset registration, issuer key, arbitrary metadata, general smart-contract runtime, bridge or external settlement signer. Oracle trust, ZEC volatility, liquidation liquidity, proof correctness and consensus-upgrade risk remain.
 
+## ZIP-candidate scope
+
+The [canonical ZIP candidate](../zips/draft-ijaack-zsv.md) now specifies public payments, a dedicated ZEC vault value pool, public zUSD UTXOs, native signature domains and a fixed 5-of-7 oracle with an anchored twelve-block window. It also specifies uncompensated retirement of bad debt by burning actual zUSD. These rules are proposed; the implementation evidence below still describes the existing account model and collateral profile. Their 2-of-3 oracle and V4 fixture signatures are not the candidate's native rules.
+
+The candidate removes the experimental OP_TRUE marker from the proposed native design. Collateral resides in a separate value pool and never becomes an ordinary payment UTXO while locked. Consensus must still prevent namespace confusion, duplicated value, unauthorized vault transitions and acceptance paths that skip ZSV state validation. New transaction/digest dispatch, authoritative prevout resolution, block commitments, relay identifiers, finalization and persistence need independent implementation and review.
+
+The fixed quorum adds no direct collateral-spending key, but false observations can authorize excess borrowing or wrongful liquidation. Five compromised reporter keys can certify an arbitrary price; three unavailable keys can halt reports. Quorum intersections limit conflicting certificates only under an explicit bound on equivocation and honest signing behavior. Shared data sources may mislead honest signers. The block-age bound cannot prove market sampling time or bound wall-clock delay, and an upgrade-only roster can be slow to repair.
+
+Bad-debt retirement transfers no ZEC and grants no reward or redemption claim. It preserves the liability identity by reducing supply and bad debt together. If holders will not absorb losses, borrowing can remain frozen indefinitely. Dust losses can trigger the freeze. This availability risk remains despite having a precisely defined recovery operation.
+
+Public owner keys, balances and payment graphs reveal financial activity. P2PK-only funding can link previously shielded ZEC to a vault. Shielding later does not remove those disclosures. Per-block byte, signature and output limits constrain the candidate's specified work; they are unbenchmarked and do not eliminate long-term state growth or cheap transactions accepted by a producer.
+
+The [ZIP readiness review](zip-readiness.md) records preliminary coding-agent review and limited arithmetic/encoding/oracle fixtures. It does not establish the security of the new native format or replace qualified independent consensus, cryptographic, privacy and economic review.
+
 ## Evidence and classification
 
 This model was updated on 2026-10-30 from the local prototype, [economic review](economic-review.md), [collateral profile](collateral-profile.md), [proposed Zebra integration](zebra-integration.md), and the immutable upstream evidence in [sources.md](sources.md). The upstream baseline is Zebra `5faf8a413f0d30a6e93115f3d16af1e229fd7858` and ZIPs `2bdf39494320e5e04057ac93b1794031ebfb00b5`. Both development profiles import that exact Zebra library pin. Upstream references and offline execution do not establish a running patched node.

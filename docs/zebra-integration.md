@@ -4,6 +4,12 @@ Status: native enforcement proposal with offline block and collateral profiles l
 
 The immutable source baseline is Zebra `5faf8a413f0d30a6e93115f3d16af1e229fd7858` (2026-10-28) and ZIPs `2bdf39494320e5e04057ac93b1794031ebfb00b5` (2026-10-21), researched 2026-10-29. See [sources.md](sources.md) for verified links, dates, status and evidence limits.
 
+## Candidate specification now governs implementation
+
+The [ZIP candidate](../zips/draft-ijaack-zsv.md) selects a dedicated future transaction format, public zUSD UTXOs and a separate native ZEC vault value pool. Its normalized operations, 5-of-7 oracle, domains and bad-debt retirement are proposed rules beyond the existing harness. It has no trusted bootstrap issuance or OP_TRUE collateral UTXO. Native implementation should follow that specification; the earlier API sketches and experimental guard below remain source-mapping and research evidence.
+
+Production transaction hashing will require trusted network context because the candidate commits the network genesis hash in addition to its serialized branch ID. The existing wrapper API does not supply that change automatically. Library and node work must add the parser/digests, stable UTXO namespace, vault-pool accounting, exact-parent atomic state transitions, auth-commitment/relay dispatch and all finalization paths. Merely installing the prototype marker guard would not implement this ZIP.
+
 ## What can be reused
 
 ZSV could reuse ZSA cryptography for moving a non-ZEC asset. Permissionless issuance remains excluded.

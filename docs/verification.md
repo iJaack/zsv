@@ -1,6 +1,6 @@
 # Verification receipt
 
-Status: collateral milestone checks completed on 30 October 2026. Public delivery is authorized; earlier deliveries are recorded below and each source publication is recorded in the repository history.
+Status: collateral and ZIP-candidate checks completed on 30 October 2026. Public delivery is authorized; earlier deliveries are recorded below and each source publication is recorded in the repository history.
 
 ## Scope
 
@@ -20,7 +20,7 @@ The model script runs locked Cargo tests, doc tests, formatting, strict Clippy, 
 
 ## Observed final results
 
-The main agent ran both complete verification scripts successfully after the collateral expiry and monetary-range fixes, including the final independent tests. The table separates the reference model from the Zebra-linked test suite; neither is a full node test.
+The main agent ran both model/development verification scripts successfully after the collateral expiry and monetary-range fixes. Those Rust sources are unchanged in the later ZIP revision. The separate ZIP verification script and document build passed for the candidate; its detailed scope is recorded in [zip-readiness.md](zip-readiness.md). The table separates the reference model from the Zebra-linked test suite; neither is a full node test.
 
 | Check | Observed result |
 |---|---|
@@ -47,9 +47,13 @@ The main agent ran both complete verification scripts successfully after the col
 | Rust formatting | Passed |
 | Strict Clippy, all targets | Passed; warnings denied |
 | Scenario regeneration | Model vectors, 351-case study and both Zebra scenario outputs match checked-in JSON exactly |
-| Package screening | 104 source/artifact files; relative links and bounded credential patterns passed |
+| Package screening | 114 source/artifact files; relative links and bounded credential patterns passed |
 | Git whitespace check | Passed |
-| Whitepaper | 13-page PDF generated; Giacomo Barbieri attribution, draft 0.2 date and collateral section checked; rendered pages inspected |
+| Whitepaper | 14-page PDF generated; Giacomo Barbieri attribution, draft 0.3 date and ZIP scope section checked; rendered page inspected |
+| ZIP candidate financial vectors | 54 cases; exact Fraction recomputation and u128 bounds |
+| ZIP candidate wire vectors | 7 unsigned examples; all six operations and oracle framing |
+| ZIP canonical oracle fixture | 7 signers, 4 quorum subsets, 16 rejection probes, 12 context cases |
+| ZIP rendering | Pinned upstream `render.sh --pandoc` succeeded; internal links and table structure checked |
 
 The scenario contains a solvent liquidation with supply/bad debt both zero, and a crash case leaving 209,523,810 micro-zUSD as explicit bad debt. Its final model checkpoints are:
 
@@ -60,7 +64,7 @@ The model uses these fingerprints to check repeatable state transitions. A nativ
 
 ## Source fingerprints
 
-These hashes identify the current files after the transparent collateral milestone. The adversarial review records the earlier source versions it examined.
+These hashes identify the unchanged collateral source and the current rebuilt whitepaper. ZIP-candidate source fingerprints are recorded in [zip-readiness.md](zip-readiness.md). The adversarial review records the earlier source versions it examined.
 
 - `src/lib.rs`: SHA-256 `0053a1996b70c965c9c6f3f84a45f8625c41016b7be8982666eda974c1c20c55`.
 - `src/reserve.rs`: SHA-256 `a219be80b71985a984b84eb626057908a001b538914d9bb9893fe09bd6c07c81`.
@@ -78,7 +82,7 @@ These hashes identify the current files after the transparent collateral milesto
 - `zebra/dev-harness/collateral-scenario-output.json`: SHA-256 `db556e81b737670dd181aa4f41ade91db5e059ae3e36651868f7980cd4863733`.
 - `Cargo.lock`: SHA-256 `e44aec7ac75310c939371401fd77a3ecf3b2241fa81b50354ad359a5c1f39812`.
 - `tests/reviewer_attacks.rs`: SHA-256 `b4b68bfeb05d7c37112421a45cbbf48de00b6addb1e70728c91ab7a459612110`.
-- `docs/whitepaper.pdf`: SHA-256 `b5691728b86ccecd39236845ded7d7b733fdb955fe7aa33a4a5ad291d381c6c9`.
+- `docs/whitepaper.pdf`: SHA-256 `28226437ef9112c770df8fa232e7d9d4e120b75007d4ecab70573ca0bbf68e5e`.
 - `analysis/stabilization.py`: SHA-256 `b7a1524f690901ab104305c7c95ac503034ae08e4fd2a99823ddabfaa92dfc75`.
 - `analysis/run_study.py`: SHA-256 `128a5567f539244ff079c4991daff98929223b8b3912a34f50ba24f197bf114e`.
 - `analysis/results.json`: SHA-256 `5f846c22ab50554d0b15d2ef68767b30702cabf4b775166afea7e0c0e853d845`.
@@ -211,3 +215,12 @@ Three new signed scenarios conserve 40 ZEC across bootstrap, borrowing and settl
 | Crash and bad debt | `df6851c949839a0397a3395104854efe97dd5010443a27cfdca6d80beeae5101` |
 
 The protocol script remains anyone-can-spend on unmodified nodes. This milestone installs no Zebra service or consensus rule. zUSD remains a model balance; reserve-enabled genesis and synthetic funding are rejected in this profile. Full consensus verification, upgrade-aware signatures, fees, native stablecoin value conservation, all node acceptance paths and durable state remain unfinished. The new profile replays envelopes from its trusted bootstrap and has no authenticated journal or restart implementation.
+
+
+## ZIP submission candidate
+
+The primary specification is now [draft-ijaack-zsv.md](../zips/draft-ijaack-zsv.md), with Giacomo Barbieri as owner and his approved public contact. The user confirmed public payments first and shielded payments as follow-up work. Draft status and unassigned numbering are preserved; no forum publication or upstream PR occurred.
+
+The candidate specifies a dedicated native transaction/value-pool format, normalized vault operations, a 5-of-7 anchored oracle, uncompensated bad-debt retirement and bounded validation work. These are proposed rules beyond the current Rust model. The separate ZIP checks and review are recorded in [zip-readiness.md](zip-readiness.md). Existing Rust/Python research behavior and vectors were not modified or relabeled as native conformance evidence.
+
+The whitepaper, forum draft, repository navigation and implementation plan now place the ZIP first. The new 14-page paper retains Giacomo Barbieri's attribution. Native implementations, complete signed/block vectors, deployment allocations, reporter operations, economic calibration and qualified independent review remain necessary. A complete Zebra implementation is not a prerequisite for starting ZIP discussion.

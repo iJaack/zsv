@@ -2,6 +2,8 @@
 
 Status: experimental design, 29 October 2026. The user authorized the prototype and its supporting documents in chat. This document records implementation choices, not community acceptance.
 
+The [ZIP candidate](../zips/draft-ijaack-zsv.md) is the primary proposed consensus specification. This document describes research-model choices; the candidate's native wire format, oracle and bad-debt retirement extend beyond that implementation.
+
 ## Goal
 
 Specify a ZEC-collateralized, dollar-targeting stablecoin with all spending, issuance, debt and liquidation rules enforced by Zcash consensus. Provide an executable, adversarially tested reference model and a source-pinned implementation proposal for Zebra.

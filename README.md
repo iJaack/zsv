@@ -1,10 +1,12 @@
 # ZSV · Zcash Stablecoin Vault
 
-ZSV proposes a Zcash protocol for locking ZEC and issuing one dollar-targeting stablecoin. It excludes the arbitrary asset issuance proposed by general Zcash Shielded Assets.
+ZSV proposes a Zcash protocol for locking ZEC and issuing one dollar-targeting stablecoin. It excludes the arbitrary asset issuance proposed by general Zcash Shielded Assets. The primary deliverable is a [Consensus ZIP candidate](zips/draft-ijaack-zsv.md), authored by Giacomo Barbieri, with public payments first and shielded payments in a follow-up. It is unnumbered and has not been submitted upstream.
 
 The executable is a signed account-ledger model with simulated funds. Offline profiles linked to Zebra test block commitments, branch replay and serialized transparent transactions backed by fixture UTXOs. The collateral profile checks native signatures and vault spending rules; integration into Zebra's node verifier and a native stablecoin value pool remain proposed. Do not use the prototype or its fixture keys for real funds.
 
 ## Documents
+
+- [ZIP candidate](zips/draft-ijaack-zsv.md) · [Readiness and review](docs/zip-readiness.md) · [Conformance material](zips/draft-ijaack-zsv/README.md)
 
 - [Whitepaper](docs/whitepaper.md) · [PDF](docs/whitepaper.pdf)
 - [Threat model](docs/threatmodel.md) · [Economic adversarial review](docs/economic-review.md) · [Independent code review](docs/adversarial-review.md)
@@ -31,6 +33,8 @@ The executable is a signed account-ledger model with simulated funds. Offline pr
 | Branch-specific fixture UTXOs, experimental vault spend guard and per-transaction ledger reconciliation | Collateral guard in every Zebra spend and finalization path | Native zUSD value pool or reserve funding in this profile |
 
 The fixed-asset restriction prevents arbitrary native issuance through ZSV. Off-protocol tokens, inscriptions, derivatives and speculation remain possible. The proposed cryptographic constraints and consensus code need independent review.
+
+The ZIP candidate goes beyond the implemented model: it specifies a new native format and value pool, a 5-of-7 anchored oracle and permissionless bad-debt retirement. Existing Rust tests do not establish conformance with these proposed additions. Run `bash scripts/verify-zip.sh` for the separate candidate vectors; its oracle checker needs Python `cryptography`.
 
 ## Run locally
 

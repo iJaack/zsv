@@ -2,15 +2,25 @@
 
 The completed research milestones and remaining integration work are listed below. Offline profiles link to Zebra and check fixture collateral spends; integration into the node verifier remains proposed. [verification.md](verification.md) records the tested scope.
 
-Goal: build a single-stablecoin Zcash protocol proposal, executable Rust model and independent adversarial review.
+Goal: prepare a complete, reviewable Consensus ZIP for one ZEC-backed stablecoin, supported by an executable model, mathematical evidence and adversarial review. Public payments are the initial scope; shielding is a follow-up.
 
 The account model tests fixed asset types and vault rules off-network. The Zebra proposal identifies the transaction-library and branch-state changes needed in a native implementation against a pinned source tree.
 
 Tools: Rust 2021, Ed25519 model signatures, restricted secp256k1 native signatures, integer arithmetic and Cargo tests; Markdown and PDF documents.
 
-Specification: [design.md](design.md).
+Primary candidate specification: [draft-ijaack-zsv.md](../zips/draft-ijaack-zsv.md). Research model design: [design.md](design.md).
 
-## Global Constraints
+## ZIP submission milestone
+
+- [x] Confirm public-first scope and public author contact; prepare an alias-named Draft with Consensus category and MIT license.
+- [x] Specify byte grammar, value pools, signatures, normalized vault transitions, oracle rules, bad-debt retirement and resource budgets as proposed consensus rules.
+- [x] Add separate financial, unsigned-wire and canonical-oracle fixtures; document their limits and differences from the existing Rust code.
+- [ ] Complete public discussion and incorporate objections; supply the actual submission date/discussion URL and verify upstream rendering before a ZIP PR.
+- [ ] Obtain qualified independent consensus/security/privacy review, native implementations and full conformance evidence; allocate activation parameters through the network-upgrade process.
+
+[zip-readiness.md](zip-readiness.md) records the current scope. A complete Zebra node implementation is not a prerequisite to beginning ZIP discussion.
+
+## Research-model Constraints
 
 - ZEC and one protocol-defined stablecoin only; no generic asset registration or issuer keys.
 - Regtest model only; public balances/vaults in v0; no real funds or production keys.

@@ -1,10 +1,10 @@
 # ZSV: a stablecoin-only alternative to general ZSAs
 
-Unpublished draft for community discussion. ZSV is a regtest research prototype; node-level vault enforcement and mainnet activation remain future work.
+Unpublished pre-ZIP discussion draft by Giacomo Barbieri. ZSV is a regtest research prototype; node-level vault enforcement and mainnet activation remain future work.
 
 I'd like to explore one ZEC-backed, dollar-targeting stablecoin, with vault rules enforced entirely by Zcash and no arbitrary token-launch interface.
 
-I'm calling this experiment ZSV: Zcash Stablecoin Vault.
+I'm calling the proposal ZSV: Zcash Stablecoin Vault. The intended outcome is a Consensus ZIP; the [unnumbered working draft](https://github.com/iJaack/zsv/blob/main/zips/draft-ijaack-zsv.md) contains the proposed rules. The first version has public payments and public vaults; shielded payments would follow in a separate specification.
 
 An owner would lock native ZEC, mint a stablecoin against it and repay to recover the collateral. Anyone could liquidate an unhealthy vault. Zcash nodes would check collateral, debt, minting and liquidation rules without external-chain execution or a custody committee.
 
@@ -68,7 +68,9 @@ The [Zebra-linked development runner](https://github.com/iJaack/zsv/blob/main/do
 
 The newer [collateral profile](https://github.com/iJaack/zsv/blob/main/docs/collateral-profile.md) checks serialized transparent ZEC transactions against actual fixture UTXOs. It verifies native P2PK signatures, binds each user transaction to a signed model request and checks that every wallet and vault still matches its native outputs after each transaction. Branches retain their own UTXOs and model state. Initial funding comes from a trusted test bootstrap block.
 
-The vault script is protected only by the experimental profile's spend guard; unmodified Zcash nodes would allow it to be spent. zUSD is still a model balance, and this profile excludes reserve funding and shutdown until their native cash accounting exists. The next step is to put the guard in Zebra's node verification paths and add a native stablecoin value pool.
+The vault script is protected only by the experimental profile's spend guard; unmodified Zcash nodes would allow it to be spent. zUSD is still a model balance, and this profile excludes reserve funding and shutdown until their native cash accounting exists. The candidate ZIP replaces that experimental marker with a dedicated native collateral value pool. The next step is review of the consensus specification and its conformance cases, followed by implementations of those rules.
+
+The ZIP candidate specifies a dedicated transaction format, fixed-key public zUSD outputs, a 5-of-7 oracle with a twelve-block anchored validity window, and permissionless retirement of bad debt by burning existing tokens without compensation. These are proposed changes beyond the current Rust model. The core has no Dev Fund allocation or reserve; those would be separate proposals. Without willing loss absorption, an issuance freeze can last indefinitely.
 
 ## Feedback I'd value
 
@@ -76,6 +78,7 @@ The vault script is protected only by the experimental profile's spend guard; un
 2. Which parts of the ZSA design could be safely reused while enforcing a closed two-asset set throughout the wire format and circuits?
 3. Would a dedicated native bundle be preferable to a restricted proof/predicate mechanism?
 4. What oracle, peg and loss-recovery design would justify proceeding beyond a model?
-5. What evidence should a Zebra development-network implementation produce before any activation discussion?
+5. Is the proposed fixed reporter committee and uncompensated bad-debt retirement acceptable, given censorship, false-price and indefinite-freeze risks?
+6. What changes or conformance evidence are needed for a complete ZIP and eventual Zebra implementation?
 
 Technical references: [ZSA transfer/burn](https://zips.z.cash/zip-0226), [ZSA issuance](https://zips.z.cash/zip-0227), [extensible transaction format](https://zips.z.cash/zip-0248), and [private programmability research](https://forum.zcashcommunity.com/t/private-programmability-in-zcash-research-results-and-community-discussion/48016). See the repository's source map for pinned Zebra references.

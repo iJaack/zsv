@@ -2,6 +2,7 @@
 
 This repository contains protocol research, a signed regtest model and offline development profiles linked to Zebra. The collateral profile checks serialized fixture UTXOs and vault spends; node enforcement and a native stablecoin value pool remain proposed. Use simulated funds only.
 
+- Treat `zips/draft-ijaack-zsv.md` as the primary candidate consensus specification. Keep proposed ZIP rules distinct from implemented research behavior; do not describe legacy vectors as conformance evidence for unimplemented wire/oracle/retirement rules. Public payments are the initial scope; shielding is a follow-up. Keep ZIP status Draft and numbering unassigned until the appropriate process changes them.
 - Preserve the single stablecoin asset boundary. Do not add asset registration, generic issuer keys, arbitrary asset identifiers, a VM, a bridge, or external custody.
 - Keep the account model, Zebra-linked block experiments, proposed native enforcement and future shielded designs explicitly separate. A data commitment in a coinbase output does not lock collateral or create a native stablecoin.
 - The collateral profile uses a trusted funding bootstrap, restricted V4/P2PK signatures and its own mandatory vault spend guard. Its vault script is anyone-can-spend on unmodified nodes. Preserve explicit Ed25519-to-secp256k1 owner bindings, exact-parent checkpoints, all-input checks and per-transaction UTXO/ledger reconciliation. Reject reserve state and synthetic funding until a native reserve cash lifecycle exists.

@@ -2,7 +2,7 @@
 title: "ZSV: Zcash Stablecoin Vault"
 subtitle: "A narrow native protocol for a ZEC-collateralized dollar target"
 author: "Giacomo Barbieri"
-date: "30 October 2026 · research draft 0.2"
+date: "30 October 2026 · research draft 0.3"
 geometry: margin=25mm
 fontsize: 11pt
 colorlinks: true
@@ -54,6 +54,10 @@ Every native user transaction must pair with one signed model request. Wallet in
 The profile compares native UTXO totals with each wallet's free ZEC and each vault's collateral after every transaction. Every vault input and output must name a vault touched by that authorized request, including replacements that leave its balance unchanged. Failed blocks commit neither model nor UTXO changes. The experimental vault script ends in `OP_TRUE`; unmodified Zcash nodes do not enforce its restriction. All protection comes from this profile's contextual guard. zUSD remains a signed model balance. Reserve-enabled state, synthetic funding, shielded paths and fees are excluded until their native accounting is specified.
 
 The regtest model has no peer-to-peer service, miner, payment endpoint or real-fund deposit address. It implements public vault data and public stable balances. Shielded stablecoin payments are a separate future component.
+
+The primary proposal is now the unnumbered Consensus ZIP candidate, `zips/draft-ijaack-zsv.md`, owned by Giacomo Barbieri. Its initial scope is public payments; shielding is follow-up work. It specifies a new transaction format, a dedicated collateral value pool, fixed-key zUSD outputs, a 5-of-7 anchored oracle with twelve-block validity and normalized vault transitions. These are proposed native rules beyond the tested model. The candidate also permits holders to retire recorded bad debt by burning existing tokens without compensation; only an actual reduction of bad debt to zero resumes borrowing. No recovery incentive or dollar-redemption guarantee follows. Dev Fund allocation and reserve stabilization remain separate proposals.
+
+The candidate includes financial, unsigned-wire and canonical-oracle fixtures. They do not replace native implementation, complete signed/block vectors, economic calibration or qualified independent consensus, cryptographic and privacy review. ZIP assignment and activation remain separate steps; the draft has not been submitted upstream.
 
 # Asset restriction and selective ZSA reuse
 
@@ -232,7 +236,7 @@ Consensus expansion can harm ZEC users who never borrow. State growth, verificat
 
 # Research roadmap and release gates
 
-The collateral profile supplies an executable check of native transparent ownership and per-transaction collateral accounting. Next work should integrate the spend guard into a Zebra fork, define native stablecoin encoding and value conservation, implement durable branch state, and benchmark costs under adversarial workloads. Reserve funding and shutdown need a complete native cash path before they can enter this profile.
+The collateral profile supplies an executable check of native transparent ownership and per-transaction collateral accounting. Next work should review the ZIP candidate and implement its dedicated transaction format, collateral value pool, stablecoin accounting and durable branch state in Zebra, with independent conformance vectors and adversarial cost benchmarks. Reserve funding and shutdown need a complete native cash path before they can enter this profile.
 
 Before any value-bearing test, require a defined oracle governance and compromise response, loss allocation, sustainable peg mechanism, source-based security audit, cryptographic review of any shielded profile, wallet safety/recovery, reproducible builds and full-node fork/rollback tests. Before mainnet, community review and an adopted network upgrade are indispensable. No mainnet date or funding estimate is asserted here.
 
