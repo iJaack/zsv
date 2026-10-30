@@ -171,3 +171,5 @@ The included Python module and its tests are a separate reference state machine.
 | All supply and liabilities remain visible and unchanged by swaps. | Finite inventory cannot expand supply, absorb unlimited depegs or recapitalize bad debt. |
 
 This experiment is a stronger accounting basis than raw activity rewards. Its market effectiveness, oracle robustness, allowance sizing and shutdown policy remain uncalibrated. The tests support further isolated native development; they do not establish production readiness.
+
+The later [lifecycle experiment](reserve-lifecycle.md) specifies a retained-funding budget and terminal inventory sale. It preserves this study as the v1 baseline and documents the additional auction, outage and loss-allocation risks.

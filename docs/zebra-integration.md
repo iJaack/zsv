@@ -133,13 +133,15 @@ The [inventory reserve](reserve-study.md) is a separate Python reference state m
 5. Carry reserve balances, derived epoch, per-epoch and lifetime gross counters, funding/NSM accounting and shutdown state in Zebra branch overlays, rollback data and finalized storage. Transactions in one block share cumulative limits. Replenishing assets never resets lifetime spending.
 6. Derive a separately approved funding allocation from the applicable coinbase subsidy schedule exactly once per block. Keep total coinbase/funding conservation intact. Retain credits only below the funding target and account for the remainder through the specified NSM rule. Market sale proceeds remain reserve working capital. The Python funding helper trusts its amount/cadence and implements none of this coinbase validation.
 7. Prepare swaps inside parent-specific contextual execution before native block commit. Roll back price references, balances and every counter together. Mempool allowance is provisional and cannot reserve a permanent quota. Revalidate on tip, oracle, epoch and activation changes.
-8. Specify the sunset funding route and residual ZEC/zUSD disposition before activation. Stopping fills alone is not settlement; burning inventory requires an explicit matched liability transition. The current experiment leaves that terminal policy unresolved.
+8. Specify the sunset funding route and residual ZEC/zUSD disposition before activation. Stopping fills alone is not settlement; burning inventory requires an explicit matched liability transition. The v1 experiment leaves that terminal policy unresolved; the lifecycle extension below proposes a wind-down.
 
 The relevant insertion points remain the dependency-level transaction/proof layer, common semantic verifier, validate_and_commit_non_finalized, commit_block, branch push/fork/pop_root, finalized atomic batches and mempool revalidation identified above. These are required changes, not implemented upstream APIs.
 
 Additional native evidence must cover same-block quota races, reorgs spanning epoch boundaries and funding credits, duplicate funding attempts, oracle update ordering, stale signed quotes, inventory conservation, fee accounting, terminal policy and restart equivalence. The accounting experiments do not establish native consensus or cryptographic safety.
 
 ## Acceptance evidence still needed
+
+The [lifecycle extension](reserve-lifecycle.md) now specifies proposed terminal rules and an allocation-budget alternative to lifetime gross stops. Its [Rust integration contract](reserve-rust-contract.md) defines the required signed actions, oracle timing, block ordering and combined ledger tests. These are research rules awaiting integration, including an explicit policy choice to return cash to NSM even when inventory cannot cover all bad debt.
 
 A complete native implementation needs, at minimum:
 

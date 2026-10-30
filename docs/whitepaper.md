@@ -165,7 +165,15 @@ The subsequent prototype exchanges existing ZEC and zUSD at standing target-cent
 
 In an assumed linear market, sufficient capital and arbitrage move an initial 0.95 or 1.05 dollar price to the illustrative 0.995–1.005 dollar corridor. Buying 4,500 units costs approximately 4,477.50 dollars; initial inventory has its own acquisition cost. Eleven scenarios and 144 parameter combinations test inventory and cash constraints. These inputs are uncalibrated and omit endogenous vault issuance and liquidation.
 
-The spread makes unchanged-price exact round trips costly. Stale or compromised ZEC conversion can still transfer substantial value, fundamental token losses can drain the bid, and losing cycles can occupy scarce spending allowances. Review reproduced and corrected a working-capital drain caused by sweeping trade proceeds prematurely. Shutdown asset disposition remains unresolved. The [reserve report](https://github.com/iJaack/zsv/blob/main/docs/reserve-study.md) includes the integer model, adversarial tests and native integration requirements; the compiled Rust adapter still implements the earlier vault model only.
+The spread makes unchanged-price exact round trips costly. Stale or compromised ZEC conversion can still transfer substantial value, fundamental token losses can drain the bid, and losing cycles can occupy scarce spending allowances. Review reproduced and corrected a working-capital drain caused by sweeping trade proceeds prematurely. The lifecycle extension below specifies a proposed terminal disposition. The [reserve report](https://github.com/iJaack/zsv/blob/main/docs/reserve-study.md) includes the integer model, adversarial tests and native integration requirements; the compiled Rust adapter still implements the earlier vault model only.
+
+## Reserve shutdown and allocation limits
+
+A subsequent lifecycle experiment replaces lifetime gross trading stops with a cap on initial reserve ZEC plus later retained funding credits. Sales retain working capital without restoring funding headroom. Gross per-epoch limits and a sunset remain. The 20-epoch cycle that previously occupied the lifetime purchase allowance can therefore be followed by another valid purchase when cash and epoch capacity remain.
+
+Normal quotes pause when the canonical observation becomes stale and close after a fixed uninterrupted outage or at sunset. Closure burns held tokens against explicit bad debt, returns cash to the proposed NSM bucket and offers residual token inventory through an oracle-free descending-price auction. It neither distributes free tokens nor forgives active principal. Review removed a terminal distribution that enabled borrowing solely to collect its payout and fixed stale reports postponing closure indefinitely.
+
+Returning cash to NSM can leave uncovered bad debt; auction competition and discrete price steps can produce poor proceeds. Unsold inventory stays available at a positive floor, so liquidation is not guaranteed. The [lifecycle report](https://github.com/iJaack/zsv/blob/main/docs/reserve-lifecycle.md) records these choices and exact accounting cases. This wrapper remains separate from the signed Rust ledger; the next integration contract defines that combined milestone.
 
 # Privacy
 

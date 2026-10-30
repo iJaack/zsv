@@ -40,3 +40,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m analysis.reserve_study --plots
 ```
 
 The final command additionally requires Matplotlib. `reserve-results.json`, `reserve-trajectories.csv` and `reserve-sensitivity.csv` contain 11 scenarios and 144 parameter combinations. The same unittest command above runs both studies' tests.
+
+## Lifecycle and allocation limits
+
+The [lifecycle extension](../docs/reserve-lifecycle.md) embeds the policy, caps retained new funding, preserves epoch trading limits, pauses on stale observations and closes at an outage deadline or sunset. Closure burns held tokens against bad debt, routes cash to NSM and offers residual tokens through an oracle-free auction. Auction pricing and competition remain economic risks.
+
+Run `python3 -m analysis.lifecycle_study` to regenerate `lifecycle-results.json`, or add `--check` to verify it. The unittest command above also runs the lifecycle suite. This module remains separate from the signed Rust vault ledger; the [integration contract](../docs/reserve-rust-contract.md) specifies that next step.

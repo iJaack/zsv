@@ -10,6 +10,7 @@ The executable is a signed account-ledger model with simulated funds. The native
 - [Threat model](docs/threatmodel.md) · [Economic adversarial review](docs/economic-review.md) · [Independent code review](docs/adversarial-review.md)
 - [Stabilization funding: mathematical tests](docs/stabilization-math.md) · [Reproducible study](analysis/README.md)
 - [Bounded inventory reserve: implementation and adversarial results](docs/reserve-study.md)
+- [Reserve shutdown and funding allowances](docs/reserve-lifecycle.md) · [Next Rust integration contract](docs/reserve-rust-contract.md)
 - [Native Zebra implementation proposal](docs/zebra-integration.md) · [Draft ZIP](docs/draft-zip.md) · [Pinned sources](docs/sources.md)
 - [Forum post draft](docs/forum-post.md) (not published)
 - [Verification receipt](docs/verification.md)

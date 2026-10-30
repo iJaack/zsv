@@ -1,0 +1,124 @@
+{
+  "after_round_trip_cycle": {
+    "active_debt_micro": 90000000000,
+    "bad_debt_micro": 0,
+    "gross_zat_paid": 9950000000,
+    "normal_quotes_closed": false,
+    "nsm_zat": 0,
+    "reserve_micro_tokens": 10000000000,
+    "reserve_zat": 10100000000,
+    "retained_funding_zat": 10000000000,
+    "shutdown": null,
+    "stable_supply_micro": 90000000000
+  },
+  "auction_at_floor": {
+    "after": {
+      "active_debt_micro": 84000000000,
+      "bad_debt_micro": 0,
+      "gross_zat_paid": 0,
+      "normal_quotes_closed": true,
+      "nsm_zat": 10000004000,
+      "reserve_micro_tokens": 0,
+      "reserve_zat": 0,
+      "retained_funding_zat": 10000000000,
+      "shutdown": {
+        "bad_debt_burn": 6000000000,
+        "height": 1,
+        "reason": "sunset",
+        "zec_to_nsm": 10000000000
+      },
+      "stable_supply_micro": 84000000000
+    },
+    "fill": {
+      "tokens": 4000000000,
+      "unit_price_zat_per_token": 1,
+      "zec_amount": 4000
+    },
+    "note": "Worst-case floor fill, not an estimate of competitive clearing price."
+  },
+  "retained_allocation_path": [
+    {
+      "active_debt_micro": 90000000000,
+      "bad_debt_micro": 0,
+      "gross_zat_paid": 1990000000,
+      "normal_quotes_closed": false,
+      "nsm_zat": 1010000000,
+      "reserve_micro_tokens": 12000000000,
+      "reserve_zat": 10000000000,
+      "retained_funding_zat": 11990000000,
+      "shutdown": null,
+      "stable_supply_micro": 90000000000
+    },
+    {
+      "active_debt_micro": 90000000000,
+      "bad_debt_micro": 0,
+      "gross_zat_paid": 3980000000,
+      "normal_quotes_closed": false,
+      "nsm_zat": 4020000000,
+      "reserve_micro_tokens": 14000000000,
+      "reserve_zat": 10000000000,
+      "retained_funding_zat": 13980000000,
+      "shutdown": null,
+      "stable_supply_micro": 90000000000
+    },
+    {
+      "active_debt_micro": 90000000000,
+      "bad_debt_micro": 0,
+      "gross_zat_paid": 5970000000,
+      "normal_quotes_closed": false,
+      "nsm_zat": 8000000000,
+      "reserve_micro_tokens": 16000000000,
+      "reserve_zat": 9030000000,
+      "retained_funding_zat": 15000000000,
+      "shutdown": null,
+      "stable_supply_micro": 90000000000
+    }
+  ],
+  "scope": "Exact accounting cases; host-authorized synthetic inputs.",
+  "shutdown_before_auction": {
+    "active_debt_micro": 84000000000,
+    "bad_debt_micro": 0,
+    "gross_zat_paid": 0,
+    "normal_quotes_closed": true,
+    "nsm_zat": 10000000000,
+    "reserve_micro_tokens": 4000000000,
+    "reserve_zat": 0,
+    "retained_funding_zat": 10000000000,
+    "shutdown": {
+      "bad_debt_burn": 6000000000,
+      "height": 1,
+      "reason": "sunset",
+      "zec_to_nsm": 10000000000
+    },
+    "stable_supply_micro": 84000000000
+  },
+  "stale_update_trickle": {
+    "active_debt_micro": 90000000000,
+    "bad_debt_micro": 0,
+    "gross_zat_paid": 0,
+    "normal_quotes_closed": true,
+    "nsm_zat": 10000000000,
+    "reserve_micro_tokens": 10000000000,
+    "reserve_zat": 0,
+    "retained_funding_zat": 10000000000,
+    "shutdown": {
+      "bad_debt_burn": 0,
+      "height": 10,
+      "reason": "oracle_outage",
+      "zec_to_nsm": 10000000000
+    },
+    "stable_supply_micro": 90000000000
+  },
+  "subsequent_purchase": {
+    "active_debt_micro": 90000000000,
+    "bad_debt_micro": 0,
+    "gross_zat_paid": 10049500000,
+    "normal_quotes_closed": false,
+    "nsm_zat": 0,
+    "reserve_micro_tokens": 10100000000,
+    "reserve_zat": 10000500000,
+    "retained_funding_zat": 10000000000,
+    "shutdown": null,
+    "stable_supply_micro": 90000000000
+  }
+}

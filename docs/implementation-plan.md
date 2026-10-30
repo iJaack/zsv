@@ -1,6 +1,6 @@
 # Zcash Stablecoin Vault Implementation Plan
 
-The prototype and documents below are complete. Native Zebra support remains proposed; [verification.md](verification.md) records the tested scope.
+The completed research milestones and remaining integration work are listed below. Native Zebra support remains proposed; [verification.md](verification.md) records the tested scope.
 
 Goal: build a single-stablecoin Zcash protocol proposal, executable Rust model and independent adversarial review.
 
@@ -57,6 +57,15 @@ Files: `README.md`, `docs/verification.md`, `SECURITY.md`, `LICENSE`.
 - [x] Run Cargo tests/fmt/clippy, scenario, PDF generation and bounded secret/content screening.
 - [x] Inspect all staged files; commit original research and source only.
 - [x] Push to the requested account/repository when existing authenticated permissions allow; verify remote commit and visibility. Do not widen permissions or copy credentials to overcome a scope error.
+
+## Reserve lifecycle milestone
+
+- [x] Replace lifetime gross trading stops with a nonresettable retained-funding budget in a separate research wrapper; preserve gross epoch limits and sunset.
+- [x] Specify and test stale-oracle pause, fixed outage deadline, bad-debt inventory burn and paid inventory wind-down.
+- [x] Review and remove a free terminal-distribution farming path; fix stale-report updates extending the outage indefinitely.
+- [x] Publish the [lifecycle rules](reserve-lifecycle.md) and [signed Rust integration contract](reserve-rust-contract.md).
+- [ ] Implement the reserve and lifecycle inside the signed Rust vault state machine, including versioned domains, atomic funding and branch rollback.
+- [ ] Stress the combined vault/reserve economy and build an isolated native Zebra integration after review.
 
 ## Execution note
 

@@ -19,7 +19,7 @@ The first command runs locked Cargo tests, doc tests, formatting, strict Clippy,
 
 ## Observed final results
 
-After the inventory reserve study was added, the main agent ran the complete verification script. It exited with status zero.
+After the reserve lifecycle experiment was added, the main agent ran the complete verification script. It exited with status zero.
 
 | Check | Observed result |
 |---|---|
@@ -31,15 +31,15 @@ After the inventory reserve study was added, the main agent ran the complete ver
 | Signed scenario vector replay | 1 passed |
 | Contextual adapter tests | 10 passed |
 | Total Rust integration tests | 71 passed; 0 failed; 0 ignored |
-| Python mathematical tests | 71 passed: 32 previous, 26 reserve core, 5 independent reserve attacks, 8 reserve study |
-| Numerical study reproduction | Exact JSON/CSV match; funding 10 scenarios / 240 combinations; reserve 11 / 144 |
+| Python mathematical tests | 96 passed: 71 previous, 22 lifecycle, 3 independent lifecycle review tests |
+| Numerical study reproduction | Exact JSON/CSV match; funding 10 scenarios / 240 combinations; reserve 11 / 144; lifecycle accounting cases |
 | Unit / doc / example test targets | Successful; no additional tests defined |
 | Rust formatting | Passed |
 | Strict Clippy, all targets | Passed; warnings denied |
 | Scenario regeneration | Byte-for-byte match with checked-in signed vectors |
-| Package screening | 61 source/artifact files; relative links and bounded credential patterns passed |
+| Package screening | 68 source/artifact files; relative links and bounded credential patterns passed |
 | Git whitespace check | Passed |
-| Whitepaper | 11-page PDF generated; authorship and both study sections checked |
+| Whitepaper | 12-page PDF generated; authorship and lifecycle section checked |
 
 The scenario contains a solvent liquidation with supply/bad debt both zero, and a crash case leaving 209,523,810 micro-zUSD as explicit bad debt. Its final model checkpoints are:
 
@@ -55,13 +55,16 @@ These hashes identify the current files after cleanup and the mathematical study
 - `src/lib.rs`: SHA-256 `d05503f59afe6324ee4a5119e41aba5bb845411a772f738f272db68edf6fdc07`.
 - `Cargo.lock`: SHA-256 `e44aec7ac75310c939371401fd77a3ecf3b2241fa81b50354ad359a5c1f39812`.
 - `tests/reviewer_attacks.rs`: SHA-256 `b4b68bfeb05d7c37112421a45cbbf48de00b6addb1e70728c91ab7a459612110`.
-- `docs/whitepaper.pdf`: SHA-256 `47c7a5f6189b28520b8d711f43936938211640b2611919ecf1ffd2c24c41c75d`.
+- `docs/whitepaper.pdf`: SHA-256 `cc3fcc9bb1bdd3396a821a179baae35c13a4dcb5524013c30fe47a29fbdfa4f0`.
 - `analysis/stabilization.py`: SHA-256 `b7a1524f690901ab104305c7c95ac503034ae08e4fd2a99823ddabfaa92dfc75`.
 - `analysis/run_study.py`: SHA-256 `128a5567f539244ff079c4991daff98929223b8b3912a34f50ba24f197bf114e`.
 - `analysis/results.json`: SHA-256 `5f846c22ab50554d0b15d2ef68767b30702cabf4b775166afea7e0c0e853d845`.
 - `analysis/reserve.py`: SHA-256 `41ef7fd01d5d629a291d9ba34cbc05d2b57a30cf70a3b2d32eba788029bf9b51`.
 - `analysis/reserve_study.py`: SHA-256 `45c711987565e2aa6ccf22717e4d5a3a2845d111980edef28a1df2f4c50accb9`.
 - `analysis/reserve-results.json`: SHA-256 `f9c053e69227e524e7c33f1e70adf1829d7828f755ddcb0f3eaa516ee89b3777`.
+- `analysis/reserve_lifecycle.py`: SHA-256 `767e175360c3a0ae1c5b3d066e2f4002b418da96561ec18a104895e5003d37aa`.
+- `analysis/lifecycle_study.py`: SHA-256 `2eda95380fc12fa6da6d9168acfc65a83bf67b1be52d94edfa79145a4305e1f3`.
+- `analysis/lifecycle-results.json`: SHA-256 `1d0f26e62d8a517937d2ba2dc49f1299cb0a604d2c758dd564707d942159a28e`.
 
 PDF generation timestamps may change on rebuilding; source behavior and the signed scenario vectors are deterministic.
 
@@ -124,3 +127,13 @@ All 71 Python tests pass, including 39 new tests. Numeric reproduction matches 1
 Review reproduced a working-capital drain when sale proceeds above a hard cash cap swept into the NSM bucket. The implementation agent observed the 101-ZEC regression expectation fail against that behavior, then fixed the policy to retain market proceeds. The new-funding target diverts excess subsidy credits only. Independent replay now finishes the 20-epoch path with 101 ZEC, original inventory and zero NSM transfer. Most lifetime purchase allowance is still occupied, which the report treats as a remaining availability weakness.
 
 The main agent reran full locked Rust tests, formatting, strict Clippy, exact signed vectors and package checks after adding the reserve study. The Rust suite remains at 71 passing integration tests. The new figure was generated with Matplotlib 3.10.8 and visually inspected; the PDF was rebuilt with Giacomo Barbieri's attribution and its reserve section checked. Oracle error, fundamental token losses, unmodeled backing and trader behavior, native authentication and shutdown disposition remain explicit limitations.
+
+## Lifecycle and retained-funding policy
+
+The [lifecycle wrapper](reserve-lifecycle.md) embeds immutable configuration, records canonical observation content, requires prepared block context and rejects a second funding credit at the same height. Its allocation budget counts initial cash and later retained credits. Gross epoch limits continue to apply; the original reserve studies remain unchanged as v1 baselines.
+
+Closure burns actual held tokens against explicit bad debt and transfers reserve ZEC to the NSM bucket. Residual tokens remain available through a paid, oracle-free descending-price sale. Active principal is unchanged. A native shutdown, funding schedule, signature verifier and vault/reserve integration have not been implemented by this Python wrapper; the [Rust contract](reserve-rust-contract.md) specifies that next milestone.
+
+Independent review rejected free holder distributions after demonstrating a mint-hold-repay windfall. The reviewer also reproduced a functional outage-clock bug: always-stale reports with advancing sequences could keep postponing closure. The corrected implementation preserves the first uninterrupted stale height. Twenty-two lifecycle tests and three independent review tests pass, including 12 age/grace configurations and a discrete-auction-price counterexample. The independent full Python run passed all 96 tests and reproduced the numeric cases.
+
+The main agent ran the full verification script successfully: 71 Rust integration tests, 96 Python tests, all numeric/vector comparisons, formatting, strict Clippy and package checks. The rebuilt 12-page whitepaper credits Giacomo Barbieri. Residual economics remain explicit: within-epoch quota occupation, oracle-triggered closure, low auction proceeds, unsold inventory and returning cash to NSM while bad debt may remain. This receipt establishes reference arithmetic and observed checks, not production readiness or guaranteed price support.
