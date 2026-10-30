@@ -155,11 +155,13 @@ Before exposing a decoder to peers, bound bytes and collection lengths before al
 
 ### Proposed stabilization reserve
 
-The separate [funding study](stabilization-math.md) evaluates a hypothetical allocation from reduced future ZCG funding. Such a reserve adds spendable assets, payout rules and a stablecoin-market price input. The current Rust oracle reports ZEC/USD only; it does not supply that additional input or implement incentives.
+The separate [funding study](stabilization-math.md) evaluates a hypothetical allocation from reduced future ZCG funding. Its activity-bounty controller would need a stablecoin-market observation in addition to ZEC/USD. The later [inventory reserve experiment](reserve-study.md) uses standing bid/ask quotes with the ZEC/USD conversion observation alone. It adds inventory and spending counters in a separate Python model; the Rust ledger and adapter have no reserve operations.
 
 An adversary can mint in one rewarded epoch, retain the tokens and burn them in a later rewarded epoch. Accounting and debt age can be valid while no independent market trade occurs. Wallet caps are Sybilable; matched trades can manufacture volume. Thin-market price manipulation can also trigger rewards. A global budget bounds the reserve loss but does not prevent capture.
 
 Before adding a native mechanism, define its price sources and compromise response, inventory and liability accounting, spending limits and shutdown behavior. Delay and reserve depletion can destabilize an otherwise valid feedback rule. Holding both collateral and incentives in ZEC exposes them to the same drawdown. The current research model gives no evidence of a secure production reward mechanism.
+
+The standing-quote spread makes an exact unchanged-price round trip costly, while wrong ZEC conversion and a fundamental token depeg can still transfer value to traders. Losing cycles can occupy gross quotas without improving the external market. An early sale-proceeds sweep enabled working-capital grief; the corrected funding target retains those proceeds. Physical caps do not guarantee a dollar-loss bound. Canonical policy, observations, authorized orders and schedule-derived funding are trusted host inputs in Python; native consensus must establish them. Sunset currently stops fills without implementing residual-asset disposition.
 
 ### Governance and scope of the native restriction
 

@@ -1,0 +1,349 @@
+{
+  "hostile_trades": {
+    "fundamental_token_depeg": {
+      "reported_zec_usd": 100,
+      "reserve_plus_nsm_trade_loss_usd": 4950.0,
+      "side": "buy",
+      "tokens": 10000.0,
+      "trader_gain_usd": 4950.0,
+      "true_token_usd": 0.5,
+      "true_zec_usd": 100,
+      "zec_exchanged": 99.5
+    },
+    "zec_gap_down": {
+      "reported_zec_usd": 100,
+      "reserve_plus_nsm_trade_loss_usd": 7990.0,
+      "side": "sell",
+      "tokens": 10000.0,
+      "trader_gain_usd": 7990.0,
+      "true_token_usd": 1.0,
+      "true_zec_usd": 20,
+      "zec_exchanged": 100.5
+    },
+    "zec_gap_up": {
+      "reported_zec_usd": 100,
+      "reserve_plus_nsm_trade_loss_usd": 9900.0,
+      "side": "buy",
+      "tokens": 10000.0,
+      "trader_gain_usd": 9900.0,
+      "true_token_usd": 1.0,
+      "true_zec_usd": 200,
+      "zec_exchanged": 99.5
+    }
+  },
+  "initial_cash_usd_base": 10000,
+  "initial_inventory_target_value_usd_base": 10000,
+  "initial_total_supply_tokens_base": 90000,
+  "scenarios": {
+    "demand_exceeds_total_supply": {
+      "assumptions": {
+        "demand": 100000,
+        "demand_step": 0,
+        "epoch_token_cap": 1000000000,
+        "epochs": 40,
+        "funding_zat": 0,
+        "hurdle": "0",
+        "inventory": 10000,
+        "lifetime_zec_cap": 10000000000,
+        "name": "demand_exceeds_total_supply",
+        "reserve_zec": 100,
+        "response": "1",
+        "sunset": 1000,
+        "zec_usd": 100
+      },
+      "result": {
+        "final_inventory_tokens": 0.0,
+        "final_price": 1.1,
+        "final_reserve_zec": 200.5,
+        "initial_price": 1.2,
+        "nsm_zec": 0.0,
+        "purchased_tokens": 0,
+        "sold_tokens": 10000.0,
+        "zec_paid": 0,
+        "zec_received": 100.5
+      }
+    },
+    "early_sunset": {
+      "assumptions": {
+        "demand": 75000,
+        "demand_step": 0,
+        "epoch_token_cap": 1000000000,
+        "epochs": 40,
+        "funding_zat": 0,
+        "hurdle": "0",
+        "inventory": 10000,
+        "lifetime_zec_cap": 10000000000,
+        "name": "early_sunset",
+        "reserve_zec": 100,
+        "response": "1",
+        "sunset": 20,
+        "zec_usd": 100
+      },
+      "result": {
+        "final_inventory_tokens": 12010.050252,
+        "final_price": 0.97010050252,
+        "final_reserve_zec": 80.0,
+        "initial_price": 0.95,
+        "nsm_zec": 0.0,
+        "purchased_tokens": 2010.050252,
+        "sold_tokens": 0,
+        "zec_paid": 20.0,
+        "zec_received": 0
+      }
+    },
+    "empty_sale_inventory": {
+      "assumptions": {
+        "demand": 85000,
+        "demand_step": 0,
+        "epoch_token_cap": 1000000000,
+        "epochs": 40,
+        "funding_zat": 0,
+        "hurdle": "0",
+        "inventory": 0,
+        "lifetime_zec_cap": 10000000000,
+        "name": "empty_sale_inventory",
+        "reserve_zec": 100,
+        "response": "1",
+        "sunset": 1000,
+        "zec_usd": 100
+      },
+      "result": {
+        "final_inventory_tokens": 0.0,
+        "final_price": 1.05,
+        "final_reserve_zec": 100.0,
+        "initial_price": 1.05,
+        "nsm_zec": 0.0,
+        "purchased_tokens": 0,
+        "sold_tokens": 0,
+        "zec_paid": 0,
+        "zec_received": 0
+      }
+    },
+    "funded_purchase": {
+      "assumptions": {
+        "demand": 75000,
+        "demand_step": 0,
+        "epoch_token_cap": 1000000000,
+        "epochs": 40,
+        "funding_zat": 0,
+        "hurdle": "0",
+        "inventory": 10000,
+        "lifetime_zec_cap": 10000000000,
+        "name": "funded_purchase",
+        "reserve_zec": 100,
+        "response": "1",
+        "sunset": 1000,
+        "zec_usd": 100
+      },
+      "result": {
+        "final_inventory_tokens": 14500.0,
+        "final_price": 0.995,
+        "final_reserve_zec": 55.22500002,
+        "initial_price": 0.95,
+        "nsm_zec": 0.0,
+        "purchased_tokens": 4500.0,
+        "sold_tokens": 0,
+        "zec_paid": 44.77499998,
+        "zec_received": 0
+      }
+    },
+    "funded_sale": {
+      "assumptions": {
+        "demand": 85000,
+        "demand_step": 0,
+        "epoch_token_cap": 1000000000,
+        "epochs": 40,
+        "funding_zat": 0,
+        "hurdle": "0",
+        "inventory": 10000,
+        "lifetime_zec_cap": 10000000000,
+        "name": "funded_sale",
+        "reserve_zec": 100,
+        "response": "1",
+        "sunset": 1000,
+        "zec_usd": 100
+      },
+      "result": {
+        "final_inventory_tokens": 5500.0,
+        "final_price": 1.005,
+        "final_reserve_zec": 145.225,
+        "initial_price": 1.05,
+        "nsm_zec": 0.0,
+        "purchased_tokens": 0,
+        "sold_tokens": 4500.0,
+        "zec_paid": 0,
+        "zec_received": 45.225
+      }
+    },
+    "no_participation": {
+      "assumptions": {
+        "demand": 75000,
+        "demand_step": 0,
+        "epoch_token_cap": 1000000000,
+        "epochs": 40,
+        "funding_zat": 0,
+        "hurdle": "0",
+        "inventory": 10000,
+        "lifetime_zec_cap": 10000000000,
+        "name": "no_participation",
+        "reserve_zec": 100,
+        "response": "0",
+        "sunset": 1000,
+        "zec_usd": 100
+      },
+      "result": {
+        "final_inventory_tokens": 10000.0,
+        "final_price": 0.95,
+        "final_reserve_zec": 100.0,
+        "initial_price": 0.95,
+        "nsm_zec": 0.0,
+        "purchased_tokens": 0,
+        "sold_tokens": 0,
+        "zec_paid": 0,
+        "zec_received": 0
+      }
+    },
+    "persistent_contraction": {
+      "assumptions": {
+        "demand": 80000,
+        "demand_step": -500,
+        "epoch_token_cap": 1000000000,
+        "epochs": 40,
+        "funding_zat": 20000000,
+        "hurdle": "0",
+        "inventory": 10000,
+        "lifetime_zec_cap": 100000000000,
+        "name": "persistent_contraction",
+        "reserve_zec": 100,
+        "response": "1",
+        "sunset": 1000,
+        "zec_usd": 100
+      },
+      "result": {
+        "final_inventory_tokens": 20793.969858,
+        "final_price": 0.90793969858,
+        "final_reserve_zec": 0.0,
+        "initial_price": 1.0,
+        "nsm_zec": 0.6,
+        "purchased_tokens": 10793.969858,
+        "sold_tokens": 0,
+        "zec_paid": 107.39999999999999,
+        "zec_received": 0
+      }
+    },
+    "small_sale_inventory": {
+      "assumptions": {
+        "demand": 85000,
+        "demand_step": 0,
+        "epoch_token_cap": 1000000000,
+        "epochs": 40,
+        "funding_zat": 0,
+        "hurdle": "0",
+        "inventory": 1000,
+        "lifetime_zec_cap": 10000000000,
+        "name": "small_sale_inventory",
+        "reserve_zec": 100,
+        "response": "1",
+        "sunset": 1000,
+        "zec_usd": 100
+      },
+      "result": {
+        "final_inventory_tokens": 0.0,
+        "final_price": 1.04,
+        "final_reserve_zec": 110.05,
+        "initial_price": 1.05,
+        "nsm_zec": 0.0,
+        "purchased_tokens": 0,
+        "sold_tokens": 1000.0,
+        "zec_paid": 0,
+        "zec_received": 10.05
+      }
+    },
+    "transaction_hurdle": {
+      "assumptions": {
+        "demand": 75000,
+        "demand_step": 0,
+        "epoch_token_cap": 1000000000,
+        "epochs": 40,
+        "funding_zat": 0,
+        "hurdle": "1/100",
+        "inventory": 10000,
+        "lifetime_zec_cap": 10000000000,
+        "name": "transaction_hurdle",
+        "reserve_zec": 100,
+        "response": "1",
+        "sunset": 1000,
+        "zec_usd": 100
+      },
+      "result": {
+        "final_inventory_tokens": 13500.0,
+        "final_price": 0.985,
+        "final_reserve_zec": 65.17500002,
+        "initial_price": 0.95,
+        "nsm_zec": 0.0,
+        "purchased_tokens": 3500.0,
+        "sold_tokens": 0,
+        "zec_paid": 34.82499998,
+        "zec_received": 0
+      }
+    },
+    "underfunded_purchase": {
+      "assumptions": {
+        "demand": 75000,
+        "demand_step": 0,
+        "epoch_token_cap": 1000000000,
+        "epochs": 40,
+        "funding_zat": 0,
+        "hurdle": "0",
+        "inventory": 10000,
+        "lifetime_zec_cap": 10000000000,
+        "name": "underfunded_purchase",
+        "reserve_zec": 10,
+        "response": "1",
+        "sunset": 1000,
+        "zec_usd": 100
+      },
+      "result": {
+        "final_inventory_tokens": 11005.025126,
+        "final_price": 0.96005025126,
+        "final_reserve_zec": 0.0,
+        "initial_price": 0.95,
+        "nsm_zec": 0.0,
+        "purchased_tokens": 1005.025126,
+        "sold_tokens": 0,
+        "zec_paid": 10.0,
+        "zec_received": 0
+      }
+    },
+    "zec_crash_purchase": {
+      "assumptions": {
+        "demand": 75000,
+        "demand_step": 0,
+        "epoch_token_cap": 1000000000,
+        "epochs": 40,
+        "funding_zat": 0,
+        "hurdle": "0",
+        "inventory": 10000,
+        "lifetime_zec_cap": 10000000000,
+        "name": "zec_crash_purchase",
+        "reserve_zec": 100,
+        "response": "1",
+        "sunset": 1000,
+        "zec_usd": 20
+      },
+      "result": {
+        "final_inventory_tokens": 12010.050252,
+        "final_price": 0.97010050252,
+        "final_reserve_zec": 1e-08,
+        "initial_price": 0.95,
+        "nsm_zec": 0.0,
+        "purchased_tokens": 2010.050252,
+        "sold_tokens": 0,
+        "zec_paid": 99.99999998999999,
+        "zec_received": 0
+      }
+    }
+  },
+  "scope": "Synthetic fixtures and uncalibrated deterministic market assumptions.",
+  "sensitivity_runs": 144
+}

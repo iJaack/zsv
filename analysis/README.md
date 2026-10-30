@@ -26,3 +26,17 @@ PYTHONDONTWRITEBYTECODE=1 python3 analysis/run_study.py --plots
 ```
 
 Read [the mathematical report](../docs/stabilization-math.md). `results.json` contains assumptions, funding calculations, attack examples and scenario summaries. `trajectories.csv` records every simulated epoch. The charts contain selected scenarios, not forecasts or probability estimates.
+
+## Inventory reserve
+
+The next experiment replaces activity rewards with standing ZEC/zUSD bid/ask exchanges. [Its report](../docs/reserve-study.md) covers integer transfers, inventory, gross caps, oracle attacks and quota occupation. The exact ledger assumes host-authorized orders, canonical policy and price observations, and schedule-authorized funding; it supplies no signature verifier or native transaction adapter.
+
+From the repository root:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 -m analysis.reserve_study
+PYTHONDONTWRITEBYTECODE=1 python3 -m analysis.reserve_study --check
+PYTHONDONTWRITEBYTECODE=1 python3 -m analysis.reserve_study --plots
+```
+
+The final command additionally requires Matplotlib. `reserve-results.json`, `reserve-trajectories.csv` and `reserve-sensitivity.csv` contain 11 scenarios and 144 parameter combinations. The same unittest command above runs both studies' tests.

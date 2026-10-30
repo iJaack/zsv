@@ -159,6 +159,14 @@ The study proves conditional stability bounds for an assumed linear market respo
 
 The adversarial test rejects raw mint/burn bounties: a borrower can mint during one rewarded epoch, retain the tokens and burn them during a later rewarded epoch, collecting both payments without an external trade. Age requirements and epoch netting do not prove market impact. The Python study includes 10 finite-budget scenarios and a 240-case parameter grid; inputs are uncalibrated. It changes no Rust monetary rules. Equations, sources, counterexamples and reproducible results are in the [mathematical report](https://github.com/iJaack/zsv/blob/main/docs/stabilization-math.md).
 
+## Bounded inventory reserve
+
+The subsequent prototype exchanges existing ZEC and zUSD at standing target-centred bid/ask quotes. Purchased tokens remain reserve inventory; sales require existing inventory. These transfers leave total supply and liabilities unchanged. Only the accepted ZEC/USD conversion observation is needed. Gross per-epoch and lifetime outflow limits, order bounds, freshness and a sunset constrain physical exposure. Excess new funding goes to a proposed NSM bucket; trade proceeds remain available for future purchases.
+
+In an assumed linear market, sufficient capital and arbitrage move an initial 0.95 or 1.05 dollar price to the illustrative 0.995–1.005 dollar corridor. Buying 4,500 units costs approximately 4,477.50 dollars; initial inventory has its own acquisition cost. Eleven scenarios and 144 parameter combinations test inventory and cash constraints. These inputs are uncalibrated and omit endogenous vault issuance and liquidation.
+
+The spread makes unchanged-price exact round trips costly. Stale or compromised ZEC conversion can still transfer substantial value, fundamental token losses can drain the bid, and losing cycles can occupy scarce spending allowances. Review reproduced and corrected a working-capital drain caused by sweeping trade proceeds prematurely. Shutdown asset disposition remains unresolved. The [reserve report](https://github.com/iJaack/zsv/blob/main/docs/reserve-study.md) includes the integer model, adversarial tests and native integration requirements; the compiled Rust adapter still implements the earlier vault model only.
+
 # Privacy
 
 The executable model exposes ownership, collateral, principal, oracle prices and stable balances so its transitions can be inspected. Public liquidations can reveal financial distress and enable transaction-ordering strategies.

@@ -133,3 +133,5 @@ Before proposing production parameters, add independently reviewed market and or
 ## Proposed external incentive funding
 
 The [stabilization study](stabilization-math.md) tests a hypothetical ZEC reserve funded from part of proposed grant-funding reductions. It proves conditional controller bounds and demonstrates reserve exhaustion. Its adversarial examples show that mint/burn bounties can reward a retained-token cycle with no external trade; wallet caps and self-trade requirements do not establish independent market participation. The study adds no reward rules to the executable ledger.
+
+The subsequent [inventory reserve study](reserve-study.md) replaces rewards with atomic exchanges of existing assets. It tests physical spending bounds and demonstrates stale-price value transfers, fundamental-depeg losses and quota occupation. An initial sale-proceeds sweep could drain working cash through a losing cycle; the corrected funding target retains market proceeds and diverts excess new funding only. Native authentication, actual collateral backing and market calibration remain outside this Python experiment.

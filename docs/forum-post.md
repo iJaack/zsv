@@ -54,6 +54,8 @@ A separate mathematical study tests that possibility. Taking 10% of the taper di
 
 Funding alone does not establish a peg. The study finds that delay narrows the controller's stable range, finite budgets leave residual deviations, and a ZEC crash weakens both collateral and dollar incentive capacity. It also finds a direct attack on raw mint/burn bounties: mint, retain the tokens, then burn them in a later rewarded epoch and collect both payments without an external trade. The current prototype has no rewards. The [math and reproducible scenarios](https://github.com/iJaack/zsv/blob/main/docs/stabilization-math.md) explain what would need to change.
 
+The next [reserve experiment](https://github.com/iJaack/zsv/blob/main/docs/reserve-study.md) implements standing ZEC/zUSD bid/ask exchanges with existing inventory and gross spending limits. It needs only the ZEC/USD conversion oracle. In its assumed market, enough cash and inventory support a $0.995–$1.005 corridor; purchasing 4,500 tokens costs about $4,477.50. This is a Python research model, not native Zebra support. Wrong ZEC prices, fundamental depegs and paid occupation of trading quotas remain risks; terminal asset disposition is unresolved.
+
 ## Feedback I'd value
 
 1. Is a fixed stablecoin-only scope a useful alternative to general ZSAs, given its remaining financial and consensus complexity?

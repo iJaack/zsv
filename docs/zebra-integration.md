@@ -122,6 +122,23 @@ Use integer/rational arithmetic with specified rounding. Require fresh prices fo
 
 A ZEC-backed token targets a dollar value; it is not a claim on redeemable bank dollars. Collateral ratios, liquidation incentives, oracle delay, sudden ZEC price gaps, liquidity, redemption rules and bad-debt settlement determine peg resilience. Repayment alone does not guarantee a peg. Specify these economics before a production claim; the consensus engine must never invent collateral to conceal insolvency.
 
+## Proposed reserve integration
+
+The [inventory reserve](reserve-study.md) is a separate Python reference state machine. It adds no operations to the compiled Rust contextual seam above. A native experiment would need these additional consensus rules:
+
+1. Recognize exactly one reserve value path holding native ZEC and already-issued zUSD. Reserve swaps transfer both assets atomically. They cannot change issued supply, debt or bad debt, release vault collateral, or authorize arbitrary assets. No discretionary spending or issuer key overrides these rules.
+2. Fix bid/ask derivation, integer rounding, activation, expiry, inventory bounds and epoch/lifetime gross outflow limits through the network's canonical parameters. The host-selected Python policy is not a native authorization mechanism. All checked wide intermediates and stored-value bounds require specified rejection behavior.
+3. Resolve the accepted ZEC/USD observation from the exact parent branch and in-block ordering. Require freshness and canonical sequence/content. A user cannot select a convenient old price. Standing quotes require no stablecoin-market trigger feed; oracle truth remains external.
+4. Bind swap direction, quantity, actor authorization, both value flows, minimum output/maximum input, observation sequence, derived epoch and expiry to the native transaction digest and chain/branch domain. Require real asset inputs and spend proofs or signatures. Simulation account names and nonces do not establish that authorization.
+5. Carry reserve balances, derived epoch, per-epoch and lifetime gross counters, funding/NSM accounting and shutdown state in Zebra branch overlays, rollback data and finalized storage. Transactions in one block share cumulative limits. Replenishing assets never resets lifetime spending.
+6. Derive a separately approved funding allocation from the applicable coinbase subsidy schedule exactly once per block. Keep total coinbase/funding conservation intact. Retain credits only below the funding target and account for the remainder through the specified NSM rule. Market sale proceeds remain reserve working capital. The Python funding helper trusts its amount/cadence and implements none of this coinbase validation.
+7. Prepare swaps inside parent-specific contextual execution before native block commit. Roll back price references, balances and every counter together. Mempool allowance is provisional and cannot reserve a permanent quota. Revalidate on tip, oracle, epoch and activation changes.
+8. Specify the sunset funding route and residual ZEC/zUSD disposition before activation. Stopping fills alone is not settlement; burning inventory requires an explicit matched liability transition. The current experiment leaves that terminal policy unresolved.
+
+The relevant insertion points remain the dependency-level transaction/proof layer, common semantic verifier, validate_and_commit_non_finalized, commit_block, branch push/fork/pop_root, finalized atomic batches and mempool revalidation identified above. These are required changes, not implemented upstream APIs.
+
+Additional native evidence must cover same-block quota races, reorgs spanning epoch boundaries and funding credits, duplicate funding attempts, oracle update ordering, stale signed quotes, inventory conservation, fee accounting, terminal policy and restart equivalence. The accounting experiments do not establish native consensus or cryptographic safety.
+
 ## Acceptance evidence still needed
 
 A complete native implementation needs, at minimum:

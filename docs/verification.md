@@ -19,7 +19,7 @@ The first command runs locked Cargo tests, doc tests, formatting, strict Clippy,
 
 ## Observed final results
 
-After the funding study was added, the main agent ran the complete verification script. It exited with status zero.
+After the inventory reserve study was added, the main agent ran the complete verification script. It exited with status zero.
 
 | Check | Observed result |
 |---|---|
@@ -31,15 +31,15 @@ After the funding study was added, the main agent ran the complete verification 
 | Signed scenario vector replay | 1 passed |
 | Contextual adapter tests | 10 passed |
 | Total Rust integration tests | 71 passed; 0 failed; 0 ignored |
-| Python mathematical tests | 32 passed |
-| Numerical study reproduction | Exact JSON/CSV match; 10 scenarios and 240 parameter combinations |
+| Python mathematical tests | 71 passed: 32 previous, 26 reserve core, 5 independent reserve attacks, 8 reserve study |
+| Numerical study reproduction | Exact JSON/CSV match; funding 10 scenarios / 240 combinations; reserve 11 / 144 |
 | Unit / doc / example test targets | Successful; no additional tests defined |
 | Rust formatting | Passed |
 | Strict Clippy, all targets | Passed; warnings denied |
 | Scenario regeneration | Byte-for-byte match with checked-in signed vectors |
-| Package screening | 50 source/artifact files; relative links and bounded credential patterns passed |
+| Package screening | 61 source/artifact files; relative links and bounded credential patterns passed |
 | Git whitespace check | Passed |
-| Whitepaper | 11-page PDF generated; authorship and funding-study text checked |
+| Whitepaper | 11-page PDF generated; authorship and both study sections checked |
 
 The scenario contains a solvent liquidation with supply/bad debt both zero, and a crash case leaving 209,523,810 micro-zUSD as explicit bad debt. Its final model checkpoints are:
 
@@ -55,10 +55,13 @@ These hashes identify the current files after cleanup and the mathematical study
 - `src/lib.rs`: SHA-256 `d05503f59afe6324ee4a5119e41aba5bb845411a772f738f272db68edf6fdc07`.
 - `Cargo.lock`: SHA-256 `e44aec7ac75310c939371401fd77a3ecf3b2241fa81b50354ad359a5c1f39812`.
 - `tests/reviewer_attacks.rs`: SHA-256 `b4b68bfeb05d7c37112421a45cbbf48de00b6addb1e70728c91ab7a459612110`.
-- `docs/whitepaper.pdf`: SHA-256 `e6a003d70be6f9aa1c4112f832444b8c21fbf559583d393ffa6dab3c4042d9dc`.
+- `docs/whitepaper.pdf`: SHA-256 `47c7a5f6189b28520b8d711f43936938211640b2611919ecf1ffd2c24c41c75d`.
 - `analysis/stabilization.py`: SHA-256 `b7a1524f690901ab104305c7c95ac503034ae08e4fd2a99823ddabfaa92dfc75`.
 - `analysis/run_study.py`: SHA-256 `128a5567f539244ff079c4991daff98929223b8b3912a34f50ba24f197bf114e`.
 - `analysis/results.json`: SHA-256 `5f846c22ab50554d0b15d2ef68767b30702cabf4b775166afea7e0c0e853d845`.
+- `analysis/reserve.py`: SHA-256 `41ef7fd01d5d629a291d9ba34cbc05d2b57a30cf70a3b2d32eba788029bf9b51`.
+- `analysis/reserve_study.py`: SHA-256 `45c711987565e2aa6ccf22717e4d5a3a2845d111980edef28a1df2f4c50accb9`.
+- `analysis/reserve-results.json`: SHA-256 `f9c053e69227e524e7c33f1e70adf1829d7828f755ddcb0f3eaa516ee89b3777`.
 
 PDF generation timestamps may change on rebuilding; source behavior and the signed scenario vectors are deterministic.
 
@@ -111,3 +114,13 @@ The main agent verified 32 Python tests, 10 finite-budget scenarios, 240 paramet
 An independent mathematical reviewer checked the funding conversions, analytical stability bounds, reserve reconciliation and attack examples, then reran all 32 final Python tests and numeric reproduction successfully. Twelve additional unconstrained cases matched the analytical recurrences to less than 1e-14. A separate source reviewer independently recomputed the signed funding comparisons and checked the grant-expiry baseline. Review caught malformed math delimiters and funding-denomination ambiguities; these were corrected before publication.
 
 The grid's endpoint proximity statistic is not a convergence or success probability: some bounded runs stop at the target through exact reserve exhaustion despite an unstable ideal gain. No empirical calibration, production reward implementation, stablecoin price oracle, liquidation simulator or dollar-redemption facility was added. Rust source, dependencies and signed vectors retain their previous hashes. The rebuilt whitepaper continues to credit Giacomo Barbieri.
+
+## Inventory reserve implementation and review
+
+The [reserve report](reserve-study.md) covers a new exact-integer Python state machine and a separate assumed market. It conserves each asset across atomic bid/ask fills, holds purchased token inventory, preserves aggregate stablecoin liabilities and enforces physical gross limits. Funding amounts/cadence, canonical policy and observations, branch state and actor authorization are trusted host inputs. No native transaction or reserve operation was added to Rust or the compiled Zebra adapter.
+
+All 71 Python tests pass, including 39 new tests. Numeric reproduction matches 11 reserve scenarios and 144 parameter combinations exactly. Independent reviewers reran the suite and reproduction; one also checked 1,000 randomized fills against Fraction-derived rounding inequalities, balance deltas, nonces and conservation. The separate adversarial suite exercises 72 unchanged-oracle cycles and verifies hostile-price value transfers and quota occupation. These samples do not establish an adversarial equilibrium or calibrated price response.
+
+Review reproduced a working-capital drain when sale proceeds above a hard cash cap swept into the NSM bucket. The implementation agent observed the 101-ZEC regression expectation fail against that behavior, then fixed the policy to retain market proceeds. The new-funding target diverts excess subsidy credits only. Independent replay now finishes the 20-epoch path with 101 ZEC, original inventory and zero NSM transfer. Most lifetime purchase allowance is still occupied, which the report treats as a remaining availability weakness.
+
+The main agent reran full locked Rust tests, formatting, strict Clippy, exact signed vectors and package checks after adding the reserve study. The Rust suite remains at 71 passing integration tests. The new figure was generated with Matplotlib 3.10.8 and visually inspected; the PDF was rebuilt with Giacomo Barbieri's attribution and its reserve section checked. Oracle error, fundamental token losses, unmodeled backing and trader behavior, native authentication and shutdown disposition remain explicit limitations.
