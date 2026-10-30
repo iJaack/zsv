@@ -151,6 +151,14 @@ The 5% liquidation bonus is paid out of collateral. Full debt coverage requires 
 
 A production proposal needs credible demand, liquidation depth, stress-tested caps, peg incentives, recapitalization and emergency settlement. Those decisions must be tested against adversarial scenarios rather than inferred from high initial collateralization. The independent economic review supplies concrete counterexamples and additional acceptance scenarios.
 
+## Funding and stabilization study
+
+A separate mathematical study tests diverting a fraction of proposed ZCG funding reductions to a bounded ZEC incentive reserve. The forum proposal's rounded future-funding comparison implies about 62,000 ZEC less funding; a hypothetical 10% diversion would be about 6,200 ZEC over its horizon, excluding the separate treasury donation. This is an aggregate scenario, not an approved or upfront balance. Current grant streams expire around 2028, whereas the taper discussion extends reduced funding to 2032. An exact payable stream therefore needs an explicit reference and extension budget.
+
+The study proves conditional stability bounds for an assumed linear market response. With no delay, gain k must lie between zero and two; with one epoch of delay it must lie between zero and one. Finite reserves, limited collateral and borrowing freezes can prevent peg recovery even within those bounds. A reserve held in ZEC shares the collateral's drawdown risk.
+
+The adversarial test rejects raw mint/burn bounties: a borrower can mint during one rewarded epoch, retain the tokens and burn them during a later rewarded epoch, collecting both payments without an external trade. Age requirements and epoch netting do not prove market impact. The Python study includes 10 finite-budget scenarios and a 240-case parameter grid; inputs are uncalibrated. It changes no Rust monetary rules. Equations, sources, counterexamples and reproducible results are in the [mathematical report](https://github.com/iJaack/zsv/blob/main/docs/stabilization-math.md).
+
 # Privacy
 
 The executable model exposes ownership, collateral, principal, oracle prices and stable balances so its transitions can be inspected. Public liquidations can reveal financial distress and enable transaction-ordering strategies.

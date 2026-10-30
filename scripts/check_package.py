@@ -6,6 +6,7 @@ import sys
 root = Path(__file__).resolve().parents[1]
 files = [p for p in root.rglob('*')
          if '.git' not in p.relative_to(root).parts
+         and '__pycache__' not in p.relative_to(root).parts
          and 'target' not in p.relative_to(root).parts and p.is_file()]
 issues = []
 patterns = {

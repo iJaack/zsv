@@ -15,28 +15,31 @@ bash scripts/verify.sh
 bash scripts/build-whitepaper.sh
 ```
 
-The first command runs locked Cargo tests, doc tests, formatting, strict Clippy, scenario regeneration comparison, relative-link/credential-pattern checks and a whitespace check. The second uses Graphviz, Pandoc and pdfLaTeX to regenerate the diagram and paper. Rust 1.90 is selected by `rust-toolchain.toml`; Cargo may need a network connection for its initial dependency download.
+The first command runs locked Cargo tests, doc tests, formatting, strict Clippy, signed scenario comparison, Python mathematical tests, numeric study reproduction, relative-link/credential-pattern checks and a whitespace check. The second uses Graphviz, Pandoc and pdfLaTeX to regenerate the diagram and paper. Rust 1.90 is selected by `rust-toolchain.toml`; Cargo may need a network connection for its initial dependency download. The mathematical study needs Python 3.10 or later; Matplotlib is optional for figure regeneration.
 
 ## Observed final results
 
-After the namespace and signature-domain fixes, the main agent ran the complete verification script. It exited with status zero.
+After the funding study was added, the main agent ran the complete verification script. It exited with status zero.
 
 | Check | Observed result |
 |---|---|
 | Adversarial integration tests | 22 passed |
 | Boundary integration tests | 6 passed |
+| Signing cleanup integration tests | 2 passed |
 | Economics integration tests | 9 passed |
 | Independent reviewer attack tests | 21 passed |
 | Signed scenario vector replay | 1 passed |
 | Contextual adapter tests | 10 passed |
-| Total integration tests | 69 passed; 0 failed; 0 ignored |
+| Total Rust integration tests | 71 passed; 0 failed; 0 ignored |
+| Python mathematical tests | 32 passed |
+| Numerical study reproduction | Exact JSON/CSV match; 10 scenarios and 240 parameter combinations |
 | Unit / doc / example test targets | Successful; no additional tests defined |
 | Rust formatting | Passed |
 | Strict Clippy, all targets | Passed; warnings denied |
 | Scenario regeneration | Byte-for-byte match with checked-in signed vectors |
-| Package screening | 36 source/artifact files; relative links and bounded credential patterns passed |
+| Package screening | 50 source/artifact files; relative links and bounded credential patterns passed |
 | Git whitespace check | Passed |
-| Whitepaper | 10-page PDF generated; cover and interior rendering inspected |
+| Whitepaper | 11-page PDF generated; authorship and funding-study text checked |
 
 The scenario contains a solvent liquidation with supply/bad debt both zero, and a crash case leaving 209,523,810 micro-zUSD as explicit bad debt. Its final model checkpoints are:
 
@@ -47,12 +50,15 @@ The model uses these fingerprints to check repeatable state transitions. A nativ
 
 ## Source fingerprints
 
-These hashes identify the current files after prose and code cleanup. The adversarial review records the earlier source versions it examined.
+These hashes identify the current files after cleanup and the mathematical study. The adversarial review records the earlier source versions it examined.
 
 - `src/lib.rs`: SHA-256 `d05503f59afe6324ee4a5119e41aba5bb845411a772f738f272db68edf6fdc07`.
 - `Cargo.lock`: SHA-256 `e44aec7ac75310c939371401fd77a3ecf3b2241fa81b50354ad359a5c1f39812`.
 - `tests/reviewer_attacks.rs`: SHA-256 `b4b68bfeb05d7c37112421a45cbbf48de00b6addb1e70728c91ab7a459612110`.
-- `docs/whitepaper.pdf`: SHA-256 `f694eea785580dc3bb2134b8921befc917524231b0d23bd91564c5cfc2384a62`.
+- `docs/whitepaper.pdf`: SHA-256 `e6a003d70be6f9aa1c4112f832444b8c21fbf559583d393ffa6dab3c4042d9dc`.
+- `analysis/stabilization.py`: SHA-256 `b7a1524f690901ab104305c7c95ac503034ae08e4fd2a99823ddabfaa92dfc75`.
+- `analysis/run_study.py`: SHA-256 `128a5567f539244ff079c4991daff98929223b8b3912a34f50ba24f197bf114e`.
+- `analysis/results.json`: SHA-256 `5f846c22ab50554d0b15d2ef68767b30702cabf4b775166afea7e0c0e853d845`.
 
 PDF generation timestamps may change on rebuilding; source behavior and the signed scenario vectors are deterministic.
 
@@ -95,3 +101,13 @@ The code pass followed [AI Slop Cleaner](https://buildwithclaude.com/skill/ai-sl
 The writer, a separate reviewer and the main agent each ran `scripts/verify.sh` successfully after the code edit: 71 integration tests passed, including the original 69; doc tests, formatting, strict Clippy, exact scenario comparison, package checks and whitespace checks passed. The reviewer found no required follow-ups. The package checker now covers 38 files.
 
 Cargo manifests, dependencies, public APIs, signature bytes, checkpoints, errors and monetary rules are unchanged. The [cleanup plan and evidence](code-cleanup.md) record the diff and remaining risks. The Dev Fund incentive discussion remains a funding proposal; this cleanup adds no rewards or monetary mechanism.
+
+## Mathematical stabilization study
+
+The [report](stabilization-math.md) and [executable study](../analysis/README.md) test a hypothetical diversion of future grant-funding reductions. Funding splits use `Fraction` and integer zatoshi. Market trajectories use floating-point equations with explicit, uncalibrated response assumptions. They are separate from consensus monetary arithmetic.
+
+The main agent verified 32 Python tests, 10 finite-budget scenarios, 240 parameter combinations, and byte-for-byte reproduction of JSON/CSV results. Both figures were regenerated with Matplotlib 3.10.8 and visually inspected. Numeric checks use only Python's standard library. The package checker excludes ignored Python bytecode caches.
+
+An independent mathematical reviewer checked the funding conversions, analytical stability bounds, reserve reconciliation and attack examples, then reran all 32 final Python tests and numeric reproduction successfully. Twelve additional unconstrained cases matched the analytical recurrences to less than 1e-14. A separate source reviewer independently recomputed the signed funding comparisons and checked the grant-expiry baseline. Review caught malformed math delimiters and funding-denomination ambiguities; these were corrected before publication.
+
+The grid's endpoint proximity statistic is not a convergence or success probability: some bounded runs stop at the target through exact reserve exhaustion despite an unstable ideal gain. No empirical calibration, production reward implementation, stablecoin price oracle, liquidation simulator or dollar-redemption facility was added. Rust source, dependencies and signed vectors retain their previous hashes. The rebuilt whitepaper continues to credit Giacomo Barbieri.

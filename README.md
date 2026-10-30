@@ -8,6 +8,7 @@ The executable is a signed account-ledger model with simulated funds. The native
 
 - [Whitepaper](docs/whitepaper.md) · [PDF](docs/whitepaper.pdf)
 - [Threat model](docs/threatmodel.md) · [Economic adversarial review](docs/economic-review.md) · [Independent code review](docs/adversarial-review.md)
+- [Stabilization funding: mathematical tests](docs/stabilization-math.md) · [Reproducible study](analysis/README.md)
 - [Native Zebra implementation proposal](docs/zebra-integration.md) · [Draft ZIP](docs/draft-zip.md) · [Pinned sources](docs/sources.md)
 - [Forum post draft](docs/forum-post.md) (not published)
 - [Verification receipt](docs/verification.md)
@@ -36,6 +37,8 @@ cargo clippy --locked --all-targets -- -D warnings
 ```
 
 The scenario uses public fixture keys and simulated ZEC. It demonstrates issuance, repayment and a price crash that creates bad debt. The verification receipt records the commands, results and model limits.
+
+The separate funding study needs Python 3.10 or later. Run `python3 -m unittest discover -s analysis -p 'test_*.py'` and `python3 analysis/run_study.py --check` to verify its arithmetic and checked-in results. Figures additionally require Matplotlib. The study finds that simple mint/burn bounties can be farmed without external trading; it adds no incentive rules to the Rust model.
 
 The library accepts a `Block` through `State::validate_block` / `State::apply_block`. `Snapshot`s expose copies of balances and vault state for inspection. `from_regtest_fixture` constructs the state and rejects Mainnet/Testnet. Callers cannot deserialize mutable ledger state or invoke a general mint API.
 

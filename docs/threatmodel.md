@@ -153,6 +153,14 @@ A concrete resource path uses one zatoshi repeatedly: open a debt-free vault at 
 
 Before exposing a decoder to peers, bound bytes and collection lengths before allocation, enforce aggregate block cost and persistent-state limits, and price validation/storage resources. Model-level transaction/action counts do not substitute for these checks. No-fee experiments cannot establish that production blockspace or long-term state remains available under Sybil load. Valid borrowers can still occupy scarce debt capacity under any finite global cap; a cap is not an admission-fairness mechanism. The tiny-bad-debt freeze requires an explicit loss/reserve/coverage policy, not silent rounding away of liabilities.
 
+### Proposed stabilization reserve
+
+The separate [funding study](stabilization-math.md) evaluates a hypothetical allocation from reduced future ZCG funding. Such a reserve adds spendable assets, payout rules and a stablecoin-market price input. The current Rust oracle reports ZEC/USD only; it does not supply that additional input or implement incentives.
+
+An adversary can mint in one rewarded epoch, retain the tokens and burn them in a later rewarded epoch. Accounting and debt age can be valid while no independent market trade occurs. Wallet caps are Sybilable; matched trades can manufacture volume. Thin-market price manipulation can also trigger rewards. A global budget bounds the reserve loss but does not prevent capture.
+
+Before adding a native mechanism, define its price sources and compromise response, inventory and liability accounting, spending limits and shutdown behavior. Delay and reserve depletion can destabilize an otherwise valid feedback rule. Holding both collateral and incentives in ZEC exposes them to the same drawdown. The current research model gives no evidence of a secure production reward mechanism.
+
 ### Governance and scope of the native restriction
 
 Omitting a generic issuer/admin key removes one route to unilateral minting. Oracle keys still carry economically powerful authority. Risk parameters, key-set replacement, emergency behavior, activation and insolvency policy remain governance decisions even if implemented only through a consensus upgrade. Define those rules and their delay/failure behavior before deployment; do not quietly add an operator escape hatch.

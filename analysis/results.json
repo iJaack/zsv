@@ -1,0 +1,369 @@
+{
+  "adversarial_examples": {
+    "bounty_capacity_at_10_usd_zec": 500000.0,
+    "bounty_capacity_at_20_usd_zec": 1000000.0,
+    "break_even_holding_days_without_fixed_cost": 29.2,
+    "purchase_capacity_at_20_usd_zec_one_dollar_token": 20000.0,
+    "retained_mint_burn_one_day_profit_usd": 192.15068493150685,
+    "retained_mint_burn_thirty_day_profit_usd": -6.479452054794507,
+    "thin_pool_two_percent_upward_price_move": {
+      "marked_loss": 0.09803681288211763,
+      "quote_capital": 9.95049383620783,
+      "stable_received": 9.852457023325712
+    },
+    "wallet_cap_one_wallet_payout_usd": 9.090909090909092,
+    "wallet_cap_ten_wallets_payout_usd": 50.0
+  },
+  "funding": {
+    "forum_rounded_future_cut_zec": 62000,
+    "hypothetical_renewed_eight_percent_reference": [
+      {
+        "grants_pct_subsidy": 8.0,
+        "incentives_pct_subsidy": 0.0,
+        "month": 0,
+        "per_million_subsidy_zec": {
+          "grants": 80000.0,
+          "incentives": 0.0,
+          "nsm": 0.0,
+          "reference": 80000.0
+        }
+      },
+      {
+        "grants_pct_subsidy": 7.76,
+        "incentives_pct_subsidy": 0.024,
+        "month": 1,
+        "per_million_subsidy_zec": {
+          "grants": 77600.0,
+          "incentives": 240.0,
+          "nsm": 2160.0,
+          "reference": 80000.0
+        }
+      },
+      {
+        "grants_pct_subsidy": 5.550738887963504,
+        "incentives_pct_subsidy": 0.244926111203,
+        "month": 12,
+        "per_million_subsidy_zec": {
+          "grants": 55507.38887963,
+          "incentives": 2449.26111203,
+          "nsm": 22043.35000834,
+          "reference": 80000.0
+        }
+      },
+      {
+        "grants_pct_subsidy": 3.8513377752937896,
+        "incentives_pct_subsidy": 0.41486622247,
+        "month": 24,
+        "per_million_subsidy_zec": {
+          "grants": 38513.37775293,
+          "incentives": 4148.6622247,
+          "nsm": 37337.96002237,
+          "reference": 80000.0
+        }
+      },
+      {
+        "grants_pct_subsidy": 1.8541003324256147,
+        "incentives_pct_subsidy": 0.614589966757,
+        "month": 48,
+        "per_million_subsidy_zec": {
+          "grants": 18541.00332425,
+          "incentives": 6145.89966757,
+          "nsm": 55313.09700818,
+          "reference": 80000.0
+        }
+      },
+      {
+        "grants_pct_subsidy": 0.8925958311819427,
+        "incentives_pct_subsidy": 0.710740416881,
+        "month": 72,
+        "per_million_subsidy_zec": {
+          "grants": 8925.95831181,
+          "incentives": 7107.40416881,
+          "nsm": 63966.63751938,
+          "reference": 80000.0
+        }
+      }
+    ],
+    "normalization_example_net_cut_zec": {
+      "current_law": 2375.40245859,
+      "renewed_eight_percent": 106055.40245859
+    },
+    "ten_percent_of_forum_future_cut_zec": 6200.0,
+    "treasury_donation_included": false
+  },
+  "scenarios": {
+    "bad_debt_freeze": {
+      "assumptions": {
+        "bad_debt": true,
+        "collateral_zec": 2500,
+        "debt_ceiling": 100000,
+        "delay": 0,
+        "demand_step_per_epoch": 0,
+        "depth": 100000,
+        "epochs": 40,
+        "funding_zec": 0,
+        "gain": 0.5,
+        "initial_supply": 80000,
+        "name": "bad_debt_freeze",
+        "reserve_zec": 1,
+        "response": 1,
+        "reward_usd": 0.01,
+        "target_demand": 85000,
+        "zec_usd": 100
+      },
+      "result": {
+        "absolute_action_tokens": 0,
+        "final_price_usd": 1.05,
+        "final_reserve_zec": 1.0,
+        "final_supply": 80000,
+        "payout_usd": 0.0
+      }
+    },
+    "delayed_overshoot": {
+      "assumptions": {
+        "bad_debt": false,
+        "collateral_zec": 2500,
+        "debt_ceiling": 100000,
+        "delay": 1,
+        "demand_step_per_epoch": 0,
+        "depth": 100000,
+        "epochs": 40,
+        "funding_zec": 0,
+        "gain": 1.1,
+        "initial_supply": 80000,
+        "name": "delayed_overshoot",
+        "reserve_zec": 1,
+        "response": 1,
+        "reward_usd": 0.01,
+        "target_demand": 85000,
+        "zec_usd": 100
+      },
+      "result": {
+        "absolute_action_tokens": 10000.0,
+        "final_price_usd": 0.95,
+        "final_reserve_zec": 0,
+        "final_supply": 90000.0,
+        "payout_usd": 100.0
+      }
+    },
+    "funded_contraction": {
+      "assumptions": {
+        "bad_debt": false,
+        "collateral_zec": 2500,
+        "debt_ceiling": 100000,
+        "delay": 0,
+        "demand_step_per_epoch": 0,
+        "depth": 100000,
+        "epochs": 40,
+        "funding_zec": 0,
+        "gain": 0.5,
+        "initial_supply": 80000,
+        "name": "funded_contraction",
+        "reserve_zec": 1,
+        "response": 1,
+        "reward_usd": 0.01,
+        "target_demand": 75000,
+        "zec_usd": 100
+      },
+      "result": {
+        "absolute_action_tokens": 4999.9999999954525,
+        "final_price_usd": 0.9999999999999546,
+        "final_reserve_zec": 0.5000000000004547,
+        "final_supply": 75000.00000000454,
+        "payout_usd": 49.999999999954525
+      }
+    },
+    "funded_expansion": {
+      "assumptions": {
+        "bad_debt": false,
+        "collateral_zec": 2500,
+        "debt_ceiling": 100000,
+        "delay": 0,
+        "demand_step_per_epoch": 0,
+        "depth": 100000,
+        "epochs": 40,
+        "funding_zec": 0,
+        "gain": 0.5,
+        "initial_supply": 80000,
+        "name": "funded_expansion",
+        "reserve_zec": 1,
+        "response": 1,
+        "reward_usd": 0.01,
+        "target_demand": 85000,
+        "zec_usd": 100
+      },
+      "result": {
+        "absolute_action_tokens": 4999.9999999954525,
+        "final_price_usd": 1.0000000000000453,
+        "final_reserve_zec": 0.5000000000004547,
+        "final_supply": 84999.99999999546,
+        "payout_usd": 49.999999999954525
+      }
+    },
+    "no_collateral_headroom": {
+      "assumptions": {
+        "bad_debt": false,
+        "collateral_zec": 2000,
+        "debt_ceiling": 100000,
+        "delay": 0,
+        "demand_step_per_epoch": 0,
+        "depth": 100000,
+        "epochs": 40,
+        "funding_zec": 0,
+        "gain": 0.5,
+        "initial_supply": 80000,
+        "name": "no_collateral_headroom",
+        "reserve_zec": 1,
+        "response": 1,
+        "reward_usd": 0.01,
+        "target_demand": 85000,
+        "zec_usd": 100
+      },
+      "result": {
+        "absolute_action_tokens": 0,
+        "final_price_usd": 1.05,
+        "final_reserve_zec": 1.0,
+        "final_supply": 80000,
+        "payout_usd": 0.0
+      }
+    },
+    "no_response": {
+      "assumptions": {
+        "bad_debt": false,
+        "collateral_zec": 2500,
+        "debt_ceiling": 100000,
+        "delay": 0,
+        "demand_step_per_epoch": 0,
+        "depth": 100000,
+        "epochs": 40,
+        "funding_zec": 0,
+        "gain": 0.5,
+        "initial_supply": 80000,
+        "name": "no_response",
+        "reserve_zec": 1,
+        "response": 0,
+        "reward_usd": 0.01,
+        "target_demand": 85000,
+        "zec_usd": 100
+      },
+      "result": {
+        "absolute_action_tokens": 0.0,
+        "final_price_usd": 1.05,
+        "final_reserve_zec": 1.0,
+        "final_supply": 80000.0,
+        "payout_usd": 0.0
+      }
+    },
+    "persistent_demand": {
+      "assumptions": {
+        "bad_debt": false,
+        "collateral_zec": 2500,
+        "debt_ceiling": 100000,
+        "delay": 0,
+        "demand_step_per_epoch": 500,
+        "depth": 100000,
+        "epochs": 40,
+        "funding_zec": 0.02,
+        "gain": 0.5,
+        "initial_supply": 80000,
+        "name": "persistent_demand",
+        "reserve_zec": 0.1,
+        "response": 1,
+        "reward_usd": 0.01,
+        "target_demand": 85000,
+        "zec_usd": 100
+      },
+      "result": {
+        "absolute_action_tokens": 9000.0,
+        "final_price_usd": 1.16,
+        "final_reserve_zec": 0,
+        "final_supply": 89000.0,
+        "payout_usd": 90.0
+      }
+    },
+    "underfunded_contraction": {
+      "assumptions": {
+        "bad_debt": false,
+        "collateral_zec": 2500,
+        "debt_ceiling": 100000,
+        "delay": 0,
+        "demand_step_per_epoch": 0,
+        "depth": 100000,
+        "epochs": 40,
+        "funding_zec": 0,
+        "gain": 0.5,
+        "initial_supply": 80000,
+        "name": "underfunded_contraction",
+        "reserve_zec": 0.1,
+        "response": 1,
+        "reward_usd": 0.01,
+        "target_demand": 75000,
+        "zec_usd": 100
+      },
+      "result": {
+        "absolute_action_tokens": 1000.0,
+        "final_price_usd": 0.96,
+        "final_reserve_zec": 0,
+        "final_supply": 79000.0,
+        "payout_usd": 10.0
+      }
+    },
+    "underfunded_expansion": {
+      "assumptions": {
+        "bad_debt": false,
+        "collateral_zec": 2500,
+        "debt_ceiling": 100000,
+        "delay": 0,
+        "demand_step_per_epoch": 0,
+        "depth": 100000,
+        "epochs": 40,
+        "funding_zec": 0,
+        "gain": 0.5,
+        "initial_supply": 80000,
+        "name": "underfunded_expansion",
+        "reserve_zec": 0.1,
+        "response": 1,
+        "reward_usd": 0.01,
+        "target_demand": 85000,
+        "zec_usd": 100
+      },
+      "result": {
+        "absolute_action_tokens": 1000.0,
+        "final_price_usd": 1.04,
+        "final_reserve_zec": 0,
+        "final_supply": 81000.0,
+        "payout_usd": 10.0
+      }
+    },
+    "zec_crash_contraction": {
+      "assumptions": {
+        "bad_debt": false,
+        "collateral_zec": 2500,
+        "debt_ceiling": 100000,
+        "delay": 0,
+        "demand_step_per_epoch": 0,
+        "depth": 100000,
+        "epochs": 40,
+        "funding_zec": 0,
+        "gain": 0.5,
+        "initial_supply": 80000,
+        "name": "zec_crash_contraction",
+        "reserve_zec": 1,
+        "response": 1,
+        "reward_usd": 0.01,
+        "target_demand": 75000,
+        "zec_usd": 20
+      },
+      "result": {
+        "absolute_action_tokens": 2000.0,
+        "final_price_usd": 0.97,
+        "final_reserve_zec": 0,
+        "final_supply": 78000.0,
+        "payout_usd": 20.0
+      }
+    }
+  },
+  "scope": "Uncalibrated deterministic scenarios. No rewards implemented in Rust. No forecasts.",
+  "sensitivity_runs": 240,
+  "sensitivity_within_one_cent_after_40_epochs": 55
+}

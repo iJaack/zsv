@@ -129,3 +129,7 @@ The table covers prototype correctness and economic assumptions. Passing account
 | Simultaneous vault liquidation into shallow ZEC markets | Apply sale slippage and feedback into subsequent collateral prices, rather than valuing every seizure at one unchanged price. |
 
 Before proposing production parameters, add independently reviewed market and oracle data, explicit acceptable-loss targets, a defined loss-allocation mechanism, liquidity stress results, consensus and cryptographic review, and an operational failure plan.
+
+## Proposed external incentive funding
+
+The [stabilization study](stabilization-math.md) tests a hypothetical ZEC reserve funded from part of proposed grant-funding reductions. It proves conditional controller bounds and demonstrates reserve exhaustion. Its adversarial examples show that mint/burn bounties can reward a retained-token cycle with no external trade; wallet caps and self-trade requirements do not establish independent market participation. The study adds no reward rules to the executable ledger.

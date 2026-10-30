@@ -48,6 +48,12 @@ Several economic and technical problems remain unresolved:
 - Freezing new borrowing after any bad debt contains issuance but can also create a system-wide griefing target.
 - Putting this into consensus adds risk and resource costs for ZEC users who never borrow.
 
+## Could reduced grant funding support stabilization?
+
+A separate mathematical study tests that possibility. Taking 10% of the taper discussion's rounded net reduction in future ZCG funding would imply about 6,200 ZEC over its horizon, excluding the separate treasury contribution. That allocation would reduce what otherwise goes to the NSM and needs a specified schedule and network upgrade.
+
+Funding alone does not establish a peg. The study finds that delay narrows the controller's stable range, finite budgets leave residual deviations, and a ZEC crash weakens both collateral and dollar incentive capacity. It also finds a direct attack on raw mint/burn bounties: mint, retain the tokens, then burn them in a later rewarded epoch and collect both payments without an external trade. The current prototype has no rewards. The [math and reproducible scenarios](https://github.com/iJaack/zsv/blob/main/docs/stabilization-math.md) explain what would need to change.
+
 ## Feedback I'd value
 
 1. Is a fixed stablecoin-only scope a useful alternative to general ZSAs, given its remaining financial and consensus complexity?

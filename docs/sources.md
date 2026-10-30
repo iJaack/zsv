@@ -53,3 +53,13 @@ ZIP 226/227 still contain historical references to a ZSA “v6” and ZIP 230. T
 No upstream checkout was built and no Zcash chain was synchronized in this research. Source reads verify the names and definitions above; they do not establish accepted network deployment, audited safety, or economic peg behavior. No claim is made that ZIPs 222, 226 or 227 are active on Mainnet.
 
 The upstream [Zebra contribution policy](https://github.com/ZcashFoundation/zebra/blob/5faf8a413f0d30a6e93115f3d16af1e229fd7858/AGENTS.md#L5-L35) requires a team-acknowledged issue before an upstream PR. This independent ZSV design repository is not an upstream PR, endorsement, or reserved protocol allocation.
+
+## Stabilization funding study
+
+The later [mathematical study](stabilization-math.md) checked these additional primary sources. It treats the forum figures as rounded author estimates; no underlying spreadsheet or finalized taper schedule was available.
+
+- [ZCG taper discussion, 29 October 2026](https://forum.zcashcommunity.com/t/zcg-gets-too-much-zec-heres-our-plan-to-fix-that/58566): approximately 109,000 ZEC of future funding through the current 2028 expiry, approximately 47,000 through 2032 under the proposal, and a separate conditional 36,200 ZEC treasury contribution. The proposed monthly taper and reference schedule are not fully specified.
+- [ZIP 214](https://zips.z.cash/zip-0214): 8% ZCG and 12% CCF-labelled `DEFERRED_POOL` allocation; expiry at the third halving. Its revision status header and abstract differ on the enacted NU6.1 revision; [Final ZIP 255](https://zips.z.cash/zip-0255) anchors NU6.1 activation.
+- [ZIP 271](https://zips.z.cash/zip-0271): one-time 78,750 ZEC deferred-pool disbursement, distinct from ongoing deferred accrual. Neither is counted as ZSV funding.
+- [ZIP 218](https://zips.z.cash/zip-0218): proposed shorter block interval with proportionally adjusted scheduled subsidy. The study's 1,800/900 ZEC daily rates are idealized target-spacing inputs.
+- [ZIP 237](https://zips.z.cash/zip-0237) and [ZIP 259](https://zips.z.cash/zip-0259): NSM accounting and proposed reissuance parameters. The simplified study excludes reserve-dependent reissuance and uses scheduled subsidy explicitly.
