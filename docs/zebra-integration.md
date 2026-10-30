@@ -1,6 +1,6 @@
 # Native ZSV integration with Zebra
 
-Status: proposal, not deployed consensus. ZSV (Zcash Stablecoin Vault) would lock ZEC in protocol-controlled vaults and mint one protocol-defined stablecoin against that collateral. Zcash nodes must validate all ownership, mint, burn, withdrawal, liquidation and state-transition rules. General asset creation, issuer keys, arbitrary metadata, user-selected tickers, arbitrary base points and external settlement chains are excluded.
+Status: native enforcement proposal with an offline development runner linked to Zebra; no deployed consensus change. ZSV (Zcash Stablecoin Vault) would lock ZEC in protocol-controlled vaults and mint one protocol-defined stablecoin against that collateral. Zcash nodes must validate all ownership, mint, burn, withdrawal, liquidation and state-transition rules. General asset creation, issuer keys, arbitrary metadata, user-selected tickers, arbitrary base points and external settlement chains are excluded.
 
 The immutable source baseline is Zebra `5faf8a413f0d30a6e93115f3d16af1e229fd7858` (2026-10-28) and ZIPs `2bdf39494320e5e04057ac93b1794031ebfb00b5` (2026-10-21), researched 2026-10-29. See [sources.md](sources.md) for verified links, dates, status and evidence limits.
 
@@ -98,6 +98,18 @@ In the pinned source, that future call belongs in the parent-specific contextual
 
 [`tests/zebra_adapter.rs`](../tests/zebra_adapter.rs) covers preparation/commit, parent and network mismatch, nonconsecutive or inconsistent heights, stale siblings and replay, commit onto another state at the same height, late transaction failure, detached inspection and signature tampering. These tests compile the seam against the local crate; they are not patched-Zebra node tests. A native serialized bundle, branch/version-aware signing, ZEC outpoint locking, stablecoin transfer encoding, durable state and full-node activation remain required.
 
+## Zebra-linked block development
+
+The separate [development runner](../zebra/dev-harness) imports `zebra-chain` from the exact pin above. It uses Zebra's native block/transaction decoder, block hash, transaction Merkle root, coinbase-height extraction and regtest parameters. It does not patch a node service or enable a new transaction format. [zebra-development.md](zebra-development.md) describes the experiment and its trust boundary.
+
+Each fixture contains one V1 coinbase transaction with one zero-valued output. Its exact `OP_RETURN` script commits a version tag and SHA-256 digest of the model chain domain, parent model checkpoint and canonical signed payload. The runner checks the output and native Merkle root, so the native header hash binds that payload. Restricting the carrier to one V1 transaction avoids treating V5's non-authorizing txid as a commitment to all transaction bytes. A data commitment does not lock collateral or create native zUSD.
+
+Only the default Zebra regtest parameters are accepted, with the native root fixed to regtest genesis and the model root supplied as trusted configuration. Native block bytes contain no network tag. Accepted children resolve their exact parent by native block hash and re-execute the signed ledger before entering an in-memory branch archive. Selected-tip changes are explicit experiments without a proof-of-work fork-choice rule.
+
+The envelope caps native bytes at 2,000,000 and canonical model payloads at 1 MiB before parsing. The archive permits at most 256 non-genesis blocks; journals are capped at 16 MiB. Journal replay requires trusted genesis and an external receipt containing the selected tip and complete journal digest, then repeats validation rather than importing post-state. These bounds limit the offline experiment; they do not establish production peer resource costs or crash-safe persistence.
+
+The fixtures are not mined or fully consensus-verified. Equihash, difficulty, ordinary input/script validation, subsidies and shielded proofs remain outside the runner. Native ZEC funds and the model's synthetic funding are separate. The [development review](development-review.md) and [verification receipt](verification.md) record the observed test scope.
+
 ## Validation contract for a real adapter
 
 The following is a proposed contract, not an existing upstream API:
@@ -143,7 +155,7 @@ Additional native evidence must cover same-block quota races, reorgs spanning ep
 
 ## Acceptance evidence still needed
 
-The signed ledger closes the Python experiments' caller-authorization and funding-cadence gaps using actual model signatures, an immutable schedule and combined conservation. It remains an in-memory reference implementation. Returning cash to NSM even when inventory cannot cover all bad debt is an explicit economic policy, not a consequence required by accounting. The next stage needs combined vault/reserve stress results and native integration evidence.
+The signed ledger closes the Python experiments' caller-authorization and funding-cadence gaps using actual model signatures, an immutable schedule and combined conservation. It remains an in-memory reference implementation. Returning cash to NSM even when inventory cannot cover all bad debt is an explicit economic policy, not a consequence required by accounting. The [combined stress study](combined-stress.md) now exercises the signed ledger, and the Zebra-linked runner supplies block-binding and replay evidence. Native value-pool enforcement, full node validation and durable branch-state evidence remain outstanding.
 
 A complete native implementation needs, at minimum:
 

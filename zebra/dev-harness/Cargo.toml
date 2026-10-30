@@ -1,0 +1,20 @@
+[package]
+name = "zsv-zebra-dev"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.90"
+publish = false
+
+[workspace]
+
+[dependencies]
+zsv = { path = "../.." }
+zebra-chain = { git = "https://github.com/ZcashFoundation/zebra.git", rev = "5faf8a413f0d30a6e93115f3d16af1e229fd7858", default-features = false }
+serde_json = "1"
+sha2 = "0.10"
+
+[profile.dev]
+debug = 0
+
+[profile.release]
+overflow-checks = true

@@ -4,22 +4,23 @@ Status: local implementation and checks complete; published to the public iJaack
 
 ## Scope
 
-The checks cover an account-ledger model and a contextual preparation/commit adapter compiled as integration-test code. Native Zcash transactions, a full Zebra node, consensus activation and real funds remain outside that scope. The forum post and upstream proposal are drafts.
+The checks cover the signed account ledger, its contextual adapter, the combined economic study and a separate offline crate linked to the actual pinned Zebra library. The new crate parses native fixture blocks and binds model payloads to their headers. It does not implement native vault collateral, a native stablecoin value pool, full node consensus or real funds. The forum post and upstream proposal remain drafts.
 
-The native integration proposal uses Zebra `5faf8a413f0d30a6e93115f3d16af1e229fd7858` and the ZIP pin recorded in `sources.md`. The researchers inspected those sources; they did not build a patched node.
+The native integration proposal uses Zebra `5faf8a413f0d30a6e93115f3d16af1e229fd7858` and the ZIP pin recorded in `sources.md`. The initial research inspected those sources. The development crate now compiles zebra-chain from that pin; no patched zebrad node was built.
 
 ## Reproduction
 
 ```sh
 bash scripts/verify.sh
+bash zebra/verify-dev.sh
 bash scripts/build-whitepaper.sh
 ```
 
-The first command runs locked Cargo tests, doc tests, formatting, strict Clippy, signed scenario comparison, Python mathematical tests, numeric study reproduction, relative-link/credential-pattern checks and a whitespace check. The second uses Graphviz, Pandoc and pdfLaTeX to regenerate the diagram and paper. Rust 1.90 is selected by `rust-toolchain.toml`; Cargo may need a network connection for its initial dependency download. The mathematical study needs Python 3.10 or later; Matplotlib is optional for figure regeneration.
+The model script runs locked Cargo tests, doc tests, formatting, strict Clippy, signed vectors, combined stress reproduction, independent Fraction checks, Python mathematical tests, earlier numeric studies and package checks. The Zebra script uses Cargo nextest for its separate crate, then formatting, strict Clippy and exact scenario comparison. The paper script uses Graphviz, Pandoc and pdfLaTeX. Rust 1.90 is selected by `rust-toolchain.toml`; Cargo may need a network connection for its initial dependency download. The mathematical study needs Python 3.10 or later; Matplotlib is optional for figure regeneration.
 
 ## Observed final results
 
-After integrating the reserve into the signed Rust ledger and applying the independent review fix, the main agent ran the complete verification script. It exited with status zero. The final documentation/package check also passed after the review receipt was added.
+The model and Zebra development verification scripts passed after the combined study and journal-anchor fix. The table separates the reference model from the Zebra-linked test suite; neither is a full node test.
 
 | Check | Observed result |
 |---|---|
@@ -34,16 +35,20 @@ After integrating the reserve into the signed Rust ledger and applying the indep
 | Independent reserve attacks | 19 passed |
 | Combined reserve adapter tests | 3 passed |
 | Signed reserve vector replay | 1 passed, covering three scenarios |
-| Total Rust integration tests | 102 passed; 0 failed; 0 ignored |
+| Reference Rust integration tests | 102 passed; 0 failed; 0 ignored |
+| Combined stress example tests | 6 passed |
+| Total reference-model Rust tests | 108 passed |
+| Zebra-linked nextest suite | 15 passed: 5 implementation and 10 independent review |
+| Combined economic study | 351 exact signed-ledger cases; independent integer/Fraction recomputation passed |
 | Python mathematical tests | 96 passed: 71 previous, 22 lifecycle, 3 independent lifecycle review tests |
 | Numerical study reproduction | Exact JSON/CSV match; funding 10 scenarios / 240 combinations; reserve 11 / 144; lifecycle accounting cases |
-| Unit / doc / example test targets | Successful; no additional tests defined |
+| Unit / doc / other example targets | Successful; no additional tests defined |
 | Rust formatting | Passed |
 | Strict Clippy, all targets | Passed; warnings denied |
-| Scenario regeneration | Both examples match checked-in JSON exactly; legacy vectors unchanged |
-| Package screening | 76 source/artifact files; relative links and bounded credential patterns passed |
+| Scenario regeneration | Model vectors, 351-case study and Zebra scenario output match checked-in JSON exactly |
+| Package screening | 93 source/artifact files; relative links and bounded credential patterns passed |
 | Git whitespace check | Passed |
-| Whitepaper | 12-page PDF generated; Giacomo Barbieri author metadata and reserve/lifecycle pages checked |
+| Whitepaper | 12-page PDF generated; Giacomo Barbieri attribution and combined stress section checked |
 
 The scenario contains a solvent liquidation with supply/bad debt both zero, and a crash case leaving 209,523,810 micro-zUSD as explicit bad debt. Its final model checkpoints are:
 
@@ -54,15 +59,21 @@ The model uses these fingerprints to check repeatable state transitions. A nativ
 
 ## Source fingerprints
 
-These hashes identify the current files after the signed reserve integration. The adversarial review records the earlier source versions it examined.
+These hashes identify the current files after the combined stress and Zebra-linked development milestone. The adversarial review records the earlier source versions it examined.
 
 - `src/lib.rs`: SHA-256 `efa3702d818a0453863b6e59bc7a8d11393c1802c9c5ae86541a10c303a9ffa6`.
 - `src/reserve.rs`: SHA-256 `a219be80b71985a984b84eb626057908a001b538914d9bb9893fe09bd6c07c81`.
 - `tests/reserve_attacks.rs`: SHA-256 `7a16cff322c82f34fecdce60acfc64a425ed4152ebe68382114a6d6006ca9208`.
 - `examples/reserve-scenario-output.json`: SHA-256 `575a1cea502679d94083240d9ebad7395c647182c729a1ba90d1de2dde649895`.
+- `examples/combined_stress.rs`: SHA-256 `412f0decec25ced6807d9e0fb92c5c3aa8d27ea77e43549f663e4e098f7c41a2`.
+- `analysis/combined-results.json`: SHA-256 `6fb62bb18a5e5fa486cfdef44f065fe63a05c200d02a342cae2b8bec96c822f9`.
+- `analysis/check_combined.py`: SHA-256 `ebb1a05223dbb73f7245607cc8f9522f2a689f258e48f042e852c48e72a35107`.
+- `zebra/dev-harness/src/lib.rs`: SHA-256 `3aa64aa39ad11ede493def932098930597bf6d652999125b9f4c9c3fb1535a7b`.
+- `zebra/dev-harness/Cargo.lock`: SHA-256 `9413826fb02dc3ccba2537c576587a44c9393d1081f8b61dc17905829738baa4`.
+- `zebra/dev-harness/scenario-output.json`: SHA-256 `054f3ec60d6b36760207a22b287db0e909cab0e85ff6dd1f5273b1523986ddeb`.
 - `Cargo.lock`: SHA-256 `e44aec7ac75310c939371401fd77a3ecf3b2241fa81b50354ad359a5c1f39812`.
 - `tests/reviewer_attacks.rs`: SHA-256 `b4b68bfeb05d7c37112421a45cbbf48de00b6addb1e70728c91ab7a459612110`.
-- `docs/whitepaper.pdf`: SHA-256 `aeb112784c64858d3a5fa26889d2dba6561f1d54c65f887801516e4e32643d04`.
+- `docs/whitepaper.pdf`: SHA-256 `449473a2eb4e6eba7ebe344a6c5435f8d8568d8ce19a991a41e8112305314069`.
 - `analysis/stabilization.py`: SHA-256 `b7a1524f690901ab104305c7c95ac503034ae08e4fd2a99823ddabfaa92dfc75`.
 - `analysis/run_study.py`: SHA-256 `128a5567f539244ff079c4991daff98929223b8b3912a34f50ba24f197bf114e`.
 - `analysis/results.json`: SHA-256 `5f846c22ab50554d0b15d2ef68767b30702cabf4b775166afea7e0c0e853d845`.
@@ -164,3 +175,15 @@ Three checked-in signed scenarios produce these final model checkpoints:
 The adapter tests restore an exact parent and replay closure, funding and auction fills, reject stale sibling commits, and reject late failures without partial state changes. This is in-memory model evidence, not a native node reorg or restart test.
 
 The terminal burn precedes user transactions and happens once; later liquidations can create bad debt while auction inventory remains. Reserve inclusion-age checks cannot detect a quorum re-signing stale market data, and legacy vault operations retain their own expiry rule. Cash returned to NSM may leave debt uncovered, reserve purchases can buy impaired tokens, and poor auction competition can reward borrowers. The signed ledger makes these outcomes executable and measurable; it does not establish an economic equilibrium, a dollar peg or production readiness.
+
+## Combined stress and Zebra-linked development
+
+The [combined study](combined-stress.md) executes 324 liquidation cases, six stale-price trades, 12 funding cases and nine auctions through the signed Rust ledger. Six example tests check selected economic boundaries. The independent [integer/Fraction checker](../analysis/check_combined.py) recomputes all 351 rows from documented assumptions, including parameter-grid completeness. The main agent regenerated and inspected the comparison figure; no market calibration or probability estimate was added. The core vault/reserve source, dependencies and earlier signed vectors retain their previous fingerprints.
+
+The [Zebra development crate](zebra-development.md) compiles against actual zebra-chain 15.0.0 at the source pin using Rust 1.90 and its own locked dependencies. Its verification script passed with nextest 0.9.100: 15 tests, formatting, strict all-target Clippy and exact output for the three existing signed reserve scenarios. The implementation worker ran that script and the main agent inspected its receipt and final source fingerprints. The separate upstream source checkout remains unchanged. No node or peer service was started.
+
+The native codec experiment accepts only its exact V1 coinbase carrier. It verifies a zero-value commitment, Merkle root, coinbase height, native parent and model checkpoint before executing model signatures. Branch selection is manual. Replay reconstructs accepted inputs from a trusted model genesis, selected tip and full-journal digest; it never imports asserted balances. Input, journal and block-count limits do not establish a production resource budget.
+
+Independent review identified that a tip-only replay anchor could miss deletion of an unselected sibling. The fix requires an external digest of the complete journal. The reviewer identified the issue from source semantics; no pre-fix executable failure was recorded. Post-fix regression rejects the deleted-sibling journal and reproduces the complete original archive. The [development review](development-review.md) records the ten independent probes, arithmetic checks and remaining boundaries.
+
+The checks establish deterministic research behavior and data binding through actual native codecs. They do not establish PoW or full transaction consensus, native collateral custody, fixed-asset proofs, coinbase/NSM funding, consensus fork choice, database crash consistency or a stable peg. The economic study retains the closing-block loss-coverage gap and conditional auction subsidy capture as unresolved policy findings.

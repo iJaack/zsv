@@ -1,14 +1,14 @@
 # ZSV research prototype
 
-This repository contains protocol research and a regtest-only executable model. Native Zebra support remains proposed. Use simulated funds only.
+This repository contains protocol research, a signed regtest model and an offline development runner linked to Zebra. Native vault and stablecoin enforcement remains proposed. Use simulated funds only.
 
 - Preserve the single stablecoin asset boundary. Do not add asset registration, generic issuer keys, arbitrary asset identifiers, a VM, a bridge, or external custody.
-- Keep prototype behavior, proposed Zebra integration, and future shielded designs explicitly separate.
+- Keep the account model, Zebra-linked block experiments, proposed native enforcement and future shielded designs explicitly separate. A data commitment in a coinbase output does not lock collateral or create a native stablecoin.
 - All monetary arithmetic uses integer units and checked bounds. Accepted transactions must preserve the documented supply, debt and ZEC invariants atomically.
 - Add regression tests for adversarial findings. Reject mainnet and public-testnet execution in the model.
 - Never use real funds, production keys, private conversation context or credentials in fixtures or documentation.
 - Public forum content is a draft. Publication, upstream submissions and deployments require explicit authorization.
-- Run `cargo test --locked`, `cargo fmt --check`, and `cargo clippy --locked --all-targets -- -D warnings` before claiming Rust validation. Record scope and failures honestly.
+- Run `cargo test --locked`, `cargo fmt --check`, and `cargo clippy --locked --all-targets -- -D warnings` before claiming model validation. Run `bash zebra/verify-dev.sh` for changes to the Zebra-linked runner; its targeted tests use nextest. Record scope and failures honestly.
 
 ## Writing
 

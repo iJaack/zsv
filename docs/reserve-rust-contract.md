@@ -64,4 +64,4 @@ Returning cash to NSM can leave bad debt outstanding. It is a policy choice, not
 
 The scenarios include a crash leaving 523.809524 zUSD of bad debt, followed by a 400-token inventory burn and an explicit 123.809524 remainder. An uncontested four-block auction sells 400 tokens for 400 zatoshi at its floor, after which the borrower repays. Its short duration deliberately illustrates a failure of competition; it is not a calibrated auction recommendation.
 
-The [verification receipt](verification.md) records the actual test counts, commands and fingerprints. The next engineering work is economic stress testing of this combined ledger and an isolated native Zebra integration under the [native proposal](zebra-integration.md).
+The [verification receipt](verification.md) records the actual test counts, commands and fingerprints. The subsequent [combined stress study](combined-stress.md) and [Zebra-linked development harness](zebra-development.md) test economic outcomes and native block binding. Full node enforcement remains the work described in the [native proposal](zebra-integration.md).

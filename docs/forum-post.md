@@ -1,6 +1,6 @@
 # ZSV: a stablecoin-only alternative to general ZSAs
 
-Unpublished draft for community discussion. ZSV is a regtest research prototype; native integration and mainnet activation remain future work.
+Unpublished draft for community discussion. ZSV is a regtest research prototype; native vault enforcement and mainnet activation remain future work.
 
 I'd like to explore one ZEC-backed, dollar-targeting stablecoin, with vault rules enforced entirely by Zcash and no arbitrary token-launch interface.
 
@@ -32,7 +32,7 @@ A signed price observation is accepted into Zcash state under deterministic quor
 
 ## What exists so far?
 
-The repository contains an executable Rust research model, a whitepaper, a threat model, independent adversarial analysis and a source-pinned Zebra implementation proposal.
+The repository contains an executable Rust research model, a whitepaper, a threat model, independent adversarial analysis, combined economic stress scenarios and an offline development runner linked to the pinned Zebra library.
 
 The isolated account model uses public vaults and balances, real signatures and integer monetary arithmetic. Its optional reserve trades tokens created by model vaults, accounts for scheduled fixture funding and closes or auctions inventory under fixed rules. Native Zebra accounting, live funds and shielded stablecoin payments remain future work.
 
@@ -60,7 +60,11 @@ The [inventory study](https://github.com/iJaack/zsv/blob/main/docs/reserve-study
 
 The [lifecycle policy](https://github.com/iJaack/zsv/blob/main/docs/reserve-lifecycle.md) replaces lifetime trading stops with a cap on retained funding. Closure follows sustained report failure or sunset: existing inventory first covers recorded bad debt, cash moves to the NSM bucket, and residual tokens enter an oracle-free auction. Free terminal distributions were rejected after a borrowing-based farming counterexample. Auctions can still clear cheaply, and cash returned to NSM may leave bad debt uncovered.
 
-These rules now run inside the [signed Rust vault ledger](https://github.com/iJaack/zsv/blob/main/docs/reserve-rust-contract.md). The reserve starts with a donor's simulated ZEC and no tokens. It can buy only tokens that vaults have issued, and all vault, reserve, funding and shutdown changes roll back if a block fails. The funding schedule is a regtest fixture, not an approved block-reward allocation. Freshness measures report inclusion age and expiry; a quorum can still publish stale market data in a new report. The next work is combined economic stress testing and an isolated native Zebra implementation.
+These rules now run inside the [signed Rust vault ledger](https://github.com/iJaack/zsv/blob/main/docs/reserve-rust-contract.md). The reserve starts with a donor's simulated ZEC and no tokens. It can buy only tokens that vaults have issued, and all vault, reserve, funding and shutdown changes roll back if a block fails. The funding schedule is a regtest fixture, not an approved block-reward allocation. Freshness measures report inclusion age and expiry; a quorum can still publish stale market data in a new report.
+
+The [combined stress tests](https://github.com/iJaack/zsv/blob/main/docs/combined-stress.md) vary crashes, reporting delays, liquidator token balances, reserve inventory and liquidation timing through the signed ledger. They distinguish recorded bad debt from collateral shortfalls in vaults that have not been liquidated. One result makes the shutdown choice concrete: at $20/ZEC, liquidating a 25-ZEC vault with 1,000 zUSD debt creates 523.809524 zUSD of bad debt. An 800-token reserve can cover it if liquidation comes before closure; liquidation in the closing block runs after the burn and leaves the loss outstanding. The auction cases also allow a lone borrower to buy back tokens cheaply and repay. These are assumed paths, not a forecast or proof of peg stability.
+
+The [Zebra-linked development runner](https://github.com/iJaack/zsv/blob/main/docs/zebra-development.md) parses native block bytes, checks a model-payload commitment in a zero-valued coinbase output and replays parent-specific branches. The commitment binds data; it does not lock native collateral. The offline fixtures are not mined or fully consensus-verified blocks. A native transaction format, asset accounting, proofs and node-state integration are still required.
 
 ## Feedback I'd value
 

@@ -46,3 +46,16 @@ The final command additionally requires Matplotlib. `reserve-results.json`, `res
 The [lifecycle extension](../docs/reserve-lifecycle.md) embeds the policy, caps retained new funding, preserves epoch trading limits, pauses on stale observations and closes at an outage deadline or sunset. Closure burns held tokens against bad debt, routes cash to NSM and offers residual tokens through an oracle-free auction. Auction pricing and competition remain economic risks.
 
 Run `python3 -m analysis.lifecycle_study` to regenerate `lifecycle-results.json`, or add `--check` to verify it. The unittest command above also runs the lifecycle suite. This module remains a separate reference. The [signed Rust implementation](../docs/reserve-rust-contract.md) now combines the reserve and vault ledger, derives regtest funding and authenticates orders. It uses oracle inclusion height because the existing signed report format has no market-observation timestamp.
+
+## Combined signed-ledger stress cases
+
+The [combined study](../docs/combined-stress.md) executes 351 cases through the actual Rust vault/reserve validator: liquidation liquidity and closure timing, stale market information, finite funding and auction participation. It distinguishes recorded bad debt from unresolved collateral shortfalls and measures a fully repaid borrower's auction profit. Its behavior assumptions are fixed; it does not predict token prices or market probabilities.
+
+```sh
+cargo run --locked --example combined_stress > analysis/combined-results.json
+cargo run --locked --example combined_stress -- --check
+python3 analysis/check_combined.py
+python3 analysis/plot_combined.py
+```
+
+The first two commands need Rust and the locked dependencies. The independent checker uses Python's integer and Fraction arithmetic to recompute all 351 outcomes from the documented fixture assumptions. The optional figure command also needs Matplotlib. The plot reads the JSON without running a second monetary model.

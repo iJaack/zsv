@@ -11,6 +11,8 @@ cargo run --locked --example scenario > "$scenario_output"
 cmp examples/scenario-output.json "$scenario_output"
 cargo run --locked --example reserve_scenario > "$scenario_output"
 cmp examples/reserve-scenario-output.json "$scenario_output"
+cargo run --locked --example combined_stress -- --check
+PYTHONDONTWRITEBYTECODE=1 python3 analysis/check_combined.py
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s analysis -p 'test_*.py'
 PYTHONDONTWRITEBYTECODE=1 python3 analysis/run_study.py --check
 PYTHONDONTWRITEBYTECODE=1 python3 -m analysis.reserve_study --check

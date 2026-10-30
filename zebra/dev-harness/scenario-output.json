@@ -1,0 +1,33 @@
+{
+  "scenarios": [
+    {
+      "blocks": 2,
+      "journal_bytes": 3247,
+      "journal_sha256": "3768eec3fd577fe276756e1c887730f10e71dfb1f6c0ebd4f61231b4f559a1cb",
+      "model_checkpoint_sha256": "181ac4b3a3f3d4178c9f93aa15ff962ea682e3ab6dc33c22e3c54022457c8efb",
+      "name": "borrow_reserve_roundtrip_repay",
+      "native_tip": "c42530fb9d8e4f188f9d7603e7fc9d7d29a521a50022adc8cdebe4fb8f5dc220",
+      "replay_equal": true
+    },
+    {
+      "blocks": 3,
+      "journal_bytes": 4768,
+      "journal_sha256": "1623b72da3aea28a0e48b12cdd8bf5c88e201325d7726dde99cee7699d976dd6",
+      "model_checkpoint_sha256": "de90497f37dbc6021589e83f13414777b95f1ab053e566dda610d0cfab3ff46c",
+      "name": "crash_partial_bad_debt_coverage",
+      "native_tip": "f6cc41ce6fde47ca123cbff471357398fc01c495025695ad370c1ba64d8159b8",
+      "replay_equal": true
+    },
+    {
+      "blocks": 7,
+      "journal_bytes": 5119,
+      "journal_sha256": "232496984c2678b100e39ba489fe62b7871fbd8358552012060626434f030706",
+      "model_checkpoint_sha256": "564adb10876508e93e304deade3d191dcce75392ae843ccfe67f4c39e5bbb26a",
+      "name": "uncontested_floor_auction_then_repay",
+      "native_tip": "ca821a4fca48b98398a1fd81cf76b0d741c6f6ee6779b3fe6278dba89153b57e",
+      "replay_equal": true
+    }
+  ],
+  "scope": "Offline V1 coinbase data commitments; no PoW, native collateral or native stablecoin enforcement",
+  "zebra_source_pin": "5faf8a413f0d30a6e93115f3d16af1e229fd7858"
+}

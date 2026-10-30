@@ -50,7 +50,7 @@ ZIP 226/227 still contain historical references to a ZSA “v6” and ZIP 230. T
 
 ## Evidence limits
 
-No upstream checkout was built and no Zcash chain was synchronized in this research. Source reads verify the names and definitions above; they do not establish accepted network deployment, audited safety, or economic peg behavior. No claim is made that ZIPs 222, 226 or 227 are active on Mainnet.
+The initial API mapping used source reads. The later [development harness](zebra-development.md) compiles against the pinned zebra-chain library and tests its native codecs and hashes. No patched zebrad node was built or chain synchronized. These checks do not establish accepted network deployment, audited safety or economic peg behavior. No claim is made that ZIPs 222, 226 or 227 are active on Mainnet.
 
 The upstream [Zebra contribution policy](https://github.com/ZcashFoundation/zebra/blob/5faf8a413f0d30a6e93115f3d16af1e229fd7858/AGENTS.md#L5-L35) requires a team-acknowledged issue before an upstream PR. This independent ZSV design repository is not an upstream PR, endorsement, or reserved protocol allocation.
 

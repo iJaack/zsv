@@ -47,6 +47,10 @@ Normal quotes pause when report inclusion age or expiry exceeds the reserve poli
 
 All reserve, funding and lifecycle transitions share the vault ledger's block overlay and conservation checks. The [Rust integration specification](reserve-rust-contract.md) records the exact API and ordering. The [lifecycle study](reserve-lifecycle.md) explains the economic limits: quota occupation, weak auction competition and uncovered bad debt remain possible.
 
+## Zebra-linked development
+
+The [offline harness](zebra-development.md) imports the pinned Zebra library to parse native blocks, verify coinbase data commitments and select exact parent model states by native block hash. It replays accepted envelopes using a separately trusted journal digest and tip. Its fixtures carry no native spendable funds; no node service, native vault lock or stablecoin value pool is implemented by this data-binding experiment.
+
 ## Native proposal
 
 Public vault state and public liquidation information are the initial integration target. A proposed dedicated vault bundle binds collateral locking, successor vault state and zUSD mint/burn in one Zcash transaction. Contextual verification and branch-specific state commits/rollback must be atomic. Existing transparent or shielded payment paths must not provide alternative collateral spending or stablecoin issuance paths.

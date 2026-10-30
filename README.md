@@ -2,7 +2,7 @@
 
 ZSV proposes a Zcash protocol for locking ZEC and issuing one dollar-targeting stablecoin. It excludes the arbitrary asset issuance proposed by general Zcash Shielded Assets.
 
-The executable is a signed account-ledger model with simulated funds. The native Zebra implementation is proposed separately. Do not use the prototype or its fixture keys for real funds.
+The executable is a signed account-ledger model with simulated funds. An isolated development runner links it to Zebra for native block parsing, payload commitments and branch replay. Native collateral locking and stablecoin value pools remain proposed. Do not use the prototype or its fixture keys for real funds.
 
 ## Documents
 
@@ -11,13 +11,14 @@ The executable is a signed account-ledger model with simulated funds. The native
 - [Stabilization funding: mathematical tests](docs/stabilization-math.md) · [Reproducible study](analysis/README.md)
 - [Bounded inventory reserve: implementation and adversarial results](docs/reserve-study.md)
 - [Reserve shutdown and funding allowances](docs/reserve-lifecycle.md) · [Signed Rust integration](docs/reserve-rust-contract.md) · [Reserve adversarial review](docs/reserve-adversarial-review.md)
+- [Combined vault and reserve stress](docs/combined-stress.md) · [Zebra-linked development](docs/zebra-development.md) · [Development review](docs/development-review.md)
 - [Native Zebra implementation proposal](docs/zebra-integration.md) · [Draft ZIP](docs/draft-zip.md) · [Pinned sources](docs/sources.md)
 - [Forum post draft](docs/forum-post.md) (not published)
 - [Verification receipt](docs/verification.md)
 
 ## Scope
 
-| Implemented executable model | Proposed native integration | Not included |
+| Implemented research software | Proposed native integration | Not included |
 |---|---|---|
 | ZEC + one fixed stablecoin enum | Consensus vault bundle and restricted payment encoding | Arbitrary tokens, NFTs or issuer keys |
 | Real signed requests and 2-of-3 oracle reports | Native Zcash signatures/digests, fixed asset constraints | Bridge, external execution or custody committee |
@@ -25,6 +26,7 @@ The executable is a signed account-ledger model with simulated funds. The native
 | Checked integer math and supply/debt conservation | Wallet/library encoding and native value-pool integration | Dollar redemption, interest, general recapitalization |
 | Explicit bad debt and issuance freeze | Possible fixed-two-asset shielded profile | Shielded stablecoin payments or private vaults in v0 |
 | Optional signed reserve swaps, scheduled fixture funding, shutdown and inventory auction | Native reserve value path and approved coinbase/NSM accounting | Approved funding allocation or guaranteed peg |
+| Zebra block parsing, commitment checks and offline branch replay | Native semantic/contextual verification and durable branch state | Mined blocks, node fork choice or crash-safe database commits |
 
 The fixed-asset restriction prevents arbitrary native issuance through ZSV. Off-protocol tokens, inscriptions, derivatives and speculation remain possible. The proposed cryptographic constraints and consensus code need independent review.
 
@@ -36,13 +38,14 @@ Requires Rust 1.90 with `rustfmt` and `clippy`; the checked-in toolchain selects
 cargo test --locked
 cargo run --locked --example scenario
 cargo run --locked --example reserve_scenario
+cargo run --locked --example combined_stress
 cargo fmt --check
 cargo clippy --locked --all-targets -- -D warnings
 ```
 
 The scenario uses public fixture keys and simulated ZEC. It demonstrates issuance, repayment and a price crash that creates bad debt. The verification receipt records the commands, results and model limits.
 
-The reserve example adds three signed scenarios: a reserve round trip followed by vault repayment, shutdown that covers only part of the bad debt, and an uncontested auction that sells inventory cheaply.
+The reserve example adds three signed scenarios: a reserve round trip followed by vault repayment, shutdown that covers only part of the bad debt, and an uncontested auction that sells inventory cheaply. The combined stress example varies crashes, oracle delays, liquidator funding, reserve inventory and shutdown timing through the same signed ledger. It reports recorded bad debt separately from shortfalls remaining in active vaults.
 
 The separate funding and inventory studies need Python 3.10 or later. Run `python3 -m unittest discover -s analysis -p 'test_*.py'`, `python3 analysis/run_study.py --check`, `python3 -m analysis.reserve_study --check` and `python3 -m analysis.lifecycle_study --check` to verify their arithmetic and checked-in results. Figures additionally require Matplotlib. These are uncalibrated economic experiments; the Rust implementation checks their reserve accounting and authorization within the vault ledger.
 
@@ -63,7 +66,9 @@ The reserve starts with ZEC debited from a named fixture donor and no stablecoin
 
 The proposed native system gives no collateral spending or issuer key authority to override consensus rules. The account model tests those rules using simulated ZEC. Native collateral locking and Zcash vault-transaction parsing still need implementation.
 
-The Zebra proposal identifies current APIs, required librustzcash changes, activation and digest rules, fork handling, and release checks. The included contextual adapter tests preparation and commit behavior against the model. It is not linked into Zebra.
+The original contextual adapter tests preparation and commit against the local model. The separate [Zebra-linked runner](zebra/dev-harness) imports the pinned Zebra library, verifies a model-payload commitment in a native coinbase output and follows native parent hashes. That output commits data only. The fixtures do not undergo full Zcash consensus validation, and model funds never become native UTXOs or notes. The [native proposal](docs/zebra-integration.md) identifies the remaining transaction-library, proof, value-pool and node-state work.
+
+The Zebra-linked crate has its own pinned dependency lockfile and checks. With Cargo nextest installed, run `bash zebra/verify-dev.sh`. Initial dependency fetching needs network access; the tests then run offline without starting a node. The [development notes](docs/zebra-development.md) state which native checks remain absent.
 
 ## Rebuild the paper
 

@@ -1,6 +1,6 @@
 # Zcash Stablecoin Vault Implementation Plan
 
-The completed research milestones and remaining integration work are listed below. Native Zebra support remains proposed; [verification.md](verification.md) records the tested scope.
+The completed research milestones and remaining integration work are listed below. The offline runner links to Zebra; native vault enforcement remains proposed; [verification.md](verification.md) records the tested scope.
 
 Goal: build a single-stablecoin Zcash protocol proposal, executable Rust model and independent adversarial review.
 
@@ -67,7 +67,9 @@ Files: `README.md`, `docs/verification.md`, `SECURITY.md`, `LICENSE`.
 - [x] Implement the reserve and lifecycle inside the signed Rust vault state machine, including versioned domains, atomic funding and branch rollback.
 - [x] Start with donor-funded ZEC and zero reserve tokens; acquire inventory from signed vault issuance and trades. Preserve the original vault-only vectors.
 - [x] Bind reserve orders to sequence, epoch, expiry and slippage; retain the market-age limitation of inclusion-based freshness.
-- [ ] Stress the combined vault/reserve economy and build an isolated native Zebra integration after review.
+- [x] Stress the combined vault/reserve ledger with signed issuance, liquidator funding constraints, delayed reports, closure ordering and auction participation. Report latent active-vault shortfalls separately from recorded bad debt.
+- [x] Compile and independently review the isolated Zebra-linked block runner, including payload commitments, parent selection and journal replay.
+- [ ] Implement native transaction/value-pool rules, collateral locks, proofs, full consensus validation and durable Zebra branch state before a value-bearing network experiment.
 
 ## Execution note
 
