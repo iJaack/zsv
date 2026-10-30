@@ -552,6 +552,19 @@ impl State {
     }
     /// Validate ordered transactions in a private clone. Rejection never mutates the input.
     pub fn validate_block(&self, block: &Block) -> Result<Self, Error> {
+        self.execute_block(block, false).map(|(state, _)| state)
+    }
+    /// Validate a complete block and return detached snapshots for native value-flow checks.
+    /// The first snapshot follows the oracle/lifecycle/funding prelude; each remaining
+    /// snapshot follows one signed transaction. No trace is returned for a rejected block.
+    pub fn validate_block_with_trace(&self, block: &Block) -> Result<(Self, Vec<Snapshot>), Error> {
+        self.execute_block(block, true)
+    }
+    fn execute_block(
+        &self,
+        block: &Block,
+        record_trace: bool,
+    ) -> Result<(Self, Vec<Snapshot>), Error> {
         if self.config.network != Network::Regtest {
             return Err(Error::Invalid("regtest only"));
         }
@@ -583,11 +596,18 @@ impl State {
             next.apply_oracle(update)?;
         }
         next.prepare_reserve_after_oracle(block.oracle.is_some())?;
+        let mut trace = Vec::new();
+        if record_trace {
+            trace.push(next.snapshot());
+        }
         for tx in &block.transactions {
             next.apply_transaction(tx)?;
+            if record_trace {
+                trace.push(next.snapshot());
+            }
         }
         next.check_invariants()?;
-        Ok(next)
+        Ok((next, trace))
     }
     pub fn apply_block(&mut self, block: &Block) -> Result<(), Error> {
         *self = self.validate_block(block)?;

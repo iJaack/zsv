@@ -1,9 +1,10 @@
 # ZSV research prototype
 
-This repository contains protocol research, a signed regtest model and an offline development runner linked to Zebra. Native vault and stablecoin enforcement remains proposed. Use simulated funds only.
+This repository contains protocol research, a signed regtest model and offline development profiles linked to Zebra. The collateral profile checks serialized fixture UTXOs and vault spends; node enforcement and a native stablecoin value pool remain proposed. Use simulated funds only.
 
 - Preserve the single stablecoin asset boundary. Do not add asset registration, generic issuer keys, arbitrary asset identifiers, a VM, a bridge, or external custody.
 - Keep the account model, Zebra-linked block experiments, proposed native enforcement and future shielded designs explicitly separate. A data commitment in a coinbase output does not lock collateral or create a native stablecoin.
+- The collateral profile uses a trusted funding bootstrap, restricted V4/P2PK signatures and its own mandatory vault spend guard. Its vault script is anyone-can-spend on unmodified nodes. Preserve explicit Ed25519-to-secp256k1 owner bindings, exact-parent checkpoints, all-input checks and per-transaction UTXO/ledger reconciliation. Reject reserve state and synthetic funding until a native reserve cash lifecycle exists.
 - All monetary arithmetic uses integer units and checked bounds. Accepted transactions must preserve the documented supply, debt and ZEC invariants atomically.
 - Add regression tests for adversarial findings. Reject mainnet and public-testnet execution in the model.
 - Never use real funds, production keys, private conversation context or credentials in fixtures or documentation.

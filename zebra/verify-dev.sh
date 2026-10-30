@@ -10,3 +10,5 @@ scenario_output="$(mktemp)"
 trap 'rm -f "$scenario_output"' EXIT
 cargo run --locked --manifest-path "$manifest" --bin scenarios > "$scenario_output"
 cmp "$zsv_root/zebra/dev-harness/scenario-output.json" "$scenario_output"
+cargo run --locked --manifest-path "$manifest" --bin collateral_scenarios > "$scenario_output"
+cmp "$zsv_root/zebra/dev-harness/collateral-scenario-output.json" "$scenario_output"

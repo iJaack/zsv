@@ -2935,6 +2935,9 @@ dependencies = [
 name = "zsv-zebra-dev"
 version = "0.1.0"
 dependencies = [
+ "ed25519-dalek",
+ "secp256k1",
+ "serde",
  "serde_json",
  "sha2 0.10.9",
  "zebra-chain",

@@ -12,6 +12,10 @@ use zebra_chain::{
 };
 use zsv::{Block as ModelBlock, State};
 
+pub mod collateral_wire;
+
+pub mod collateral;
+
 pub const SOURCE_PIN: &str = "5faf8a413f0d30a6e93115f3d16af1e229fd7858";
 pub const MAX_PAYLOAD_BYTES: usize = 1_048_576;
 pub const MAX_NATIVE_BYTES: usize = 2_000_000;

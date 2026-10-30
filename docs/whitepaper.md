@@ -2,7 +2,7 @@
 title: "ZSV: Zcash Stablecoin Vault"
 subtitle: "A narrow native protocol for a ZEC-collateralized dollar target"
 author: "Giacomo Barbieri"
-date: "29 October 2026 · research draft 0.1"
+date: "30 October 2026 · research draft 0.2"
 geometry: margin=25mm
 fontsize: 11pt
 colorlinks: true
@@ -19,7 +19,7 @@ Zcash Stablecoin Vault (ZSV) is a proposed consensus extension for locking nativ
 
 ZSV couples stablecoin issuance to collateralized debt, repayment to token destruction, and liquidation to atomic exchange of debt tokens for collateral. All proposed authorization and state-transition rules are verified by Zcash full nodes. Price observations remain an external trust input, but their acceptance, freshness and use are consensus rules. No external chain, bridge, custody committee or application server determines whether a vault can spend its collateral.
 
-The repository provides a regtest-only Rust account-ledger model, signed requests and oracle observations, economic stress tests, adversarial review and an offline development runner linked to a pinned Zebra library. The runner tests native block parsing, payload commitments and branch replay. Native vault enforcement, production cryptography integration and shielded stablecoin transfers remain unimplemented. The model has no proven dollar peg. The protocol is original design work; cited Zcash proposals supply context and do not imply approval.
+The repository provides a regtest-only Rust account-ledger model, signed requests and oracle observations, economic stress tests, adversarial review and offline profiles linked to a pinned Zebra library. The first profile tests block commitments and branch replay. A second verifies serialized transparent spends against fixture UTXOs, native signatures and an experimental vault guard. Node-verifier integration, a native stablecoin value pool and shielded stablecoin transfers remain unimplemented. The model has no proven dollar peg. The protocol is original design work; cited Zcash proposals supply context and do not imply approval.
 
 # Motivation and boundaries
 
@@ -41,11 +41,17 @@ ZIP 222 describes consensus-distributed verification of complex transparent spen
 
 # Implemented model and proposed native system
 
-The executable prototype uses an account ledger to make balances, authorization and invariants easy to inspect. Its state includes simulated free ZEC, stable balances, vault collateral and principal, account nonces, the accepted oracle observation, outstanding supply and explicit bad debt. Optional reserve state adds cash, existing token inventory, funding and trading counters, an NSM accounting bucket and shutdown records. Genesis fixtures and an immutable regtest funding schedule supply simulated ZEC. Real Ed25519 signatures authenticate model requests; native Zcash transaction signatures and spend proofs remain separate work.
+The executable prototype uses an account ledger to make balances, authorization and invariants easy to inspect. Its state includes simulated free ZEC, stable balances, vault collateral and principal, account nonces, the accepted oracle observation, outstanding supply and explicit bad debt. Optional reserve state adds cash, existing token inventory, funding and trading counters, an NSM accounting bucket and shutdown records. Genesis fixtures and an immutable regtest funding schedule supply simulated ZEC. Real Ed25519 signatures authenticate model requests. The collateral profile separately verifies a restricted native transparent signature format; shielded spend proofs remain future work.
 
 The native proposal requires transaction encoding, a designated vault value path, branch-specific contextual state, correct Zcash digests, wallet construction and atomic node state commits. The account ledger cannot replace Zebra's UTXO and shielded-note accounting. The integration document identifies upstream files and acceptance gates against a pinned Zebra commit [S8].
 
 The separate Zebra-linked runner commits a canonical signed model payload and its parent context in a zero-valued coinbase output, checks the native transaction Merkle root and follows native block hashes from regtest genesis. Replaying a branch re-executes model validation. This is an offline data-binding experiment: the output does not encumber ZEC, create native zUSD or make existing nodes enforce vault rules. Fixtures are parsed native block structures without mining or full consensus verification. Durable node state and consensus fork choice remain future work.
+
+The collateral profile adds serialized V4 transparent transactions and branch-specific UTXOs. Its custom bootstrap block contains a funding coinbase whose outputs exactly match the model's initial ZEC balances. The block has a computed Merkle root and hash, but funding is trusted fixture issuance: subsidy, maturity and proof of work are not validated. The bootstrap uses native height 1 and model height 0; subsequent native heights are one greater than model heights. It is not the standard regtest genesis block.
+
+Every native user transaction must pair with one signed model request. Wallet inputs use compressed secp256k1 P2PK keys, strict DER, low-S signatures and `SIGHASH_ALL` over actual branch prevouts in a fixed historical Sapling context. User transactions require a finite positive expiry height; zero expiry is rejected. Fixture configuration explicitly binds each Ed25519 model owner to its distinct native key. A separate Ed25519 intent binds the exact unsigned native transaction and signed model request to the profile domain and parent checkpoint. The domain includes the complete bootstrap block, owner bindings and model genesis commitment.
+
+The profile compares native UTXO totals with each wallet's free ZEC and each vault's collateral after every transaction. Every vault input and output must name a vault touched by that authorized request, including replacements that leave its balance unchanged. Failed blocks commit neither model nor UTXO changes. The experimental vault script ends in `OP_TRUE`; unmodified Zcash nodes do not enforce its restriction. All protection comes from this profile's contextual guard. zUSD remains a signed model balance. Reserve-enabled state, synthetic funding, shielded paths and fees are excluded until their native accounting is specified.
 
 The regtest model has no peer-to-peer service, miner, payment endpoint or real-fund deposit address. It implements public vault data and public stable balances. Shielded stablecoin payments are a separate future component.
 
@@ -204,7 +210,7 @@ The staged proposal is:
 1. Define the wire format, activation domain, signatures and fixed asset encodings. Do not reuse v6, which already denotes NU6.3/Ironwood [S9]. ZIP 248 is draft future infrastructure, not deployed permission to introduce a bundle.
 2. Implement bounded parsing, canonical digests and fixed asset types in the transaction library. Unknown tags, generic issuance and alternate collateral-release paths must fail closed.
 3. Add structural checks and signature/proof verification to the transaction verifier, including the mempool path. Mempool acceptance is not a substitute for parent-branch contextual verification.
-4. Implement branch-specific oracle, vault, liability, supply and reserve state in Zebra. Verify and commit the complete transition atomically, including any approved funding allocation, and undo it on a fork switch. Preserve existing ZEC fee accounting.
+4. Implement branch-specific oracle, vault, liability, supply and reserve state in Zebra. Check every transparent spend against vault restrictions, including transactions without a ZSV annotation. Protect checkpoint/direct-finalization paths as well as ordinary contextual verification. Verify and commit the complete transition atomically, including any approved funding allocation, and undo it on a fork switch. Preserve existing ZEC fee accounting.
 5. Add wallet construction/scanning and independently tested adversarial vectors. Introduce any fixed-two-asset shielded profile as its own reviewable stage.
 6. Run differential node tests and a private development network before seeking consensus adoption. No production acceptance bit is enabled by this repository.
 
@@ -220,12 +226,13 @@ The staged proposal is:
 | Selective ZSA technique reuse | New circuit/profile still requires review; not automatically a tiny upgrade |
 | Native price acceptance rules | Dollar information still relies on reporters and governance |
 | Signed reserve trades and exact funding conservation | Quotas can be occupied; oracle errors and thin auctions can transfer value to traders |
+| Native fixture UTXOs reconciled after each model transaction | Experimental guard protects only the offline profile; zUSD and reserve value paths still need native integration |
 
 Consensus expansion can harm ZEC users who never borrow. State growth, verification costs, malformed inputs, expensive signatures and inconsistent branch rollback are base-layer risks. A narrow use case is not evidence that implementation risk is small. Resource metering, state bounds and cross-implementation test vectors must be release requirements.
 
 # Research roadmap and release gates
 
-Next work should establish a stable transition specification and independent reference implementation, pin native transaction-library changes, implement branch-state behavior in a Zebra fork, and benchmark costs under adversarial workloads.
+The collateral profile supplies an executable check of native transparent ownership and per-transaction collateral accounting. Next work should integrate the spend guard into a Zebra fork, define native stablecoin encoding and value conservation, implement durable branch state, and benchmark costs under adversarial workloads. Reserve funding and shutdown need a complete native cash path before they can enter this profile.
 
 Before any value-bearing test, require a defined oracle governance and compromise response, loss allocation, sustainable peg mechanism, source-based security audit, cryptographic review of any shielded profile, wallet safety/recovery, reproducible builds and full-node fork/rollback tests. Before mainnet, community review and an adopted network upgrade are indispensable. No mainnet date or funding estimate is asserted here.
 

@@ -1,12 +1,12 @@
 # Zcash Stablecoin Vault Implementation Plan
 
-The completed research milestones and remaining integration work are listed below. The offline runner links to Zebra; native vault enforcement remains proposed; [verification.md](verification.md) records the tested scope.
+The completed research milestones and remaining integration work are listed below. Offline profiles link to Zebra and check fixture collateral spends; integration into the node verifier remains proposed. [verification.md](verification.md) records the tested scope.
 
 Goal: build a single-stablecoin Zcash protocol proposal, executable Rust model and independent adversarial review.
 
 The account model tests fixed asset types and vault rules off-network. The Zebra proposal identifies the transaction-library and branch-state changes needed in a native implementation against a pinned source tree.
 
-Tools: Rust 2021, Ed25519 signatures, integer arithmetic and Cargo tests; Markdown and PDF documents.
+Tools: Rust 2021, Ed25519 model signatures, restricted secp256k1 native signatures, integer arithmetic and Cargo tests; Markdown and PDF documents.
 
 Specification: [design.md](design.md).
 
@@ -70,6 +70,17 @@ Files: `README.md`, `docs/verification.md`, `SECURITY.md`, `LICENSE`.
 - [x] Stress the combined vault/reserve ledger with signed issuance, liquidator funding constraints, delayed reports, closure ordering and auction participation. Report latent active-vault shortfalls separately from recorded bad debt.
 - [x] Compile and independently review the isolated Zebra-linked block runner, including payload commitments, parent selection and journal replay.
 - [ ] Implement native transaction/value-pool rules, collateral locks, proofs, full consensus validation and durable Zebra branch state before a value-bearing network experiment.
+
+## Transparent collateral milestone
+
+- [x] Expose detached snapshots after the block prelude and each signed transaction through the model's shared validator.
+- [x] Parse restricted V4 transparent transactions and verify canonical, low-S P2PK signatures against actual branch prevouts with `SIGHASH_ALL`.
+- [x] Bind model owners to distinct native keys and sign native intents over the profile domain, parent checkpoint, unsigned native transaction and model request.
+- [x] Anchor fixture UTXOs in a trusted bootstrap block containing its funding transaction; bind complete bootstrap bytes and owner mappings into the profile domain.
+- [x] Pair every native user transaction with a model request, authorize every vault input/output and reconcile wallet and vault ZEC after each transaction. Keep model state and UTXOs atomic across failures and branch selection.
+- [x] Restrict this profile to vault-only state, zero fees and simulated funding; reject reserve-enabled genesis, new funding coinbases, shielded paths and unsupported formats.
+- [x] Complete independent adversarial validation and record the exact tested scope in [collateral-review.md](collateral-review.md).
+- [ ] Install the guard in Zebra's ordinary transparent-spend path and protect checkpoint/direct finalization. Add a native stablecoin value pool, full consensus verification and durable branch state before any value-bearing experiment.
 
 ## Execution note
 

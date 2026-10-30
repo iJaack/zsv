@@ -1,6 +1,6 @@
 # ZSV: a stablecoin-only alternative to general ZSAs
 
-Unpublished draft for community discussion. ZSV is a regtest research prototype; native vault enforcement and mainnet activation remain future work.
+Unpublished draft for community discussion. ZSV is a regtest research prototype; node-level vault enforcement and mainnet activation remain future work.
 
 I'd like to explore one ZEC-backed, dollar-targeting stablecoin, with vault rules enforced entirely by Zcash and no arbitrary token-launch interface.
 
@@ -32,7 +32,7 @@ A signed price observation is accepted into Zcash state under deterministic quor
 
 ## What exists so far?
 
-The repository contains an executable Rust research model, a whitepaper, a threat model, independent adversarial analysis, combined economic stress scenarios and an offline development runner linked to the pinned Zebra library.
+The repository contains an executable Rust research model, a whitepaper, a threat model, independent adversarial analysis, combined economic stress scenarios and offline development profiles linked to the pinned Zebra library.
 
 The isolated account model uses public vaults and balances, real signatures and integer monetary arithmetic. Its optional reserve trades tokens created by model vaults, accounts for scheduled fixture funding and closes or auctions inventory under fixed rules. Native Zebra accounting, live funds and shielded stablecoin payments remain future work.
 
@@ -65,6 +65,10 @@ These rules now run inside the [signed Rust vault ledger](https://github.com/iJa
 The [combined stress tests](https://github.com/iJaack/zsv/blob/main/docs/combined-stress.md) vary crashes, reporting delays, liquidator token balances, reserve inventory and liquidation timing through the signed ledger. They distinguish recorded bad debt from collateral shortfalls in vaults that have not been liquidated. One result makes the shutdown choice concrete: at $20/ZEC, liquidating a 25-ZEC vault with 1,000 zUSD debt creates 523.809524 zUSD of bad debt. An 800-token reserve can cover it if liquidation comes before closure; liquidation in the closing block runs after the burn and leaves the loss outstanding. The auction cases also allow a lone borrower to buy back tokens cheaply and repay. These are assumed paths, not a forecast or proof of peg stability.
 
 The [Zebra-linked development runner](https://github.com/iJaack/zsv/blob/main/docs/zebra-development.md) parses native block bytes, checks a model-payload commitment in a zero-valued coinbase output and replays parent-specific branches. The commitment binds data; it does not lock native collateral. The offline fixtures are not mined or fully consensus-verified blocks. A native transaction format, asset accounting, proofs and node-state integration are still required.
+
+The newer [collateral profile](https://github.com/iJaack/zsv/blob/main/docs/collateral-profile.md) checks serialized transparent ZEC transactions against actual fixture UTXOs. It verifies native P2PK signatures, binds each user transaction to a signed model request and checks that every wallet and vault still matches its native outputs after each transaction. Branches retain their own UTXOs and model state. Initial funding comes from a trusted test bootstrap block.
+
+The vault script is protected only by the experimental profile's spend guard; unmodified Zcash nodes would allow it to be spent. zUSD is still a model balance, and this profile excludes reserve funding and shutdown until their native cash accounting exists. The next step is to put the guard in Zebra's node verification paths and add a native stablecoin value pool.
 
 ## Feedback I'd value
 
