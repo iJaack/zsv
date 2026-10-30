@@ -12,7 +12,13 @@ Local submission candidate, prepared 30 October 2026. The submission date is pen
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHOULD" and "MAY" in this document are to be interpreted as described in BCP 14 [^BCP14] when, and only when, they appear in all capitals. Conformance requirements appear in the Specification section.
 
-**ZSV** means Zcash Stablecoin Vaults. **zUSD** is the provisional name of the single dollar-targeting stable asset defined here. **Principal** is debt attached to an active vault. **Bad debt** is stablecoin liability remaining after a vault closes without burning all its principal. **Stable supply** includes all unspent zUSD, including coins whose spending keys have been lost. A **report certificate** is one price report with the required matching reporter signatures. A **current vault reference** identifies the transaction that created its latest state.
+- **ZSV** means Zcash Stablecoin Vaults.
+- **zUSD** is the provisional name of the single dollar-targeting stable asset defined here.
+- **Principal** is debt attached to an active vault.
+- **Bad debt** is stablecoin liability remaining after a vault closes without burning all its principal.
+- **Stable supply** includes all unspent zUSD, including coins whose spending keys have been lost.
+- A **report certificate** is one price report with the required matching reporter signatures.
+- A **current vault reference** identifies the transaction that created its latest state.
 
 # Abstract
 

@@ -63,7 +63,7 @@ The next engineering work should follow the candidate rules and expose disagreem
 
 SHA-256 of the reviewed candidate and its conformance material:
 
-- `zips/draft-ijaack-zsv.md`: `42eb582a1b500b08e25d2eb820ef4a2e04942672cf47002fc0cab9750f107006`.
+- `zips/draft-ijaack-zsv.md`: `d91ca1494b95cda9bfcb7a59518e820fd6849b43dbdb9028b9a9e4475750383a`.
 - `zips/draft-ijaack-zsv/check_financial_vectors.py`: `d5dd93fc554af2a94f459cef1c59826e5fc9ba74bb65bf6e11d075af81f0cbf4`.
 - `zips/draft-ijaack-zsv/financial-vectors.json`: `2ca1b02eda82c065672a768cabcef6081c511d6398a32bfecaf0b763f3eb7ef9`.
 - `zips/draft-ijaack-zsv/check_wire_vectors.py`: `30f3b6d1e7a9fb0ce7cc927138127b875d6c1ccf5e992b1f0e8e32ecb9f9289f`.
