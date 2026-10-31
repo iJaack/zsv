@@ -230,3 +230,11 @@ The whitepaper, forum draft, repository navigation and implementation plan now p
 Simplified the README, forum draft, implementation plan and Zebra source map. Removed new shielded circuits, the experimental marker-script guard and reserve/funding state from the core implementation path. The whitepaper's implementation section now matches the candidate's public payments and dedicated collateral pool. Research code, fixtures and normative ZIP rules are unchanged.
 
 `bash scripts/verify-zip.sh` passed all existing candidate checks and package screening; `git diff --check` passed. The paper rebuilt to 14 pages with Giacomo Barbieri's author metadata and the corrected implementation text. PDF SHA-256: `1619bbede35db943f3b040f8f9ee176625d7496cafe24b7379bb8c75277e7150`. Existing Rust test results retain their original scope; no new model validation is claimed for this documentation change.
+
+## Oracle activation and payout checks — 31 October 2026
+
+The candidate now uses the exact parent's committed oracle observation for every operation in a block. An accepted certificate updates state for descendants only. Expiry and domain changes still disable pricing; a new certificate cannot rescue operations in its own inclusion block. The added block of price delay is documented in the ZIP, threat model and whitepaper. No native implementation or change to the legacy Rust model is claimed.
+
+`bash scripts/verify-zip.sh` passed the 54 financial cases, seven unsigned wire cases and canonical oracle checks, including 13 new block-selection cases. Restoring immediate certificate activation in a temporary mutation failed those checks. Mutating the liquidation recipient or shifting one zatoshi between its payouts was missed by the prior fixture helper and rejected after supplying both mandatory payout assertions. These checks operate on fixture helpers, not a native block verifier.
+
+Direct Pandoc rendering passed. The previous temporary upstream renderer was unavailable, so the pinned upstream rendering path was not rerun for this revision. The whitepaper rebuilt to 14 pages; author metadata and the new pricing-delay text were checked. PDF SHA-256: `9d954aa6a645c2d136242d3ff08b6b0ae9a4434da85a81518f310a2f419cc6aa`. Package and whitespace checks passed.

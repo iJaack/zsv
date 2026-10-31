@@ -20,7 +20,7 @@ The core contains vaults, one public stable asset, oracle rules and loss account
 | Transaction shape | New unallocated version; one NONE, OPEN, UPDATE, CLOSE, LIQUIDATE or RETIRE_BAD_DEBT operation; exact byte and auth grammar |
 | Authorization | Compressed secp256k1 ownership, strict DER/low-S signatures over effects and actual resolved state; network/upgrade binding |
 | Vault economics | 250% borrowing/withdrawal ratio, strict-below-200% liquidation, 5% bonus, 100-zUSD minimum nonzero debt, 100,000-zUSD initial supply cap |
-| Oracle | Fixed upgrade-selected seven-key roster; five matching signatures; anchored observation valid for twelve blocks; exact report-ID binding |
+| Oracle | Fixed upgrade-selected seven-key roster; five matching signatures; maximum twelve-block observation age; parent-selected price fixed throughout the block; exact report-ID binding |
 | Losses | Explicit bad debt stops borrowing; holders may burn existing zUSD against it without compensation; no administrator reset or redemption promise |
 | Resources | 65,536 bytes per new transaction; 256 such transactions, 1,024 secp256k1 auth slots and 4,096 new payment outputs per block; at most seven oracle signatures |
 
@@ -59,14 +59,20 @@ Before deployment: allocate transaction/group and upgrade identifiers, choose Ma
 
 The next engineering work should follow the candidate rules and expose disagreements with them. Finishing a node implementation is not a condition for beginning community discussion of the draft.
 
+## Oracle renewal correction — 31 October 2026
+
+The original same-block certificate activation could invalidate pending borrowing or liquidation even at an unchanged price. The revised rule fixes the pricing observation from the exact parent and commits new certificates for descendants. This adds one block of price delay; the twelve-block age limit remains unchanged. It prevents same-block supersession, not censorship, reorg invalidation or transactions expiring while waiting.
+
+The oracle checker now includes 13 selection cases covering unchanged and changed prices, first activation, expiry, domain changes and sibling parents. The unsigned liquidation fixture now asserts both mandatory payout amounts and recipients. These are specification/fixture checks, not native block verification. Earlier verification results above describe the original candidate milestone.
+
 ## Source fingerprints
 
 SHA-256 of the reviewed candidate and its conformance material:
 
-- `zips/draft-ijaack-zsv.md`: `d91ca1494b95cda9bfcb7a59518e820fd6849b43dbdb9028b9a9e4475750383a`.
+- `zips/draft-ijaack-zsv.md`: `ce20f8c924bfd62d560ea3f00318c26b92e91d39ec88db64f56a6abb68cc7c55`.
 - `zips/draft-ijaack-zsv/check_financial_vectors.py`: `d5dd93fc554af2a94f459cef1c59826e5fc9ba74bb65bf6e11d075af81f0cbf4`.
 - `zips/draft-ijaack-zsv/financial-vectors.json`: `2ca1b02eda82c065672a768cabcef6081c511d6398a32bfecaf0b763f3eb7ef9`.
-- `zips/draft-ijaack-zsv/check_wire_vectors.py`: `30f3b6d1e7a9fb0ce7cc927138127b875d6c1ccf5e992b1f0e8e32ecb9f9289f`.
-- `zips/draft-ijaack-zsv/wire-vectors.json`: `5b38eabb68a6a486b3e8ca985f4c471e2508bd9e145c41dfac5d648d95a4d5cd`.
-- `zips/draft-ijaack-zsv/check_oracle_vector.py`: `0a7acae381c0f1d2f71597ea0d2006084510b39fcab07fc1d94470a387dbfe14`.
-- `zips/draft-ijaack-zsv/oracle-vector.json`: `0af82f53ed8c545b7d9e5e81dc5e17812e21cf2e3d88e77cfd16437dd35d9063`.
+- `zips/draft-ijaack-zsv/check_wire_vectors.py`: `4c10aeee1b76d481dd64be6840db5bd19ae074ea385473106eca79945b9e2eb9`.
+- `zips/draft-ijaack-zsv/wire-vectors.json`: `24a93e3c1d617b5549e3141e21dcae435b9e98931997a197e3e5e17115ea571f`.
+- `zips/draft-ijaack-zsv/check_oracle_vector.py`: `ec76082be8710b5a7fc51b7771f39cf3115b7a91ff16beec3a240848c40919f7`.
+- `zips/draft-ijaack-zsv/oracle-vector.json`: `d74b39a2a83d3e62f6a0bfb711d7a20e8346e1574db716a45483135893ff9318`.

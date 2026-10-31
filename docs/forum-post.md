@@ -14,6 +14,8 @@ I'd like feedback on [ZSV](https://github.com/iJaack/zsv/blob/main/zips/draft-ij
 
 Vaults and payments are public. Shielded payments would need a follow-up ZIP. There is no arbitrary asset registration, issuer key, governance token or general execution environment. This restriction cannot prevent off-protocol derivatives or speculation.
 
+Every operation in a block uses the parent block's committed price. New reports take effect in the next block, preventing renewal from invalidating pending transactions within their inclusion block. The tradeoff is one block of additional price delay.
+
 The draft uses a 250% borrowing ratio, liquidation below 200%, a 5% liquidation bonus and a 100,000-zUSD supply cap. These are initial research parameters requiring calibration.
 
 ## The difficult tradeoffs

@@ -109,7 +109,7 @@ def fixture():
         "observed_height": height,
         "observed_block_hash_hex": ancestor.hex(),
         "price_micro_usd_per_zec": price,
-        "valid_from_height": 101,
+        "valid_from_height": 102,
         "valid_through_height": 112,
         "body_hex": report_body.hex(),
         "signing_message_hex": signed_message.hex(),
@@ -192,18 +192,71 @@ def check(document, keys):
     return len(cases)
 
 
+def block_oracle(parent, accepted, height, domain_changed=False):
+    """Oracle selection only; inputs are already-validated (ID, observed height).
+
+    This fixture helper does not validate a block, ancestry or certificate.
+    """
+    parent = None if domain_changed else parent
+    pricing = parent if parent is not None and height <= parent[1] + 12 else None
+    return pricing, accepted if accepted is not None else parent
+
+
+def check_rollover(document, keys):
+    old_message = bytes.fromhex(document["signing_message_hex"])
+    old = (sha256(old_message), 100)
+    # Same price, later observation and synthetic ancestor: both quorums verify.
+    new_message = old_message[:-44] + body(101, bytes([0x33]) * 32, 100_000_000)
+    verify_subset(keys, new_message, 0x1F, [key.sign(new_message) for key in keys[:5]])
+    new = (sha256(new_message), 101)
+    assert old[0] != new[0]
+    assert context_valid(101, 100_000_000, 102, 90, 100)
+    crash_message = old_message[:-44] + body(101, bytes([0x33]) * 32, 20_000_000)
+    verify_subset(keys, crash_message, 0x1F, [key.sign(crash_message) for key in keys[:5]])
+    crash = (sha256(crash_message), 101)
+    next_domain_message = message(bytes.fromhex(document["genesis_hash_hex"]),
+                                  document["active_branch_id_u32"] + 1,
+                                  bytes.fromhex(document["reporter_set_id_hex"]),
+                                  body(101, bytes([0x33]) * 32, 100_000_000))
+    verify_subset(keys, next_domain_message, 0x1F,
+                  [key.sign(next_domain_message) for key in keys[:5]])
+    next_domain = (sha256(next_domain_message), 101)
+    cases = [
+        # (parent, newly accepted, block height, domain change), (pricing, committed)
+        ((None, old, 101, False), (None, old)),
+        ((old, new, 102, False), (old, new)),
+        ((new, None, 103, False), (new, new)),
+        ((old, None, 102, False), (old, old)),
+        ((old, None, 112, False), (old, old)),
+        ((old, None, 113, False), (None, old)),
+        ((old, new, 113, False), (None, new)),
+        ((new, None, 114, False), (None, new)),
+        ((old, None, 102, True), (None, None)),
+        # A new-domain certificate must be verified separately before this helper.
+        ((old, next_domain, 102, True), (None, next_domain)),
+        ((old, crash, 102, False), (old, crash)),
+        ((crash, None, 103, False), (crash, crash)),
+        # Replaying a sibling uses its own parent, not the selected tip's report.
+        ((old, None, 103, False), (old, old)),
+    ]
+    for arguments, expected in cases:
+        assert block_oracle(*arguments) == expected, arguments
+    return len(cases)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--write", action="store_true", help="regenerate the checked-in fixture")
     args = parser.parse_args()
     document, keys = fixture()
     boundary_count = check(document, keys)
+    rollover_count = check_rollover(document, keys)
     encoded = json.dumps(document, indent=2) + "\n"
     if args.write:
         PATH.write_text(encoded)
     if PATH.read_text() != encoded:
         raise ValueError("oracle-vector.json differs from its deterministic fixture")
-    print(f"Oracle fixture checked: 7 canonical signers, 4 quorum subsets, 16 rejection probes, {boundary_count} context cases; exact JSON match.")
+    print(f"Oracle fixture checked: 7 canonical signers, 4 quorum subsets, 16 rejection probes, {boundary_count} context cases; {rollover_count} block-selection cases; exact JSON match.")
 
 
 if __name__ == "__main__":
