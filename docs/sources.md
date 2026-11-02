@@ -60,7 +60,7 @@ The later [mathematical study](stabilization-math.md) checked these additional p
 
 - [ZCG taper discussion, 29 October 2026](https://forum.zcashcommunity.com/t/zcg-gets-too-much-zec-heres-our-plan-to-fix-that/58566): approximately 109,000 ZEC of future funding through the current 2028 expiry, approximately 47,000 through 2032 under the proposal, and a separate conditional 36,200 ZEC treasury contribution. The proposed monthly taper and reference schedule are not fully specified.
 - [ZIP 214](https://zips.z.cash/zip-0214): 8% ZCG and 12% CCF-labelled `DEFERRED_POOL` allocation; expiry at the third halving. Its revision status header and abstract differ on the enacted NU6.1 revision; [Final ZIP 255](https://zips.z.cash/zip-0255) anchors NU6.1 activation.
-- [ZIP 271](https://zips.z.cash/zip-0271): one-time 78,750 ZEC deferred-pool disbursement, distinct from ongoing deferred accrual. Neither is counted as ZSV funding.
+- [ZIP 271](https://zips.z.cash/zip-0271): **Proposed** at the rechecked ZIP pin; one-time 78,750 ZEC deferred-pool disbursement, distinct from ongoing deferred accrual. Neither is counted as ZSV funding.
 - [ZIP 218](https://zips.z.cash/zip-0218): proposed shorter block interval with proportionally adjusted scheduled subsidy. The study's 1,800/900 ZEC daily rates are idealized target-spacing inputs.
 - [ZIP 237](https://zips.z.cash/zip-0237) and [ZIP 259](https://zips.z.cash/zip-0259): NSM accounting and proposed reissuance parameters. The simplified study excludes reserve-dependent reissuance and uses scheduled subsidy explicitly.
 
@@ -69,3 +69,7 @@ The later [mathematical study](stabilization-math.md) checked these additional p
 On 30 October 2026 the [ZIP Process](https://github.com/zcash/zips/blob/ff594de6e95bb9e9e7d2ace09510281531c30447/zips/zip-0000.rst), [Markdown guide](https://github.com/zcash/zips/blob/ff594de6e95bb9e9e7d2ace09510281531c30447/zips/zip-guide-markdown.md) and [template](https://github.com/zcash/zips/blob/ff594de6e95bb9e9e7d2ace09510281531c30447/zips/zip-template.md) were checked at `ff594de6e95bb9e9e7d2ace09510281531c30447`, committed at 01:46:53 UTC that day. This refresh governs draft structure and process; it does not change the earlier consensus/Zebra source pins.
 
 ZIP 0 permits Markdown, an alias-named initial Draft and MIT licensing. Editors assign numbers. A reference implementation generally need not be complete before Proposed; security/privacy-sensitive proposals still need qualified independent review before release. The original MIT-only research implementation license is disclosed in the candidate as required for linked code that differs from ZIP 0's recommended MIT/Apache-2.0 combination for Zebra work.
+
+## Fact-check refresh — 3 November 2026
+
+The [verification record](fact-check.md) rechecks primary ZIP text at `ff594de6e95bb9e9e7d2ace09510281531c30447`, the original forum posts, and the local Zebra checkout at the existing research pin. The GitHub connector still returned that ZIP commit as `main`; it returned Zebra `b2fd4ce06b3469259683650c173d7689ced8b2b0` (2 November 2026) as upstream `main`. The implementation source map remains scoped to `5faf8a413f0d30a6e93115f3d16af1e229fd7858`; it has not been revalidated against the newer Zebra revision. None of these repository reads measures live network activation.

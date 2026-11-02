@@ -2,7 +2,7 @@
 title: "ZSV: Zcash Stablecoin Vault"
 subtitle: "A narrow native protocol for a ZEC-collateralized dollar target"
 author: "Giacomo Barbieri"
-date: "30 October 2026 · research draft 0.3"
+date: "3 November 2026 · research draft 0.4"
 geometry: margin=25mm
 fontsize: 11pt
 colorlinks: true
@@ -17,7 +17,7 @@ header-includes: |
 
 Zcash Stablecoin Vault (ZSV) is a proposed consensus extension for locking native ZEC and issuing one dollar-targeting stablecoin on Zcash. ZEC and a single protocol-defined stable asset are the complete asset set. The protocol excludes arbitrary issuers, token descriptions, asset registration transactions, NFTs, liquidity tokens, governance tokens and programmable asset factories.
 
-ZSV couples stablecoin issuance to collateralized debt, repayment to token destruction, and liquidation to atomic exchange of debt tokens for collateral. All proposed authorization and state-transition rules are verified by Zcash full nodes. Price observations remain an external trust input, but their acceptance, freshness and use are consensus rules. No external chain, bridge, custody committee or application server determines whether a vault can spend its collateral.
+ZSV couples stablecoin issuance to collateralized debt, repayment to token destruction, and liquidation to atomic exchange of debt tokens for collateral. Upgraded Zcash full nodes would verify the proposed authorization and state-transition rules. The repository does not yet implement that native verification. Price observations remain an external trust input, but their acceptance, freshness and use are consensus rules. No external chain, bridge, custody committee or application server determines whether a vault can spend its collateral.
 
 The repository provides a regtest-only Rust account-ledger model, signed requests and oracle observations, economic stress tests, adversarial review and offline profiles linked to a pinned Zebra library. The first profile tests block commitments and branch replay. A second verifies serialized transparent spends against fixture UTXOs, native signatures and an experimental vault guard. Node-verifier integration, a native stablecoin value pool and shielded stablecoin transfers remain unimplemented. The model has no proven dollar peg. The protocol is original design work; cited Zcash proposals supply context and do not imply approval.
 
@@ -37,7 +37,7 @@ A general proof-verification or predicate layer is another possible route. It co
 
 External smart-contract execution and threshold custody are excluded because the requirement is native Zcash enforcement. An off-chain service may propose a transaction or generate a proof; it must never gain discretion to make an otherwise invalid transaction valid.
 
-ZIP 222 describes consensus-distributed verification of complex transparent spending preconditions [S1]. Its experimental implementation was removed in June 2026 and is not an available mainnet facility [S2]. More recent work includes an extensible transaction format [S3] and research on private programmability [S7].
+ZIP 222 describes consensus-distributed verification of complex transparent spending preconditions [S1]. In June 2026, upstream described TZE as experimental, development-only and not planned for deployment [S2]. More recent work includes an extensible transaction format [S3] and research on private programmability [S7].
 
 # Implemented model and proposed native system
 
@@ -151,7 +151,7 @@ The model accepts matching observations from at least two distinct authorized ke
 
 Consensus must use deterministic chain information, not a node's wall clock or an HTTP call to an exchange. If multiple observations are possible in a block, ordering and freshness semantics must be specified so different nodes produce the same result. Reorganizations must roll back oracle state with vault and monetary state.
 
-Reporter honesty and independence remain trust assumptions. Two compromised reporters can inflate collateral values to authorize excess borrowing or depress prices to enable wrongful liquidation. Distinct signing keys do not establish independent organizations or price sources. A stale-policy halt trades oracle safety for borrower/holder liveness. Reporter-set rotation and emergency governance remain unresolved production requirements.
+Reporter honesty and independence remain trust assumptions. In the three-reporter model, two compromised reporters can inflate collateral values to authorize excess borrowing or depress prices to enable wrongful liquidation. Distinct signing keys do not establish independent organizations or price sources. A stale-policy halt trades oracle safety for borrower/holder liveness. The candidate instead requires five of seven reporters and fixes membership by network upgrade. Actual operators, source independence and recovery arrangements still require review.
 
 # Dollar target and economic limitations
 
@@ -161,7 +161,7 @@ Mint capacity is capital constrained, bad-debt freezes can shut it off, and borr
 
 The 5% liquidation bonus is paid out of collateral. Full debt coverage requires collateral oracle value of at least 105% of principal, before real-world execution costs. An oracle-price crash can produce bad debt even with immediate honest execution; a market price worse than the oracle can make a nominally profitable liquidation unattractive.
 
-A production proposal needs credible demand, liquidation depth, stress-tested caps, peg incentives, recapitalization and emergency settlement. Those decisions must be tested against adversarial scenarios rather than inferred from high initial collateralization. The independent economic review supplies concrete counterexamples and additional acceptance scenarios.
+A production proposal needs credible demand, liquidation depth, stress-tested caps, peg incentives, recapitalization and emergency settlement. Those decisions must be tested against adversarial scenarios rather than inferred from high initial collateralization. The coding-agent economic review supplies concrete counterexamples and additional acceptance scenarios.
 
 ## Funding and stabilization study
 

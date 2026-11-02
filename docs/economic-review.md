@@ -1,6 +1,6 @@
 # Economic and protocol review
 
-This adversarial review covers a research prototype: one native USD-denominated asset, ZEC-only collateral, public vaults, a transparent stablecoin ledger, a canonical on-chain oracle, owner repayment and permissionless atomic liquidation. It evaluates rules that a future consensus proposal could implement. Native Zcash support for these transitions, a dollar peg and production-safe parameters remain unproven.
+This coding-agent adversarial review covers a research prototype: one native USD-denominated asset, ZEC-only collateral, public vaults, a transparent stablecoin ledger, a canonical on-chain oracle, owner repayment and permissionless atomic liquidation. It evaluates rules that a future consensus proposal could implement. Native Zcash support for these transitions, a dollar peg and production-safe parameters remain unproven.
 
 The review assumes the working prototype uses a 250% minimum collateral ratio for new debt and collateral withdrawal, a 200% liquidation threshold, a 5% liquidation bonus, no interest or fees, a 100-unit minimum nonzero vault debt, and a 100,000-unit system debt ceiling. These simulation inputs lack risk calibration. A larger collateral ratio buys time during some price declines; it does not create a guaranteed price floor.
 

@@ -238,3 +238,9 @@ The candidate now uses the exact parent's committed oracle observation for every
 `bash scripts/verify-zip.sh` passed the 54 financial cases, seven unsigned wire cases and canonical oracle checks, including 13 new block-selection cases. Restoring immediate certificate activation in a temporary mutation failed those checks. Mutating the liquidation recipient or shifting one zatoshi between its payouts was missed by the prior fixture helper and rejected after supplying both mandatory payout assertions. These checks operate on fixture helpers, not a native block verifier.
 
 Direct Pandoc rendering passed. The previous temporary upstream renderer was unavailable, so the pinned upstream rendering path was not rerun for this revision. The whitepaper rebuilt to 14 pages; author metadata and the new pricing-delay text were checked. PDF SHA-256: `9d954aa6a645c2d136242d3ff08b6b0ae9a4434da85a81518f310a2f419cc6aa`. Package and whitespace checks passed.
+
+## Research fact-check — 3 November 2026
+
+[Fact-check record](fact-check.md) maps the rechecked primary sources, corrected claims, reproduced results and remaining assumptions. `scripts/verify.sh`, `zebra/verify-dev.sh` and `scripts/verify-zip.sh` all completed successfully from revision `413fd0f`. Rust 1.90 was restored to a temporary toolchain directory; locked dependencies were fetched. Results: 110 reference Rust tests, 39 Zebra-linked tests, 96 Python tests, all 351 combined cases, exact study/scenario outputs, formatting and strict Clippy. These test scopes remain distinct from native ZIP conformance.
+
+The paper rebuilt with the claim corrections and author Giacomo Barbieri. PDF SHA-256: `4e7a2205e494afcaf0338bac36b5fde3c0477d81ac266c6217ea359a32c19de2`. Source reads, proposed rules, scenario assumptions and deployment evidence are distinguished in the fact-check record. Package and whitespace checks passed.

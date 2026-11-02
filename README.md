@@ -10,6 +10,7 @@ The first version needs four things: vault transitions, stablecoin payments, aut
 - [Whitepaper](docs/whitepaper.md) · [PDF](docs/whitepaper.pdf): rationale and research results.
 - [Threat model](docs/threatmodel.md) · [Economic review](docs/economic-review.md): attacks and unresolved risks.
 - [Implementation plan](docs/implementation-plan.md) · [Zebra integration](docs/zebra-integration.md): remaining work.
+- [Fact-check and verification](docs/fact-check.md): checked sources, reproduced results and remaining assumptions.
 - [Submission readiness](docs/zip-readiness.md) · [Forum draft](docs/forum-post.md): review and discussion material.
 
 A dollar target is not a redemption promise. False prices, a ZEC crash or insufficient liquidation liquidity can create losses. Recorded bad debt freezes borrowing until holders voluntarily burn enough existing zUSD to retire it. That freeze can last indefinitely.

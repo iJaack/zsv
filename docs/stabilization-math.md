@@ -8,7 +8,7 @@ The executable study has exact funding arithmetic, analytical controller bounds,
 
 ## 1. Which funding reduction?
 
-[ZIP 214](https://zips.z.cash/zip-0214) assigns 8% to ZCG and 12% to the CCF-labelled deferred pool, ending at the third halving, approximately 2028. [ZIP 255](https://zips.z.cash/zip-0255) specifies NU6.1; [ZIP 271](https://zips.z.cash/zip-0271) specifies its one-time deferred-pool disbursement. The ongoing 12% stream is still directed to `DEFERRED_POOL`. It is not an available ZSV treasury.
+[ZIP 214](https://zips.z.cash/zip-0214) assigns 8% to ZCG and 12% to the CCF-labelled deferred pool, ending at the third halving, approximately 2028. [ZIP 255](https://zips.z.cash/zip-0255) specifies NU6.1; [ZIP 271](https://zips.z.cash/zip-0271), whose header remains Proposed at the checked pin, specifies a one-time deferred-pool disbursement. Its header alone does not establish activation. The ongoing 12% stream is still directed to `DEFERRED_POOL`. It is not an available ZSV treasury.
 
 [ZCG's taper discussion](https://forum.zcashcommunity.com/t/zcg-gets-too-much-zec-heres-our-plan-to-fix-that/58566) proposes reduced grant funding through 2032, with roughly 3% monthly reductions and the remainder directed to the NSM. Its rounded comparison gives approximately 109,000 ZEC of future ZCG funding through the existing 2028 expiry versus 47,000 ZEC through 2032 under the proposal:
 
