@@ -1,10 +1,10 @@
 # ZSV ZIP submission candidate
 
-The primary proposal is [draft-ijaack-zsv.md](../zips/draft-ijaack-zsv.md), authored and owned by **Giacomo Barbieri <hey@jaack.me>**. Public stablecoin payments are the confirmed initial scope; shielding belongs in a follow-up specification. The draft is unnumbered and has not been submitted upstream.
+The primary proposal is [draft-ijaack-zsv.md](../zips/draft-ijaack-zsv.md), authored and owned by **Giacomo Barbieri <hey@jaack.me>**. Public stablecoin payments are the confirmed initial scope; shielding belongs in a follow-up specification. The unnumbered Draft was submitted on 5 November 2026 as [zcash/zips#1438](https://github.com/zcash/zips/pull/1438). It is open and not merged.
 
 ## Process and scope
 
-The draft follows [ZIP 0](https://github.com/zcash/zips/blob/ff594de6e95bb9e9e7d2ace09510281531c30447/zips/zip-0000.rst) and the [Markdown template](https://github.com/zcash/zips/blob/ff594de6e95bb9e9e7d2ace09510281531c30447/zips/zip-template.md), reviewed on 30 October 2026. This process pin is separate from the consensus/Zebra research baseline. The ZIP uses an alias filename, Draft status, Consensus category and MIT text license. `Created` remains a placeholder for the actual submission date. No discussion URL, editor assignment or review approval is invented.
+The draft follows [ZIP 0](https://github.com/zcash/zips/blob/ff594de6e95bb9e9e7d2ace09510281531c30447/zips/zip-0000.rst) and the [Markdown template](https://github.com/zcash/zips/blob/ff594de6e95bb9e9e7d2ace09510281531c30447/zips/zip-template.md), reviewed on 30 October 2026. This process pin is separate from the consensus/Zebra research baseline. The ZIP uses an alias filename, Draft status, Consensus category and MIT text license. `Created` records 5 November 2026; `Discussions-To` links the real [tracking issue](https://github.com/iJaack/zsv/issues/1) and `Pull-Request` links the submission. The forum announcement, editor assignment and qualified review remain pending.
 
 ZIP 0 generally permits Proposed status before the reference implementation is complete. It also requires a sufficiently specified proposal, the applicable editor/community process and qualified independent security/privacy review for release of a proposal with significant implications. The coding-agent reviews here are preliminary review and test evidence, not that expert review.
 
@@ -53,7 +53,7 @@ The independent process review found the author metadata, public-first privacy d
 
 ## Remaining submission and deployment work
 
-Before upstream submission: collect public feedback using the [forum draft](forum-post.md), supply the actual submission date and discussion URL, rerun the checked upstream renderer after final metadata changes and package auxiliary files for the ZIP repository. Existing repository publication does not imply that any of these external actions occurred.
+The upstream PR is open. Next, publish the [forum announcement](forum-post.md), collect feedback and link the actual forum topic from the submission. ZIP 0 recommends early discussion but does not impose a fixed waiting period or require resolving concerns before a draft can be merged. The upstream contribution issue reference is [iJaack/zsv#1](https://github.com/iJaack/zsv/issues/1). No forum publication is claimed.
 
 Before deployment: allocate transaction/group and upgrade identifiers, choose Mainnet/Testnet activation and actual reporter operators/keys, implement the rules, generate complete signed/native block vectors independently, measure costs, and obtain qualified consensus/cryptographic/privacy and economic review. Reporter source quality, willingness to absorb bad debt, liquidation-market depth and a dollar peg remain external economic risks.
 
@@ -69,7 +69,7 @@ The oracle checker now includes 13 selection cases covering unchanged and change
 
 SHA-256 of the reviewed candidate and its conformance material:
 
-- `zips/draft-ijaack-zsv.md`: `f2a3edbf884d67f49b62e4c2e0cc997a9baf54592986d4916b4b7483ec73db3e`.
+- `zips/draft-ijaack-zsv.md`: `a476bd263cffc21b926261fc4671e89efec182f9c5b04d7acc15a8d78b9f739d`.
 - `zips/draft-ijaack-zsv/check_financial_vectors.py`: `d5dd93fc554af2a94f459cef1c59826e5fc9ba74bb65bf6e11d075af81f0cbf4`.
 - `zips/draft-ijaack-zsv/financial-vectors.json`: `2ca1b02eda82c065672a768cabcef6081c511d6398a32bfecaf0b763f3eb7ef9`.
 - `zips/draft-ijaack-zsv/check_wire_vectors.py`: `4c10aeee1b76d481dd64be6840db5bd19ae074ea385473106eca79945b9e2eb9`.

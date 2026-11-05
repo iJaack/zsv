@@ -1,6 +1,6 @@
 # ZSV · Zcash Stablecoin Vault
 
-ZSV proposes locking ZEC to borrow one dollar-targeting stablecoin under Zcash consensus rules. The [ZIP candidate](zips/draft-ijaack-zsv.md), authored by **Giacomo Barbieri**, specifies public vaults and public zUSD payments. It is Draft, unnumbered and not submitted upstream.
+ZSV proposes locking ZEC to borrow one dollar-targeting stablecoin under Zcash consensus rules. The [ZIP candidate](zips/draft-ijaack-zsv.md), authored by **Giacomo Barbieri**, specifies public vaults and public zUSD payments. It is an unnumbered Draft, submitted as [zcash/zips#1438](https://github.com/zcash/zips/pull/1438).
 
 The first version needs four things: vault transitions, stablecoin payments, authenticated prices and explicit loss accounting. Shielded payments and any reserve or Dev Fund allocation are separate proposals. There is no arbitrary token issuance, issuer key or general execution environment.
 

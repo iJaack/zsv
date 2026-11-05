@@ -250,3 +250,9 @@ The paper rebuilt with the claim corrections and author Giacomo Barbieri. PDF SH
 The ZIP motivation, forum draft and whitepaper now cite Veylor as related work on private dollar access. The comparison distinguishes exchanging ZEC for Ethereum/Railgun USDC from borrowing against ZEC and settling the proposed zUSD asset on Zcash. It preserves the public-payment scope and treats adoption and borrowing demand as unmeasured. The source register records the primary pages, pinned contract and deployment-verification limits. No normative rules or executable source changed.
 
 `bash scripts/verify-zip.sh`, direct Pandoc ZIP rendering and whitepaper generation passed. PDF author and related-work text were checked. PDF SHA-256: `db4401940411c4401ea1fbb88b2ffe718f42052df6fc4a3bdec7c698d5a5cc9a`. The candidate source fingerprint was refreshed. These documentation checks add no native implementation or economic validation claim.
+
+## Upstream ZIP submission — 5 November 2026
+
+Verified https://github.com/zcash/zips/pull/1438 as an open PR authored by iJaack against zcash/zips, with the expected nine-file submission. It contains an unnumbered Draft Consensus ZIP; the PR is not merged or activated. The fork branch was updated with the actual Pull-Request metadata. The real change/discussion reference is https://github.com/iJaack/zsv/issues/1; the forum announcement remains pending.
+
+The research copy and submitted specification were compared equal after whitespace normalization. Candidate fixtures, upstream Pandoc rendering and whitespace checks passed. The whitepaper rebuilt with the submitted status; PDF SHA-256: `3a8d010cd3ad619f4d50e3acf54eab6adcf70453cfd1867e304db2ca096a09c9`. No new native implementation or full upstream CI result is claimed.

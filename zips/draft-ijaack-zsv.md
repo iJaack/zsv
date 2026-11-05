@@ -3,10 +3,12 @@
     Owners: Giacomo Barbieri <hey@jaack.me>
     Status: Draft
     Category: Consensus
-    Created: YYYY-MM-DD
+    Created: 2026-11-05
     License: MIT
+    Discussions-To: <https://github.com/iJaack/zsv/issues/1>
+    Pull-Request: <https://github.com/zcash/zips/pull/1438>
 
-Local submission candidate, prepared 30 October 2026. The submission date is pending; the Owners contact is approved for public use. No ZIP number or network upgrade has been assigned. Deployment allocations and outstanding review are listed below.
+No ZIP number or network upgrade has been assigned. Deployment allocations and outstanding review are listed below.
 
 # Terminology
 
@@ -508,7 +510,7 @@ The protocol choices in Specification are proposed rules, subject to public revi
 1. Allocate the new transaction/group identifiers and upgrade context; select Mainnet/Testnet activation and the public reporter roster through the deployment process.
 2. Independently review and implement the byte, digest, authorization and branch-state rules, and produce signed transaction and full-block conformance vectors.
 3. Obtain qualified consensus/cryptographic/privacy review and resource benchmarks, and justify the economic parameters, oracle operations and loss policy against adversarial conditions.
-4. Supply the actual submission date and discussion URL; rerun upstream rendering after final submission metadata is supplied. The current draft was rendered with the pinned ZIP repository's `render.sh --pandoc` path.
+4. Publish the forum announcement and add its discussion URL; rerun upstream rendering after metadata changes. This draft has been rendered with the ZIP repository's `render.sh --pandoc` path.
 
 The public-first scope and Owners contact are confirmed. No editor-assigned number, named reviewer, oracle operator or activation approval has been invented to fill these entries.
 

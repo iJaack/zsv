@@ -1,6 +1,6 @@
 # ZSV implementation plan
 
-Implement the [candidate ZIP](../zips/draft-ijaack-zsv.md): public ZEC vaults, one public stablecoin, an authenticated price feed and explicit bad debt. The [Zebra source map](zebra-integration.md) identifies the integration points. The ZIP is Draft and has not been submitted upstream.
+Implement the [candidate ZIP](../zips/draft-ijaack-zsv.md): public ZEC vaults, one public stablecoin, an authenticated price feed and explicit bad debt. The [Zebra source map](zebra-integration.md) identifies the integration points. The ZIP is an unnumbered Draft submitted as [zcash/zips#1438](https://github.com/zcash/zips/pull/1438).
 
 ## Scope
 
