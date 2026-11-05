@@ -1,6 +1,6 @@
 # ZSV: one ZEC-backed stablecoin on Zcash
 
-Unpublished discussion draft by Giacomo Barbieri.
+Published by Giacomo Barbieri on 5 November 2026: [forum topic](https://forum.zcashcommunity.com/t/zip-draft-zsv-one-zec-backed-stablecoin-on-zcash/58909).
 
 I'd like feedback on [ZSV](https://github.com/iJaack/zsv/blob/main/zips/draft-ijaack-zsv.md), a proposed Consensus ZIP for borrowing one dollar-targeting stablecoin against ZEC. Zcash nodes would enforce the vault and payment rules. The unnumbered Draft is submitted in [zcash/zips#1438](https://github.com/zcash/zips/pull/1438); this post opens the wider community discussion.
 

@@ -260,3 +260,7 @@ The research copy and submitted specification were compared equal after whitespa
 ## Related-work scope edit — 5 November 2026
 
 Removed the dedicated Veylor comparison from the ZIP motivation, forum draft and whitepaper. Each retains one sourced sentence as related work; native borrowing and payments remain the core motivation. No consensus rule or executable source changed. Candidate checks, upstream Pandoc rendering, package screening and whitespace checks passed. The whitepaper was rebuilt; PDF SHA-256: `23de48a94a640197ff59b0fda9dd08b08093fcbd5fb4a133c78264821f8293c5`.
+
+## Forum announcement — 5 November 2026
+
+Verified forum topic 58909, posted by iJaack in Technology, and its link to upstream PR #1438. The ZIP Discussions-To field and draft index now point to the actual forum topic. Candidate fixtures, Pandoc rendering, package links and whitespace checks passed; the research and submitted specifications match after whitespace normalization. GitHub rejected the attempt to update the PR description with HTTP 403; the forum link is supplied through the updated specification and project records instead.
