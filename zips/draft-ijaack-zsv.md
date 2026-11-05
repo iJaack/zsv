@@ -38,7 +38,6 @@ ZEC holders may want dollar-denominated liquidity while retaining exposure to th
 
 A data commitment alone cannot lock ZEC or create a native stablecoin. General-purpose Zcash Shielded Assets would support unrelated tokens and issuers. ZSV instead proposes one monetary use case with a closed issuance path. The smaller asset domain reduces issuance cases, but the financial and consensus complexity remains substantial.
 
-Veylor provides related work on dollar access: its documented split-key swap exchanges shielded ZEC for USDC held in Railgun on Ethereum. [^veylor] ZSV proposes borrowing against retained ZEC and settling the issued asset on Zcash. This would serve a different financial use case and avoid an external settlement chain for that path, while introducing collateral, oracle and liquidation risk. Veylor's existence does not establish adoption or demand for ZSV, and ZSV's public first version does not yet provide shielded dollar payments. No affiliation or endorsement is implied.
 
 The intended benefit is native borrowing and a transferable dollar-targeting asset without an arbitrary token-launch interface. Whether that benefit justifies the oracle dependency, privacy cost and additional consensus rules is a question for community review.
 
@@ -455,6 +454,9 @@ General ZSA issuance, a generic VM and external custody were considered. General
 
 One financial operation per transaction limits ordering ambiguity. Open-with-debt and repay-and-close remain atomic. A vault update replaces one current state; it does not accumulate reusable owner-local identifiers. The specified native signatures use one owner-key scheme instead of the prototype's permanent mapping between two key schemes.
 
+Veylor is one example of dollar access alongside shielded ZEC: its swaps deliver USDC held in
+Railgun on Ethereum. [^veylor]
+
 ## Economic policy
 
 The 250% borrowing ratio, 200% liquidation ratio, 5% bonus, 100-zUSD minimum debt and 100,000-zUSD liability ceiling are concrete proposed initial values taken from the research model. They are not calibrated safety guarantees. A 20% collateral-price decline moves a vault from 250% to 200% before oracle delay, execution costs or market gaps. Full liquidation can create bad debt despite valid accounting.
@@ -530,4 +532,4 @@ The public-first scope and Owners contact are confirmed. No editor-assigned numb
 
 [^zip-0239]: [ZIP 239: Relay of Version 5 Transactions](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0239.rst).
 
-[^veylor]: [Veylor: How it works](https://veylor.cash/how-it-works/), read 5 November 2026. The described split-key swap is coordinated by an Ethereum contract; it is not native Zcash stablecoin issuance. [Contract source at the revision linked by Veylor](https://github.com/JustZappIt/zecSwap/blob/32cc6efca0f22589655eb2e61b00ec6d582e8570/contracts/src/ZecSwap.sol).
+[^veylor]: [Veylor: How it works](https://veylor.cash/how-it-works/), read 5 November 2026.

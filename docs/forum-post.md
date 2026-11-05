@@ -4,13 +4,9 @@ Unpublished discussion draft by Giacomo Barbieri.
 
 I'd like feedback on [ZSV](https://github.com/iJaack/zsv/blob/main/zips/draft-ijaack-zsv.md), a proposed Consensus ZIP for borrowing one dollar-targeting stablecoin against ZEC. Zcash nodes would enforce the vault and payment rules. The unnumbered Draft is submitted in [zcash/zips#1438](https://github.com/zcash/zips/pull/1438); this post opens the wider community discussion.
 
-## Why this matters alongside Veylor
+## Why native borrowing?
 
-[Veylor](https://veylor.cash/how-it-works/) brings shielded ZEC and dollar access into one wallet. Its split-key swap exchanges ZEC for USDC held in Railgun on Ethereum. That is useful related work: developers are building ways for Zcash users to move between ZEC and dollars without exposing their ZEC through a transparent deposit.
-
-ZSV addresses a further use case: keep ZEC as collateral, borrow a dollar-targeting asset, and settle its payments under Zcash consensus. That would avoid requiring an Ethereum swap and Railgun balance for this borrowing and payment path. It would also replace dependence on USDC's issuer with ZEC collateral, price reporters and liquidation risk.
-
-Veylor's existence supports investigating this use case; it does not establish adoption, demand for borrowing or the safety of ZSV. Veylor already targets shielded dollar use, while this ZIP starts with public payments. Matching that privacy utility would require the follow-up shielded-payment ZIP. The proposals can complement each other; neither project's existence establishes endorsement by the other.
+ZEC holders may want dollar-denominated liquidity while retaining ZEC as collateral. ZSV proposes borrowing and payment rules enforced on Zcash, with one protocol-defined asset and no arbitrary token-launch interface.
 
 ## What the first version does
 
@@ -37,6 +33,8 @@ Public vaults expose financial positions. Public payments expose amounts and tra
 ## Why keep it narrow?
 
 The immediate question is whether one native stablecoin justifies the additional consensus and oracle risk. Public v1 needs no new shielded circuit or general ZSA issuance machinery. Selected ZSA transfer techniques may be useful for later shielding.
+
+As related work, [Veylor](https://veylor.cash/how-it-works/) combines shielded ZEC with USDC held in Railgun on Ethereum through swaps.
 
 Dev Fund incentives and a stabilization reserve are separate research. The [funding study](https://github.com/iJaack/zsv/blob/main/docs/stabilization-math.md) and [reserve results](https://github.com/iJaack/zsv/blob/main/docs/combined-stress.md) show finite-budget, stale-price and shutdown risks. No funding allocation is assumed by this ZIP.
 

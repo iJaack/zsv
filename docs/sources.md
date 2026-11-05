@@ -74,10 +74,6 @@ ZIP 0 permits Markdown, an alias-named initial Draft and MIT licensing. Editors 
 
 The [verification record](fact-check.md) rechecks primary ZIP text at `ff594de6e95bb9e9e7d2ace09510281531c30447`, the original forum posts, and the local Zebra checkout at the existing research pin. The GitHub connector still returned that ZIP commit as `main`; it returned Zebra `b2fd4ce06b3469259683650c173d7689ced8b2b0` (2 November 2026) as upstream `main`. The implementation source map remains scoped to `5faf8a413f0d30a6e93115f3d16af1e229fd7858`; it has not been revalidated against the newer Zebra revision. None of these repository reads measures live network activation.
 
-## Related work: Veylor — 5 November 2026
+## Related-work example — 5 November 2026
 
-Read the [website](https://veylor.cash/), [protocol explanation](https://veylor.cash/how-it-works/) and [contract source linked by the site](https://github.com/JustZappIt/zecSwap/blob/32cc6efca0f22589655eb2e61b00ec6d582e8570/contracts/src/ZecSwap.sol). Veylor describes exchanging shielded ZEC for USDC held in Railgun on Ethereum, using split spend-key shares and an Ethereum settlement contract. It exchanges existing assets rather than creating ZEC-backed debt tokens under Zcash consensus.
-
-This supports citing developer activity toward private dollar access as context for ZSV's motivation. It does not measure user adoption or borrowing demand, prove a need for a consensus change, or establish that ZSV is safer. ZSV starts with public payments and has different oracle, collateral and loss risks.
-
-The site describes mainnet beta, one maker, capped swaps and no published audit. These are project statements; this review did not independently verify deployment bytecode or run its tests. The pinned README names a different mainnet address from the website, so it must not be treated as proof of the site's current deployment identity. No security or affiliation claim is inferred from the comparison.
+[Veylor's protocol explanation](https://veylor.cash/how-it-works/) describes swaps between shielded ZEC and USDC held in Railgun on Ethereum. It is a wallet use-case example, not a premise or dependency of ZSV. The site and its linked contract source were read; deployment, security and adoption were not independently verified.

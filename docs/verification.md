@@ -256,3 +256,7 @@ The ZIP motivation, forum draft and whitepaper now cite Veylor as related work o
 Verified https://github.com/zcash/zips/pull/1438 as an open PR authored by iJaack against zcash/zips, with the expected nine-file submission. It contains an unnumbered Draft Consensus ZIP; the PR is not merged or activated. The fork branch was updated with the actual Pull-Request metadata. The real change/discussion reference is https://github.com/iJaack/zsv/issues/1; the forum announcement remains pending.
 
 The research copy and submitted specification were compared equal after whitespace normalization. Candidate fixtures, upstream Pandoc rendering and whitespace checks passed. The whitepaper rebuilt with the submitted status; PDF SHA-256: `3a8d010cd3ad619f4d50e3acf54eab6adcf70453cfd1867e304db2ca096a09c9`. No new native implementation or full upstream CI result is claimed.
+
+## Related-work scope edit — 5 November 2026
+
+Removed the dedicated Veylor comparison from the ZIP motivation, forum draft and whitepaper. Each retains one sourced sentence as related work; native borrowing and payments remain the core motivation. No consensus rule or executable source changed. Candidate checks, upstream Pandoc rendering, package screening and whitespace checks passed. The whitepaper was rebuilt; PDF SHA-256: `23de48a94a640197ff59b0fda9dd08b08093fcbd5fb4a133c78264821f8293c5`.

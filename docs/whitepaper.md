@@ -29,10 +29,6 @@ General-purpose Zcash Shielded Assets (ZSAs) would support many assets, includin
 
 ZSV prohibits arbitrary native asset issuance through its own rules. The protocol cannot prevent off-chain IOUs, inscriptions, wrapped derivatives, external-chain tokens, speculative trading or future Zcash upgrades. It cannot determine the social meaning of a payment.
 
-## Related work: Veylor
-
-Veylor combines shielded ZEC with USDC held in Railgun on Ethereum, using a split-key swap coordinated by an Ethereum contract [S10,S11]. It illustrates work toward private dollar access for Zcash users. ZSV would address borrowing against retained ZEC and settlement of the issued asset on Zcash. This replaces the external settlement and USDC issuer dependencies of that path with collateral, oracle and liquidation dependencies. Veylor's existence establishes neither adoption nor demand for ZSV. ZSV's public first version also lacks shielded dollar payments; those require a follow-up ZIP. No affiliation or endorsement is implied.
-
 # Design alternatives
 
 The selected route is a dedicated native vault bundle with a fixed state machine. This has a larger consensus-specific implementation than an ordinary wallet application, but its permitted behavior can be enumerated and reviewed.
@@ -42,6 +38,8 @@ A general proof-verification or predicate layer is another possible route. It co
 External smart-contract execution and threshold custody are excluded because the requirement is native Zcash enforcement. An off-chain service may propose a transaction or generate a proof; it must never gain discretion to make an otherwise invalid transaction valid.
 
 ZIP 222 describes consensus-distributed verification of complex transparent spending preconditions [S1]. In June 2026, upstream described TZE as experimental, development-only and not planned for deployment [S2]. More recent work includes an extensible transaction format [S3] and research on private programmability [S7].
+
+Veylor is one example of dollar access alongside shielded ZEC: its swaps deliver USDC held in Railgun on Ethereum [S10].
 
 # Implemented model and proposed native system
 
@@ -257,6 +255,5 @@ Before any value-bearing test, require a defined oracle governance and compromis
 - [S9] ZIP 229: Version 6 Transaction Format. <https://zips.z.cash/zip-0229>
 
 - [S10] Veylor: split-key swap and Railgun settlement explanation, read 5 November 2026. <https://veylor.cash/how-it-works/>
-- [S11] ZecSwap contract source at the revision linked by Veylor. <https://github.com/JustZappIt/zecSwap/blob/32cc6efca0f22589655eb2e61b00ec6d582e8570/contracts/src/ZecSwap.sol>
 
 See `sources.md` for the pinned primary-source map and `zebra-integration.md` for integration evidence. Security claims are bounded by `threatmodel.md`, `economic-review.md`, `adversarial-review.md` and the verification receipt.
