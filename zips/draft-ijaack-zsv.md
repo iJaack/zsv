@@ -36,6 +36,8 @@ ZEC holders may want dollar-denominated liquidity while retaining exposure to th
 
 A data commitment alone cannot lock ZEC or create a native stablecoin. General-purpose Zcash Shielded Assets would support unrelated tokens and issuers. ZSV instead proposes one monetary use case with a closed issuance path. The smaller asset domain reduces issuance cases, but the financial and consensus complexity remains substantial.
 
+Veylor provides related work on dollar access: its documented split-key swap exchanges shielded ZEC for USDC held in Railgun on Ethereum. [^veylor] ZSV proposes borrowing against retained ZEC and settling the issued asset on Zcash. This would serve a different financial use case and avoid an external settlement chain for that path, while introducing collateral, oracle and liquidation risk. Veylor's existence does not establish adoption or demand for ZSV, and ZSV's public first version does not yet provide shielded dollar payments. No affiliation or endorsement is implied.
+
 The intended benefit is native borrowing and a transferable dollar-targeting asset without an arbitrary token-launch interface. Whether that benefit justifies the oracle dependency, privacy cost and additional consensus rules is a question for community review.
 
 # Privacy Implications
@@ -525,3 +527,5 @@ The public-first scope and Owners contact are confirmed. No editor-assigned numb
 [^zip-0244]: [ZIP 244: Transaction Identifier Non-Malleability](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0244.rst).
 
 [^zip-0239]: [ZIP 239: Relay of Version 5 Transactions](https://github.com/zcash/zips/blob/2bdf39494320e5e04057ac93b1794031ebfb00b5/zips/zip-0239.rst).
+
+[^veylor]: [Veylor: How it works](https://veylor.cash/how-it-works/), read 5 November 2026. The described split-key swap is coordinated by an Ethereum contract; it is not native Zcash stablecoin issuance. [Contract source at the revision linked by Veylor](https://github.com/JustZappIt/zecSwap/blob/32cc6efca0f22589655eb2e61b00ec6d582e8570/contracts/src/ZecSwap.sol).

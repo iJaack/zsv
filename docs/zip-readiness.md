@@ -69,7 +69,7 @@ The oracle checker now includes 13 selection cases covering unchanged and change
 
 SHA-256 of the reviewed candidate and its conformance material:
 
-- `zips/draft-ijaack-zsv.md`: `ce20f8c924bfd62d560ea3f00318c26b92e91d39ec88db64f56a6abb68cc7c55`.
+- `zips/draft-ijaack-zsv.md`: `f2a3edbf884d67f49b62e4c2e0cc997a9baf54592986d4916b4b7483ec73db3e`.
 - `zips/draft-ijaack-zsv/check_financial_vectors.py`: `d5dd93fc554af2a94f459cef1c59826e5fc9ba74bb65bf6e11d075af81f0cbf4`.
 - `zips/draft-ijaack-zsv/financial-vectors.json`: `2ca1b02eda82c065672a768cabcef6081c511d6398a32bfecaf0b763f3eb7ef9`.
 - `zips/draft-ijaack-zsv/check_wire_vectors.py`: `4c10aeee1b76d481dd64be6840db5bd19ae074ea385473106eca79945b9e2eb9`.

@@ -2,7 +2,7 @@
 title: "ZSV: Zcash Stablecoin Vault"
 subtitle: "A narrow native protocol for a ZEC-collateralized dollar target"
 author: "Giacomo Barbieri"
-date: "3 November 2026 · research draft 0.4"
+date: "5 November 2026 · research draft 0.5"
 geometry: margin=25mm
 fontsize: 11pt
 colorlinks: true
@@ -28,6 +28,10 @@ ZEC holders may want dollar-denominated payment liquidity without selling all of
 General-purpose Zcash Shielded Assets (ZSAs) would support many assets, including speculative tokens. ZSV permits one additional monetary instrument while withholding a general token-launch interface. A smaller asset surface can reduce registry state, issuer authorization cases, wallet discovery complexity and some misuse opportunities. Financial, privacy and consensus risks remain.
 
 ZSV prohibits arbitrary native asset issuance through its own rules. The protocol cannot prevent off-chain IOUs, inscriptions, wrapped derivatives, external-chain tokens, speculative trading or future Zcash upgrades. It cannot determine the social meaning of a payment.
+
+## Related work: Veylor
+
+Veylor combines shielded ZEC with USDC held in Railgun on Ethereum, using a split-key swap coordinated by an Ethereum contract [S10,S11]. It illustrates work toward private dollar access for Zcash users. ZSV would address borrowing against retained ZEC and settlement of the issued asset on Zcash. This replaces the external settlement and USDC issuer dependencies of that path with collateral, oracle and liquidation dependencies. Veylor's existence establishes neither adoption nor demand for ZSV. ZSV's public first version also lacks shielded dollar payments; those require a follow-up ZIP. No affiliation or endorsement is implied.
 
 # Design alternatives
 
@@ -251,5 +255,8 @@ Before any value-bearing test, require a defined oracle governance and compromis
 - [S7] Private Programmability in Zcash, Foundation-funded research discussion. <https://forum.zcashcommunity.com/t/private-programmability-in-zcash-research-results-and-community-discussion/48016>
 - [S8] Pinned Zebra source. <https://github.com/ZcashFoundation/zebra/tree/5faf8a413f0d30a6e93115f3d16af1e229fd7858>
 - [S9] ZIP 229: Version 6 Transaction Format. <https://zips.z.cash/zip-0229>
+
+- [S10] Veylor: split-key swap and Railgun settlement explanation, read 5 November 2026. <https://veylor.cash/how-it-works/>
+- [S11] ZecSwap contract source at the revision linked by Veylor. <https://github.com/JustZappIt/zecSwap/blob/32cc6efca0f22589655eb2e61b00ec6d582e8570/contracts/src/ZecSwap.sol>
 
 See `sources.md` for the pinned primary-source map and `zebra-integration.md` for integration evidence. Security claims are bounded by `threatmodel.md`, `economic-review.md`, `adversarial-review.md` and the verification receipt.

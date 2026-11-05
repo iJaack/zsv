@@ -244,3 +244,9 @@ Direct Pandoc rendering passed. The previous temporary upstream renderer was una
 [Fact-check record](fact-check.md) maps the rechecked primary sources, corrected claims, reproduced results and remaining assumptions. `scripts/verify.sh`, `zebra/verify-dev.sh` and `scripts/verify-zip.sh` all completed successfully from revision `413fd0f`. Rust 1.90 was restored to a temporary toolchain directory; locked dependencies were fetched. Results: 110 reference Rust tests, 39 Zebra-linked tests, 96 Python tests, all 351 combined cases, exact study/scenario outputs, formatting and strict Clippy. These test scopes remain distinct from native ZIP conformance.
 
 The paper rebuilt with the claim corrections and author Giacomo Barbieri. PDF SHA-256: `4e7a2205e494afcaf0338bac36b5fde3c0477d81ac266c6217ea359a32c19de2`. Source reads, proposed rules, scenario assumptions and deployment evidence are distinguished in the fact-check record. Package and whitespace checks passed.
+
+## Veylor related-work context — 5 November 2026
+
+The ZIP motivation, forum draft and whitepaper now cite Veylor as related work on private dollar access. The comparison distinguishes exchanging ZEC for Ethereum/Railgun USDC from borrowing against ZEC and settling the proposed zUSD asset on Zcash. It preserves the public-payment scope and treats adoption and borrowing demand as unmeasured. The source register records the primary pages, pinned contract and deployment-verification limits. No normative rules or executable source changed.
+
+`bash scripts/verify-zip.sh`, direct Pandoc ZIP rendering and whitepaper generation passed. PDF author and related-work text were checked. PDF SHA-256: `db4401940411c4401ea1fbb88b2ffe718f42052df6fc4a3bdec7c698d5a5cc9a`. The candidate source fingerprint was refreshed. These documentation checks add no native implementation or economic validation claim.

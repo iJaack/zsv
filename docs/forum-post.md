@@ -4,6 +4,14 @@ Unpublished discussion draft by Giacomo Barbieri.
 
 I'd like feedback on [ZSV](https://github.com/iJaack/zsv/blob/main/zips/draft-ijaack-zsv.md), a proposed Consensus ZIP for borrowing one dollar-targeting stablecoin against ZEC. Zcash nodes would enforce the vault and payment rules. The draft is unnumbered and has not been submitted upstream.
 
+## Why this matters alongside Veylor
+
+[Veylor](https://veylor.cash/how-it-works/) brings shielded ZEC and dollar access into one wallet. Its split-key swap exchanges ZEC for USDC held in Railgun on Ethereum. That is useful related work: developers are building ways for Zcash users to move between ZEC and dollars without exposing their ZEC through a transparent deposit.
+
+ZSV addresses a further use case: keep ZEC as collateral, borrow a dollar-targeting asset, and settle its payments under Zcash consensus. That would avoid requiring an Ethereum swap and Railgun balance for this borrowing and payment path. It would also replace dependence on USDC's issuer with ZEC collateral, price reporters and liquidation risk.
+
+Veylor's existence supports investigating this use case; it does not establish adoption, demand for borrowing or the safety of ZSV. Veylor already targets shielded dollar use, while this ZIP starts with public payments. Matching that privacy utility would require the follow-up shielded-payment ZIP. The proposals can complement each other; neither project's existence establishes endorsement by the other.
+
 ## What the first version does
 
 - Locks ZEC in a dedicated vault value pool.
